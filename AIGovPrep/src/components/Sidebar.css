@@ -1,0 +1,165 @@
+/* ===== SIDEBAR ===== */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 998;
+  backdrop-filter: blur(2px);
+}
+
+.sidebar {
+  position: fixed;
+  top: var(--navbar-height);
+  left: 0;
+  bottom: 0;
+  width: var(--sidebar-width);
+  background: #FFFFFF;
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  z-index: 999;
+  overflow-y: auto;
+  transform: translateX(0);
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
+}
+
+/* Brand strip at top of sidebar */
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md) var(--space-md);
+  border-bottom: 1px solid var(--border-light);
+  background: var(--primary-bg);
+}
+.sidebar-brand-name {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+}
+
+/* Nav sections */
+.sidebar-section {
+  padding: 12px var(--space-sm) 4px;
+}
+.sidebar-section-label {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--text-muted);
+  padding: 0 8px;
+  margin-bottom: 4px;
+}
+
+/* Nav links */
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+  margin-bottom: 2px;
+  position: relative;
+}
+.sidebar-link:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+.sidebar-link.active {
+  background: var(--primary-bg);
+  color: var(--primary);
+  font-weight: 600;
+}
+.sidebar-link.active::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 6px; bottom: 6px;
+  width: 3px;
+  background: var(--primary);
+  border-radius: 0 4px 4px 0;
+}
+.sidebar-link .link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+.sidebar-link .link-icon.blue { background: var(--primary-bg); color: var(--primary); }
+.sidebar-link .link-icon.green { background: var(--bg-accent-green); color: var(--accent-green); }
+.sidebar-link .link-icon.saffron { background: var(--bg-accent-saffron); color: var(--accent-orange); }
+.sidebar-link .link-icon.red { background: var(--bg-accent-red); color: var(--accent-red); }
+.sidebar-link .link-icon.gray { background: var(--bg-tertiary); color: var(--text-secondary); }
+
+/* Footer */
+.sidebar-footer {
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-light);
+  margin-top: auto;
+}
+.sidebar-footer-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px 10px;
+  background: var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+.sidebar-footer-info .dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  animation: pulse 2s infinite;
+  flex-shrink: 0;
+}
+.sidebar-footer-text { font-size: 0.78rem; color: var(--text-muted); }
+
+.sidebar-close { display: none; }
+
+/* Desktop: always visible */
+@media (min-width: 1025px) {
+  .sidebar { transform: translateX(0) !important; }
+  .sidebar-overlay { display: none !important; }
+  .sidebar-close { display: none !important; }
+}
+
+/* Tablet/Mobile: slide in */
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    box-shadow: var(--shadow-xl);
+    width: 280px;
+  }
+  .sidebar.open { transform: translateX(0); }
+  .sidebar-close { display: flex; }
+  .sidebar-link {
+    padding: 12px 14px;
+    font-size: 0.92rem;
+    gap: 12px;
+    min-height: 44px;
+  }
+  .sidebar-link .link-icon {
+    width: 32px;
+    height: 32px;
+  }
+  .sidebar-section-label {
+    font-size: 0.72rem;
+    padding: 0 10px;
+    margin-bottom: 6px;
+  }
+  .sidebar-brand {
+    padding: var(--space-md) var(--space-lg);
+  }
+}

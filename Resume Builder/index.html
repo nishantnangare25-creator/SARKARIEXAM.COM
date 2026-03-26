@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>Resume Builder - Home</title>
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="/public/assets/css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+</head>
+
+<body>
+    <div id="loader">
+        <h1 id="loderLogo">
+            CV<span> Craft</span>
+        </h1>
+        <p>Getting Ready...</p>
+    </div>
+    <section id="navbar">
+        <h1 id="logo">
+            <a href="">Cv<span> Craft</span> <sup>BETA</sup></a>
+        </h1>
+        <!-- <ul>
+            <li><a href="#"></a></li>
+        </ul> -->
+        <form action="#box">
+            <button id="createProfile">
+                Create Profile <i class="uil uil-user"></i>
+            </button>
+        </form>
+        
+    </section>
+    <section id="home">
+        <div id="batch">
+            <div>
+                POWERED BY VARIABLE
+            </div>
+
+        </div>
+        <h1 id="animation">
+            Build Your Resume
+            <div id="flip">
+                <div>
+                    <div class="text" id="text1">Faster</div>
+                </div>
+                <div>
+                    <div class="text" id="text2">Simple</div>
+                </div>
+                <div>
+                    <div class="text" id="text3">Quick</div>
+                </div>
+            </div>
+        </h1>
+        <p>Create your perfect resume effortlessly with our user-friendly builder. Input your information, and stand out from the competition. Start building your resume Today!</p>
+
+        <div id="btns">
+            <form action="#box">
+                <!-- <button>Learn More</button> -->
+            <button id="startBtn">Get Started <i class="uil uil-arrow-right"></i></button>
+            </form>
+        </div>
+    </section>
+    <div id="box1"></div>
+    <div id="box2"></div>
+    <section id="box">
+        <section id="left">
+            <h1>Fill Form <i class="uil uil-arrow-right"></i></h1>
+            <div id="form1" class="form">
+                <input type="text" id="myname" placeholder="Enter Your Full Name" autocomplete="off">
+                <input type="email" name="" id="email" placeholder="Enter Your Email" autocomplete="off">
+                <input type="tel" name="" maxlength="10" id="tel" autocomplete="off" placeholder="Enter Your Mobile Number">
+                <textarea name="" id="profileText" cols="80" autocomplete="off" rows="8" placeholder="Type Small Description About Your Skills"></textarea>
+                <div id="formbtns">
+                    <button>Preview</button>
+                    <button id="nextBtn1">Next Step <i class="uil uil-arrow-right"></i></button>
+                </div>
+            </div>
+            <div id="form2" class="form">
+                <div>
+                    <label for="">Degree Education</label>
+                <input type="text" name="degree" id="degree" placeholder="Enter Your Degree">
+                <input type="text" name="clgname" id="clgname" placeholder="Enter Your College Name">
+                </div>
+                <hr>
+                <div>
+                    <label for="">Higher Education</label>
+                <input type="text" name="" id="hsc" placeholder="Enter Your Higher Education">
+                <input type="text" name="" id="sclname" placeholder="Enter Your School Name">
+                </div>
+                <hr>
+                <div id="formbtns">
+                    <button id="backBtn1"><i class="uil uil-arrow-left"></i> Back</button>
+                    <button id="nextBtn2">Next Step <i class="uil uil-arrow-right"></i></button>
+                </div>
+            </div>
+            <div id="form3" class="form">
+                <div>
+                    <label for="">Skills</label>
+                    <input type="text" id="skills" placeholder="Ex HTML | CSS | JS">
+                </div>
+                <div>
+                    <label for="">Project</label>
+                    <input type="text" id="projectTitle" placeholder="Enter a Title of Project">
+                    <textarea name="" id="projectInfo" cols="10" rows="5" placeholder="Short Decription About Project"></textarea>
+                    <input type="url" name="" id="projectURL" placeholder="Paste Project link">
+                </div>
+                <div id="formbtns">
+                    <button id="backBtn2"><i class="uil uil-arrow-left"></i> Back</button>
+                    <button id="nextBtn3">
+                        Last Step <i class="uil uil-arrow-right"></i></button>
+                </div>
+            </div>
+            <form id="form4" class="form" action="/pdf.html">
+                <div>
+                    <label for="">Strenght</label>
+                    <input type="text" id="li1" placeholder="Enter a Strenght 1">
+                    <input type="text" id="li2" placeholder="Enter a Strenght 2">
+                    <input type="text" id="li3" placeholder="Enter a Strenght 3">
+                </div>
+                <hr>
+                <div>
+                    <label for="">Hobbies</label>
+                    <input type="text" id="h1" placeholder="Type a Hobby 1">
+                    <input type="text" id="h2" placeholder="Type a Hobby 2">
+                </div>
+                <hr>
+                <div id="formbtns">
+                    <button id="backBtn3"><i class="uil uil-arrow-left"></i> Back</button>
+                    <button id="download">
+                    Download CV<i class="uil uil-arrow-right"></i></button>
+                </div>
+            </form>
+        </section>
+    </section>
+    
+    <footer>
+        <div>
+            ©Copywrite By <a href="#"><h3>swiftbuilder.netlify.app</h3></a> | Powerd by<h3> "Variable"</h3>
+        </div>
+        
+    </footer>
+    <!-- <script src="/pdf.js"></script> -->
+    <script src="/public/assets/js/index.js"></script>
+</body>
+
+</html>

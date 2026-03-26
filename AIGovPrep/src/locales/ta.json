@@ -1,0 +1,46 @@
+{
+  "app": {
+    "name": "Sarkari Exam AI",
+    "tagline": "AI இயக்கும் அரசு தேர்வு தயாரிப்பு"
+  },
+  "nav": {
+    "home": "முகப்பு",
+    "dashboard": "டாஷ்போர்டு",
+    "studyPlanner": "படிப்பு திட்டம்",
+    "mockTest": "மாதிரி தேர்வு",
+    "pastPaper": "பழைய வினாத்தாள்",
+    "notes": "குறிப்புகள்",
+    "analytics": "பகுப்பாய்வு",
+    "forum": "மன்றம்",
+    "peerMatch": "படிப்பு கூட்டாளிகள்",
+    "settings": "அமைப்புகள்",
+    "login": "உள்நுழைய",
+    "signup": "பதிவு",
+    "logout": "வெளியேறு",
+    "profile": "சுயவிவரம்",
+    "pyqsMockTest": "PYQs Mock Test",
+    "pyqPdfs": "PYQ PDFs"
+  },
+  "home": {
+    "hero": "உங்கள் AI தேர்வு தயாரிப்பு கூட்டாளி",
+    "subtitle": "UPSC, MPSC, SSC தேர்வுகளுக்கு AI பயிற்சியுடன் தயாராகுங்கள்",
+    "cta": "இலவச தயாரிப்பு தொடங்குங்கள்",
+    "ctaSecondary": "அம்சங்களைப் பாருங்கள்"
+  },
+  "settings": {
+    "title": "அமைப்புகள்",
+    "apiKey": "AI கட்டமைப்பு",
+    "apiKeyPlaceholder": "API விசை .env இல் கட்டமைக்கப்பட்டுள்ளது",
+    "save": "அமைப்புகளைச் சேமி",
+    "saved": "அமைப்புகள் சேமிக்கப்பட்டன!",
+    "language": "மொழி",
+    "theme": "தீம்"
+  },
+  "common": {
+    "loading": "ஏற்றுகிறது...",
+    "error": "ஏதோ தவறு",
+    "retry": "மீண்டும் முயற்சி",
+    "save": "சேமி",
+    "cancel": "ரத்து"
+  }
+}

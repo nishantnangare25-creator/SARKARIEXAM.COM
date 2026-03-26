@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Resume Builder - PDF</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://unicons.iconscout.com/release/v4.0.8/css/line.css">
+    <link rel="stylesheet" href="/public/assets/css/pdf.css" />
+    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.js"></script>
+
+</head>
+
+<body>
+    <div id="loader">
+        <h1 id="loderLogo">
+            Swift<span> Builder</span>
+        </h1>
+        <p>Getting Ready...</p>
+    </div>
+    <div class="container d-flex justify-content-center mt-50 mb-50">
+        <div class="row">
+            <a href="/Resume Builder/index.html" id="build" ><i class="uil uil-arrow-left"></i> Back to the Builder</a>
+            <div class="col-md-12 text-right mb-3">
+                <button class="btn btn-primary" id="download"> Download PDF</button>
+            </div>
+            <p style="padding:10px 20px; font-size: 18px;">Please Tap On Profile Circle and Set Your Profile Image Then Download PDF </p>
+            <div class="col-md-12">
+                <div class="card" id="invoice">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <div class="mb-4 pull-left">
+                                    <div class="pic" id="imgBox">
+                                        <input style="display: none;" type="file" accept="image/*" name="image" id="file" onchange="loadFile(event)">
+                                        <label id="fileUplaod" for="file"><i class="uil uil-image-upload"></i></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="mb-4 ">
+                                    <div class="text-sm-right">
+                                        <h6 class="invoice-color mb-2 mt-md-2" id="myname"></h6>
+                                        <ul class="list list-unstyled mb-0">
+                                            <h6 id="name" class="phone">Phone: <span class="font-weight-semibold" id="tel"></span></h6>
+                                            <h6 id="name">Email: <span class="font-weight-semibold" id="email"></span></h6>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div id="profile">
+                        <h3>Profile</h3>
+                        <p id="profileText"></p>
+                    </div>
+                    <hr>
+                    <div id="education">
+                        <h3>Education</h3>
+                        <h4 id="degree"></h4>
+                        <p id="clgname"></p>
+                        <h4 id="hsc"></h4>
+                        <p id="sclname"></p>
+                    </div>
+                    <hr>
+                    <div id="skill">
+                        <h3>Skills</h3>
+                        <p id="skills">SKILLS  : </p>
+                    </div>
+                    <hr>
+                    <div id="project">
+                        <h3>Project</h3>
+                        <h4 id="projectTitle"></h4>
+                        <p id="projectInfo"></p>
+                        <a style="text-decoration: underline;" id="projectURL" target="_blank" href="">Click To Visite</a>
+                    </div>
+                    <hr>
+                    <div id="strenghts">
+                        <h3>Strenghts</h3>
+                        <li id="li1"></li>
+                        <li id="li2"></li>
+                        <li id="li3"></li>
+                    </div>
+                    <hr>
+                    <div id="hobby">
+                        <h3>Hobbies</h3>
+                        <li id="h1"></li>
+                        <li id="h2"></li>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        
+    </script>
+    <script src="/public/assets/js/pdf.js"></script>
+</body>
+
+</html>

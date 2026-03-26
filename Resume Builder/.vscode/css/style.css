@@ -1,0 +1,1908 @@
+/* Import */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* CSS Reset */
+* {
+    padding: 0;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+html::-webkit-scrollbar {
+    width: 0px;
+}
+
+body {
+    /* background: #181818; */
+    overflow-x: hidden;
+}
+
+/* Navbar */
+#navbar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    background: #fff;
+    position: fixed;
+    width: 100%;
+    padding: 20px;
+    z-index: 1000;
+    /* box-shadow: 0px 0px 30px rgba(0,0,0,0.123); */
+}
+
+#navbar h1 {
+    font-weight: 300;
+    color: #181818;
+    font-size: 25px;
+}
+
+#navbar h1 a {
+    text-decoration: none;
+    color: #181818;
+}
+
+#navbar h1 span {
+    background: -webkit-linear-gradient(top left, #ff1ef7, #8345ff, #00eaff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 500;
+}
+
+#navbar button {
+    padding: 10px 20px;
+    background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+    border: none;
+    border-radius: 5px;
+    font-weight: 500;
+    color: #fff;
+    box-shadow: 0px 10px 30px #6f27ff44;
+    cursor: pointer;
+}
+
+sup {
+    font-size: 12px;
+    position: relative;
+    top: -10px;
+    padding: 1px 5px;
+    margin: 2px;
+    color: #181818;
+    font-weight: 400;
+    border: 1px solid #181818;
+    border-radius: 3px;
+}
+
+/* Home */
+#batch {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    top: 70px;
+}
+
+#batch div {
+    display: inline-block;
+    padding: 10px 30px;
+    border-radius: 30px;
+    background: #6f27ff;
+    color: #fff;
+    box-shadow: 0px 10px 30px #6f27ff42;
+}
+
+#home {
+    position: relative;
+    top: 100px;
+}
+
+#home h1 {
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 4rem;
+    position: relative;
+    top: 100px;
+    color: #252525;
+}
+
+#flip {
+    margin-left: 20px;
+    height: 80px;
+    /* background: #000; */
+    position: relative;
+    overflow: hidden;
+}
+
+.text {
+    background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: flex;
+    animation: textflip 5s linear infinite;
+}
+
+@keyframes textflip {
+    0% {
+        transform: translateY(-10px);
+    }
+
+    10% {
+        transform: translateY(-10px);
+    }
+
+    30% {
+        transform: translateY(-10px);
+    }
+
+    40% {
+        transform: translateY(-100px);
+    }
+
+    50% {
+        transform: translateY(-100px);
+    }
+
+    70% {
+        transform: translateY(-100px);
+    }
+
+    80% {
+        transform: translateY(-200px);
+    }
+
+    90% {
+        transform: translateY(-200px);
+    }
+
+    100% {
+        transform: translateY(-200px);
+    }
+}
+
+#home p {
+    position: relative;
+    top: 120px;
+    width: 50%;
+    left: 25%;
+    font-size: 18px;
+    font-weight: 400;
+    color: #181818;
+    text-align: center;
+}
+
+#btns {
+    position: relative;
+    top: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#btns button:nth-child(1) {
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    color: #6f27ff;
+    border-radius: 5px;
+    outline: 2px solid #6f27ff;
+    cursor: pointer;
+}
+
+#btns button:nth-child(2) {
+    padding: 8px 20px;
+    margin: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    outline: 2px solid #6f27ff;
+    background: #6f27ff;
+    outline-offset: 3px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+#btns button:nth-child(2):hover {
+    outline-offset: 0px;
+    padding: 10px 20px;
+    background: #8b52fe;
+    outline: 2px solid #8b52fe;
+}
+
+/* Box */
+#box {
+    width: 50%;
+    height: 650px;
+    background: #8345ff;
+    position: relative;
+    top: 310px;
+    left: 25%;
+    border-radius: 10px;
+    margin-bottom: 40px;
+    transition: all 1s;
+    overflow: hidden;
+}
+
+#box .form {
+    width: 84%;
+    margin: 30px;
+    padding: 10px;
+    position: relative;
+    top: 50px;
+}
+
+#box h1 {
+    color: #fff;
+    font-weight: 500;
+    position: relative;
+    left: 50px;
+    top: 30px;
+    font-size: 25px;
+}
+
+#box #name {
+    display: flex;
+    width: 107%;
+}
+
+#box .form input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: none;
+    /* outline: 2px solid #6f27ff; */
+    color: #181818;
+    font-weight: 500;
+    border: 2px solid #fff;
+    /* From https://css.glass */
+    font-weight: 400;
+    font-size: 15px;
+    background: #fff;
+}
+
+#box .form input::placeholder {
+    color: #181818;
+    font-weight: 400;
+}
+
+#box .form input:focus {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+#box #pic input {
+    color: #181818;
+    font-weight: 400;
+    font-size: 15px;
+    /* From https://css.glass */
+    background: #fff;
+}
+
+#box textarea {
+    width: 100%;
+    position: relative;
+    margin: 10px;
+    padding: 10px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    background: transparent;
+    /* From https://css.glass */
+    background: #fff;
+}
+
+#box textarea:focus {
+    outline: 2px solid #fff;
+    outline-offset: 3px;
+}
+
+#box textarea::placeholder {
+    color: #181818;
+    font-weight: 400;
+    font-size: 15px;
+}
+
+#formbtns {
+    width: 108.5%;
+    position: relative;
+    left: 2px;
+}
+
+#formbtns button:nth-child(1) {
+    width: 45%;
+    padding: 8px 20px;
+    margin: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    outline: 2px solid #ffffff;
+    background: transparent;
+    outline-offset: 3px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+#formbtns button:nth-child(1):hover {
+    background: #ffffff87;
+}
+
+#formbtns button:nth-child(2) {
+    width: 46%;
+    padding: 8px 20px;
+    margin: 10px;
+    font-size: 16px;
+    font-weight: 500;
+    background: transparent;
+    border: none;
+    color: #181818;
+    border-radius: 5px;
+    outline: 2px solid #ffffff;
+    background: #ffffff;
+    outline-offset: 3px;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+#formbtns button:nth-child(2):hover {
+    outline-offset: 0px;
+    padding: 10px 20px;
+}
+
+footer {
+    position: relative;
+    bottom: -500px;
+}
+
+footer div {
+    display: flex;
+    padding: 20px;
+    flex-direction: row;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    font-size: 18px;
+    background: #8345ff;
+    color: #fff;
+}
+
+footer div a {
+
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+}
+
+footer div a h3 {
+    font-weight: 400;
+    margin: 3px;
+    font-size: 18px;
+}
+
+footer div h3 {
+    font-weight: 500;
+    font-size: 18px;
+}
+
+#form1,
+#form2,
+#form3,
+#form4 {
+    transition: all 1s;
+}
+
+label {
+    padding: 10px;
+    color: #fff;
+    text-decoration: underline;
+}
+
+hr {
+    position: relative;
+    left: -10px;
+    margin: 20px;
+    width: 103%;
+}
+
+#right {
+    position: absolute;
+    right: 0;
+    width: 40%;
+}
+
+#right h1 {
+    color: #fff;
+    position: relative;
+    top: -300px;
+    left: -50px;
+    font-weight: 500;
+}
+
+#invoice {
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    position: relative;
+    top: -280px;
+    left: -50px;
+
+}
+
+/* Resume */
+
+#pro-pic {
+    width: 60px;
+    height: 60px;
+    background: #6f27ff;
+    border-radius: 50%;
+    position: relative;
+    left: 30px;
+    top: 30px;
+}
+
+#box1 {
+    width: 400px;
+    height: 600px;
+    background: #8345ff;
+    position: absolute;
+    left: -100px;
+    top: 78.5%;
+    border-radius: 20px;
+    animation: box1 4s infinite;
+}
+
+@keyframes box1 {
+    0% {
+        transform: translateX(0px);
+        transition: transform 1s;
+    }
+
+    50% {
+        transform: translateX(-150px);
+        transition: transform 1s;
+    }
+
+    100% {
+        transform: translateX(0px);
+        transition: transform 1s;
+    }
+}
+
+#box2 {
+    width: 400px;
+    height: 600px;
+    background: #8345ff;
+    position: absolute;
+    right: -100px;
+    top: 78.5%;
+    border-radius: 20px;
+    animation: box2 4s infinite 2s;
+}
+
+@keyframes box2 {
+    0% {
+        transform: translateX(0px);
+        transition: transform 1s;
+    }
+
+    50% {
+        transform: translateX(150px);
+        transition: transform 1s;
+    }
+
+    100% {
+        transform: translateX(0px);
+        transition: transform 1s;
+    }
+}
+
+/* Navbar Responsive */
+
+@media (min-width:375px) and (max-width:425px) {
+    body {
+        /* background: #000; */
+    }
+
+    h1 {
+        position: relative;
+        left: -20px;
+    }
+
+    #createProfile {
+        position: relative;
+        left: -25px;
+    }
+
+    #batch div {
+        display: none;
+    }
+
+    #home #animation {
+        display: block;
+        font-size: 70px;
+        text-align: center;
+        line-height: 70px;
+        position: relative;
+        left: 50px;
+        top: 30px;
+    }
+
+    #flip {
+        margin-left: 20px;
+        height: 80px;
+        margin-top: 10px;
+        /* background: #000; */
+        position: relative;
+        overflow: hidden;
+    }
+
+    .text {
+        background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        animation: textflip 5s linear infinite;
+        position: relative;
+        left: 50px;
+        line-height: 100px;
+    }
+
+    @keyframes textflip {
+        0% {
+            transform: translateY(-10px);
+        }
+
+        10% {
+            transform: translateY(-10px);
+        }
+
+        30% {
+            transform: translateY(-10px);
+        }
+
+        40% {
+            transform: translateY(-120px);
+        }
+
+        50% {
+            transform: translateY(-120px);
+        }
+
+        70% {
+            transform: translateY(-120px);
+        }
+
+        80% {
+            transform: translateY(-220px);
+        }
+
+        90% {
+            transform: translateY(-220px);
+        }
+
+        100% {
+            transform: translateY(-220px);
+        }
+    }
+
+    #home p {
+        width: 90%;
+        text-align: center;
+    }
+
+    #box1 {
+        display: none;
+    }
+
+    #box2 {
+        display: none;
+    }
+}
+
+@media (min-width:768px) and (max-width:1024px) {
+    body {
+        /* background: #000; */
+    }
+
+    #home #animation {
+        display: block;
+        font-size: 100px;
+        text-align: center;
+        line-height: 100px;
+        position: relative;
+        top: 60px;
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+    #batch {
+        display: none;
+    }
+
+    .text {
+        background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        animation: textflip 5s linear infinite;
+        line-height: 120px;
+
+    }
+
+    #flip {
+        margin-left: 20px;
+        height: 120px;
+        margin-top: 20px;
+        /* background: #000; */
+        position: relative;
+        /* left: 27%; */
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        /* overflow: hidden; */
+    }
+
+    @keyframes textflip {
+        0% {
+            transform: translateY(110px);
+        }
+
+        10% {
+            transform: translateY(110px);
+        }
+
+        30% {
+            transform: translateY(110px);
+        }
+
+        40% {
+            transform: translateY(0px);
+        }
+
+        50% {
+            transform: translateY(0px);
+        }
+
+        70% {
+            transform: translateY(0px);
+        }
+
+        80% {
+            transform: translateY(-130px);
+        }
+
+        90% {
+            transform: translateY(-130px);
+        }
+
+        100% {
+            transform: translateY(-130px);
+        }
+    }
+
+    #box1 {
+        display: none;
+    }
+
+    #box2 {
+        display: none;
+    }
+
+    #home p {
+        text-align: center;
+        width: 70%;
+        position: relative;
+        left: 15%;
+    }
+
+    #box {
+        width: 90%;
+        left: 5%;
+    }
+}
+
+@media (min-width:630px) and (max-width:768px) {
+    body {
+        /* background: #000; */
+    }
+
+    #home #animation {
+        display: block;
+        font-size: 80px;
+        text-align: center;
+        line-height: 80px;
+        position: relative;
+        top: 60px;
+        font-weight: 600;
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+    #batch {
+        display: none;
+    }
+
+    .text {
+        background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        animation: textflip 5s linear infinite;
+        line-height: 120px;
+
+    }
+
+    #flip {
+        margin-left: 20px;
+        height: 120px;
+        margin-top: 0px;
+        /* background: #000; */
+        position: relative;
+        /* left: 27%; */
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        /* overflow: hidden; */
+    }
+
+    @keyframes textflip {
+        0% {
+            transform: translateY(110px);
+        }
+
+        10% {
+            transform: translateY(110px);
+        }
+
+        30% {
+            transform: translateY(110px);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        70% {
+            transform: translateY(-10px);
+        }
+
+        80% {
+            transform: translateY(-130px);
+        }
+
+        90% {
+            transform: translateY(-130px);
+        }
+
+        100% {
+            transform: translateY(-130px);
+        }
+    }
+
+    #box1 {
+        display: none;
+    }
+
+    #box2 {
+        display: none;
+    }
+
+    #home p {
+        text-align: center;
+        width: 70%;
+        position: relative;
+        top: 100px;
+        left: 15%;
+    }
+
+    #box {
+        width: 90%;
+        left: 5%;
+    }
+
+    #box .form input {
+        width: 96%;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        border: none;
+        /* outline: 2px solid #6f27ff; */
+        color: #181818;
+        font-weight: 500;
+        border: 2px solid #fff;
+        /* From https://css.glass */
+        font-weight: 400;
+        font-size: 15px;
+        background: #fff;
+    }
+
+    #box .form input::placeholder {
+        color: #181818;
+        font-weight: 400;
+    }
+
+    #box .form input:focus {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+    }
+
+    #box #pic input {
+        color: #181818;
+        font-weight: 400;
+        font-size: 15px;
+        /* From https://css.glass */
+        background: #fff;
+    }
+
+    #box textarea {
+        width: 96%;
+        position: relative;
+        margin: 10px;
+        padding: 10px;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        background: transparent;
+        /* From https://css.glass */
+        background: #fff;
+    }
+
+    #formbtns {
+        width: 104%;
+        position: relative;
+        left: 2px;
+    }
+
+    #formbtns button:nth-child(1) {
+        width: 45%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: transparent;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(1):hover {
+        background: #ffffff87;
+    }
+
+    #formbtns button:nth-child(2) {
+        width: 46%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #181818;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: #ffffff;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(2):hover {
+        outline-offset: 0px;
+        padding: 10px 20px;
+    }
+
+    hr {
+        width: 100%;
+    }
+}
+
+@media (min-width:522px) and (max-width:660px) {
+    body {
+        /* background: #a02323; */
+    }
+
+    #navbar {
+        position: relative;
+    }
+
+    #home #animation {
+        display: block;
+        font-size: 80px;
+        text-align: center;
+        line-height: 80px;
+        position: relative;
+        top: 60px;
+        font-weight: 600;
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+    #batch {
+        display: none;
+    }
+
+    .text {
+        background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        animation: textflip 5s linear infinite;
+        line-height: 120px;
+
+    }
+
+    #flip {
+        margin-left: 20px;
+        height: 120px;
+        margin-top: 0px;
+        /* background: #000; */
+        position: relative;
+        /* left: 27%; */
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        /* overflow: hidden; */
+    }
+
+    @keyframes textflip {
+        0% {
+            transform: translateY(110px);
+        }
+
+        10% {
+            transform: translateY(110px);
+        }
+
+        30% {
+            transform: translateY(110px);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        70% {
+            transform: translateY(-10px);
+        }
+
+        80% {
+            transform: translateY(-130px);
+        }
+
+        90% {
+            transform: translateY(-130px);
+        }
+
+        100% {
+            transform: translateY(-130px);
+        }
+    }
+
+    #box1 {
+        display: none;
+    }
+
+    #box2 {
+        display: none;
+    }
+
+    #home p {
+        text-align: center;
+        width: 70%;
+        position: relative;
+        top: 100px;
+        left: 15%;
+    }
+
+    #box {
+        width: 90%;
+        left: 5%;
+        height: 650px;
+    }
+
+    #box .form input {
+        width: 92%;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        border: none;
+        /* outline: 2px solid #6f27ff; */
+        color: #181818;
+        font-weight: 500;
+        border: 2px solid #fff;
+        /* From https://css.glass */
+        font-weight: 400;
+        font-size: 15px;
+        background: #fff;
+    }
+
+    #box .form input::placeholder {
+        color: #181818;
+        font-weight: 400;
+    }
+
+    #box .form input:focus {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+    }
+
+    #box #pic input {
+        color: #181818;
+        font-weight: 400;
+        font-size: 15px;
+        /* From https://css.glass */
+        background: #fff;
+    }
+
+    #box textarea {
+        width: 92%;
+        position: relative;
+        margin: 10px;
+        padding: 10px;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        background: transparent;
+        /* From https://css.glass */
+        background: #fff;
+    }
+
+    #formbtns {
+        /* display: flex; */
+        /* flex-direction: column; */
+        width: 102%;
+        position: relative;
+        left: 2px;
+    }
+
+    #formbtns button:nth-child(1) {
+        width: 44%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: transparent;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(1):hover {
+        background: #ffffff87;
+    }
+
+    #formbtns button:nth-child(2) {
+        width: 45%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #181818;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: #ffffff;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(2):hover {
+        outline-offset: 0px;
+        padding: 10px 20px;
+    }
+
+    hr {
+        width: 100%;
+    }
+
+}
+
+@media (min-width:460px) and (max-width:520px) {
+    body {
+        /* background: #000; */
+    }
+
+    #navbar {
+        position: relative;
+    }
+
+    #home #animation {
+        display: block;
+        font-size: 80px;
+        text-align: center;
+        line-height: 80px;
+        position: relative;
+        top: 60px;
+        font-weight: 600;
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+    #batch {
+        display: none;
+    }
+
+    .text {
+        background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        animation: textflip 5s linear infinite;
+        line-height: 120px;
+
+    }
+
+    #flip {
+        margin-left: 20px;
+        height: 120px;
+        margin-top: 0px;
+        /* background: #000; */
+        position: relative;
+        /* left: 27%; */
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        /* overflow: hidden; */
+    }
+
+    @keyframes textflip {
+        0% {
+            transform: translateY(110px);
+        }
+
+        10% {
+            transform: translateY(110px);
+        }
+
+        30% {
+            transform: translateY(110px);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        70% {
+            transform: translateY(-10px);
+        }
+
+        80% {
+            transform: translateY(-130px);
+        }
+
+        90% {
+            transform: translateY(-130px);
+        }
+
+        100% {
+            transform: translateY(-130px);
+        }
+    }
+
+    #box1 {
+        display: none;
+    }
+
+    #box2 {
+        display: none;
+    }
+
+    #home p {
+        text-align: center;
+        width: 70%;
+        position: relative;
+        top: 100px;
+        left: 15%;
+    }
+
+    #box {
+        width: 90%;
+        left: 5%;
+        height: 650px;
+    }
+
+    #box .form input {
+        width: 92%;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        border: none;
+        /* outline: 2px solid #6f27ff; */
+        color: #181818;
+        font-weight: 500;
+        border: 2px solid #fff;
+        /* From https://css.glass */
+        font-weight: 400;
+        font-size: 15px;
+        background: #fff;
+        position: relative;
+        left: -10px;
+    }
+
+    #box .form input::placeholder {
+        color: #181818;
+        font-weight: 400;
+    }
+
+    #box .form input:focus {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+    }
+
+    #box #pic input {
+        color: #181818;
+        font-weight: 400;
+        font-size: 15px;
+        /* From https://css.glass */
+        background: #fff;
+    }
+
+    #box textarea {
+        width: 92%;
+        position: relative;
+        margin: 10px;
+        padding: 10px;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        background: transparent;
+        /* From https://css.glass */
+        background: #fff;
+        position: relative;
+        left: -10px;
+    }
+
+    #formbtns {
+        /* display: flex; */
+        /* flex-direction: column; */
+        width: 105%;
+        position: relative;
+        position: relative;
+        left: -5px;
+    }
+
+    #formbtns button:nth-child(1) {
+        width: 43%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: transparent;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(1):hover {
+        background: #ffffff87;
+    }
+
+    #formbtns button:nth-child(2) {
+        width: 43%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #181818;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: #ffffff;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(2):hover {
+        outline-offset: 0px;
+        padding: 10px 20px;
+    }
+
+    hr {
+        width: 100%;
+    }
+
+    footer div {
+        display: flex;
+        padding: 20px;
+        flex-direction: row;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        background: #8345ff;
+        color: #fff;
+    }
+
+    footer div a {
+
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        text-align: center;
+        color: #fff;
+        font-size: 14px;
+    }
+
+    footer div a h3 {
+        font-weight: 400;
+        margin: 3px;
+        font-size: 14px;
+    }
+
+    footer div h3 {
+        font-weight: 500;
+        font-size: 14px;
+    }
+}
+
+@media (min-width:425px) and (max-width:450px) {
+    #navbar {
+        position: relative;
+        width: 100%;
+        /* background: #000; */
+    }
+
+    #navbar #logo {
+        font-size: 16px;
+    }
+
+    #home #animation {
+        display: block;
+        font-size: 80px;
+        text-align: center;
+        line-height: 80px;
+        position: relative;
+        top: 60px;
+        font-weight: 600;
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+    #batch {
+        display: none;
+    }
+
+    .text {
+        background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        animation: textflip 5s linear infinite;
+        line-height: 120px;
+
+    }
+
+    #flip {
+        margin-left: 20px;
+        height: 120px;
+        margin-top: 0px;
+        /* background: #000; */
+        position: relative;
+        /* left: 27%; */
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        /* overflow: hidden; */
+    }
+
+    @keyframes textflip {
+        0% {
+            transform: translateY(110px);
+        }
+
+        10% {
+            transform: translateY(110px);
+        }
+
+        30% {
+            transform: translateY(110px);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        70% {
+            transform: translateY(-10px);
+        }
+
+        80% {
+            transform: translateY(-130px);
+        }
+
+        90% {
+            transform: translateY(-130px);
+        }
+
+        100% {
+            transform: translateY(-130px);
+        }
+    }
+
+    #box1 {
+        display: none;
+    }
+
+    #box2 {
+        display: none;
+    }
+
+    #home p {
+        text-align: center;
+        width: 70%;
+        position: relative;
+        top: 100px;
+        left: 15%;
+    }
+
+    #box {
+        width: 90%;
+        left: 5%;
+        height: 650px;
+    }
+
+    #box .form input {
+        width: 92%;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        border: none;
+        /* outline: 2px solid #6f27ff; */
+        color: #181818;
+        font-weight: 500;
+        border: 2px solid #fff;
+        /* From https://css.glass */
+        font-weight: 400;
+        font-size: 15px;
+        background: #fff;
+        position: relative;
+        left: -10px;
+    }
+
+    #box .form input::placeholder {
+        color: #181818;
+        font-weight: 400;
+    }
+
+    #box .form input:focus {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+    }
+
+    #box #pic input {
+        color: #181818;
+        font-weight: 400;
+        font-size: 15px;
+        /* From https://css.glass */
+        background: #fff;
+    }
+
+    #box textarea {
+        width: 92%;
+        position: relative;
+        margin: 10px;
+        padding: 10px;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        background: transparent;
+        /* From https://css.glass */
+        background: #fff;
+        position: relative;
+        left: -10px;
+    }
+
+    #formbtns {
+        /* display: flex; */
+        /* flex-direction: column; */
+        width: 105%;
+        position: relative;
+        position: relative;
+        left: -5px;
+    }
+
+    #formbtns button:nth-child(1) {
+        width: 43%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: transparent;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(1):hover {
+        background: #ffffff87;
+    }
+
+    #formbtns button:nth-child(2) {
+        width: 43%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #181818;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: #ffffff;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(2):hover {
+        outline-offset: 0px;
+        padding: 10px 20px;
+    }
+
+    hr {
+        width: 100%;
+    }
+
+    footer div {
+        display: flex;
+        padding: 20px;
+        flex-direction: row;
+        text-align: center;
+        justify-content: center;
+        align-items: center;
+        font-size: 14px;
+        background: #8345ff;
+        color: #fff;
+    }
+
+    footer div a {
+
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        text-align: center;
+        color: #fff;
+        font-size: 14px;
+    }
+
+    footer div a h3 {
+        font-weight: 400;
+        margin: 3px;
+        font-size: 14px;
+    }
+
+    footer div h3 {
+        font-weight: 500;
+        font-size: 14px;
+    }
+}
+
+@media  screen and (max-device-width:400px), screen and (max-width:320px){
+    body{
+        /* background: #000; */
+    }
+    #navbar #logo a{
+        font-size: 20px;
+    }
+    #navbar {
+        position: fixed;
+        width: 100%;
+        /* background: #000; */
+    }
+    sup{
+        font-size: 8px;
+    }
+    #navbar #logo {
+        font-size: 16px;
+    }
+
+    #home #animation {
+        display: block;
+        font-size: 60px;
+        text-align: center;
+        line-height: 60px;
+        position: relative;
+        top: 50px;
+        left: 0px;
+        font-weight: 600;
+        display: inline-flex;
+        flex-direction: column;
+    }
+
+    #batch {
+        display: none;
+    }
+
+    .text {
+        background: -webkit-linear-gradient(top left, #ff45f9, #6f27ff, #00eaff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        animation: textflip 5s linear infinite;
+        line-height: 120px;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        left: 0px;
+
+    }
+
+    #flip {
+        /* margin-left: 20px; */
+        height: 80px;
+        margin-top: 10px;
+        /* background: #000; */
+        position: relative;
+        left: -10px;
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: center;
+        /* overflow: hidden; */
+    }
+
+    @keyframes textflip {
+        0% {
+            transform: translateY(110px);
+        }
+
+        10% {
+            transform: translateY(110px);
+        }
+
+        30% {
+            transform: translateY(110px);
+        }
+
+        40% {
+            transform: translateY(-10px);
+        }
+
+        50% {
+            transform: translateY(-10px);
+        }
+
+        70% {
+            transform: translateY(-10px);
+        }
+
+        80% {
+            transform: translateY(-130px);
+        }
+
+        90% {
+            transform: translateY(-130px);
+        }
+
+        100% {
+            transform: translateY(-130px);
+        }
+    }
+
+    #box1 {
+        display: none;
+    }
+
+    #box2 {
+        display: none;
+    }
+
+    #home p {
+        text-align: center;
+        width: 80%;
+        position: relative;
+        top: 100px;
+        left: 10%;
+        top:70px;
+        font-size: 16px;
+    }
+
+    #box {
+        position: absolute;
+        width: 90%;
+        left: 5%;
+        height: 700px;
+        top: 650px;
+        padding-bottom: 20px;
+    }
+
+    #box .form input {
+        width: 92%;
+        padding: 10px;
+        margin: 10px;
+        border-radius: 5px;
+        border: none;
+        /* outline: 2px solid #6f27ff; */
+        color: #181818;
+        font-weight: 500;
+        border: 2px solid #fff;
+        /* From https://css.glass */
+        font-weight: 400;
+        font-size: 15px;
+        background: #fff;
+        position: relative;
+        left: -20px;
+    }
+
+    #box .form input::placeholder {
+        color: #181818;
+        font-weight: 400;
+    }
+
+    #box .form input:focus {
+        outline: 2px solid #fff;
+        outline-offset: 3px;
+    }
+
+    #box #pic input {
+        color: #181818;
+        font-weight: 400;
+        font-size: 15px;
+        /* From https://css.glass */
+        background: #fff;
+    }
+
+    #box textarea {
+        width: 92%;
+        position: relative;
+        margin: 10px;
+        padding: 10px;
+        border: 2px solid #fff;
+        border-radius: 5px;
+        background: transparent;
+        /* From https://css.glass */
+        background: #fff;
+        position: relative;
+        left: -20px;
+    }
+
+    #formbtns {
+        /* display: flex; */
+        /* flex-direction: column; */
+        width: 105%;
+        /* position: relative; */
+        position: relative;
+        left: -15px;
+    }
+    #btns{
+        position: relative;
+        top: 100px;
+    }
+    #formbtns button:nth-child(1) {
+        width: 92%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #fff;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: transparent;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+    }
+
+    #formbtns button:nth-child(1):hover {
+        background: #ffffff87;
+    }
+
+    #formbtns button:nth-child(2) {
+        width: 92%;
+        padding: 8px 20px;
+        margin: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        background: transparent;
+        border: none;
+        color: #181818;
+        border-radius: 5px;
+        outline: 2px solid #ffffff;
+        background: #ffffff;
+        outline-offset: 3px;
+        cursor: pointer;
+        transition: all 0.5s;
+        margin-bottom:30px ;
+    }
+
+    #formbtns button:nth-child(2):hover {
+        outline-offset: 0px;
+        padding: 10px 20px;
+    }
+
+    hr {
+        width: 100%;
+        position: relative;
+        left: -30px;
+    }
+    label{
+        position: relative;
+        left: -20px;
+    }
+
+    footer div {
+        display: none;
+    }
+}
+
+/* loader */
+#loader{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background:#fff;
+    width: 100%;
+    position: fixed;
+    z-index: 10000;
+}
+#loader h1 {
+    font-weight: 500;
+    color: #181818;
+    font-size: 30px;
+}
+
+#loader h1 span {
+    background: -webkit-linear-gradient(top left, #ff1ef7, #8345ff, #00eaff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 500;
+}

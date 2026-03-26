@@ -1,0 +1,39 @@
+{
+  "app": {
+    "name": "Sarkari Exam AI",
+    "tagline": "AI سے چلنے والی سرکاری امتحان کی تیاری"
+  },
+  "nav": {
+    "home": "ہوم",
+    "dashboard": "ڈیش بورڈ",
+    "studyPlanner": "مطالعہ منصوبہ",
+    "mockTest": "ماک ٹیسٹ",
+    "pastPaper": "پچھلے پرچے",
+    "notes": "نوٹس",
+    "analytics": "تجزیات",
+    "forum": "فورم",
+    "peerMatch": "پارٹنرز",
+    "settings": "ترتیبات",
+    "login": "لاگ ان",
+    "signup": "سائن اپ",
+    "logout": "لاگ آؤٹ",
+    "profile": "پروفائل",
+    "apiKey": "AI کنفیگریشن",
+    "apiKeyPlaceholder": "API چابی .env میں کنفیگر کی گئی ہے",
+    "pyqsMockTest": "PYQs Mock Test",
+    "pyqPdfs": "PYQ PDFs"
+  },
+  "home": {
+    "hero": "آپ کا AI امتحان تیاری ساتھی",
+    "subtitle": "UPSC, MPSC, SSC کی تیاری AI کوچنگ کے ساتھ",
+    "cta": "مفت تیاری شروع کریں",
+    "ctaSecondary": "خصوصیات دیکھیں"
+  },
+  "common": {
+    "loading": "لوڈ ہو رہا ہے...",
+    "error": "کچھ غلط ہو گیا",
+    "retry": "دوبارہ کوشش",
+    "save": "محفوظ",
+    "cancel": "منسوخ"
+  }
+}
