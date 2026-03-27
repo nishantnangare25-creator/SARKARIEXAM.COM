@@ -7,7 +7,7 @@ import {
   Clock, ArrowRight, Play, BookOpen, Newspaper 
 } from 'lucide-react';
 
-export default function Dashboard() {
+export default function Dashboard({ onToggleSidebar }) {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
   const [greeting, setGreeting] = useState('');
@@ -41,7 +41,16 @@ export default function Dashboard() {
         <header className="page-header animate-fadeInUp">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
             <div>
-              <p className="badge badge-primary" style={{ marginBottom: 8 }}>Dashboard Overview</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 8 }}>
+                <p className="badge badge-primary" style={{ margin: 0 }}>Dashboard Overview</p>
+                <button 
+                  className="btn btn-sm btn-outline" 
+                  onClick={onToggleSidebar}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', padding: '4px 10px', borderRadius: 'var(--radius-full)' }}
+                >
+                  <Newspaper size={14} /> Open Menu
+                </button>
+              </div>
               <h1 style={{ marginBottom: 4 }}>{greeting}, {user?.displayName?.split(' ')[0] || 'Scholar'}! 👋</h1>
               <p>Ready to continue your {profile?.exam || 'competitive'} exam preparation?</p>
             </div>

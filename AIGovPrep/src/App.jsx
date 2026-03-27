@@ -35,7 +35,7 @@ function AppLayout() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Routes>
         <Route path="/" element={<Landing />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard onToggleSidebar={() => setSidebarOpen(true)} />} />
         <Route path="/study-planner" element={<StudyPlanner />} />
         <Route path="/mock-test" element={<MockTest />} />
         <Route path="/pyqs-mock-test" element={<PYQSMockTest />} />
