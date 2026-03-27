@@ -5,6 +5,7 @@ import LanguageSelector from './components/LanguageSelector';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import MobileBottomNav from './components/MobileBottomNav';
+import Landing from './pages/Landing';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import StudyPlanner from './pages/StudyPlanner';
