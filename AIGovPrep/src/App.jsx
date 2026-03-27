@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LanguageSelector from './components/LanguageSelector';
 import Navbar from './components/Navbar';
@@ -28,6 +28,9 @@ import './i18n';
 import './index.css';
 
 function AppLayout({ sidebarOpen, setSidebarOpen }) {
+  const location = useLocation();
+  console.log("Current path:", location.pathname);
+
   return (
     <>
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
@@ -52,6 +55,7 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
         <Route path="/privacy" element={<PrivacyPolicy />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="*" element={<div style={{ padding: 100, textAlign: 'center' }}><h2>Page Not Found</h2><Link to="/">Go Home</Link></div>} />
       </Routes>
       <MobileBottomNav />
     </>
@@ -64,10 +68,19 @@ export default function App() {
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  // If we are at a direct link (like /login), but haven't picked a language, 
+  // just default to English for now so it doesn't stay blank/blocked.
+  useEffect(() => {
+    if (!languageChosen && window.location.pathname !== '/') {
+      setLanguageChosen(true);
+      // Optional: set default lang in i18n
+    }
+  }, [languageChosen]);
+
   return (
     <Router>
       <AuthProvider>
-        {!languageChosen ? (
+        {!languageChosen && window.location.pathname === '/' ? (
           <LanguageSelector onSelect={() => setLanguageChosen(true)} />
         ) : (
           <AppLayout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
