@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { languages } from '../i18n';
-import { Globe, ArrowRight, Sparkles } from 'lucide-react';
+import { Globe, ArrowRight, Sparkles, BookOpen } from 'lucide-react';
 import './LanguageSelector.css';
 
 export default function LanguageSelector({ onSelect }) {
@@ -32,7 +32,8 @@ export default function LanguageSelector({ onSelect }) {
       <div className="lang-splash-card animate-fadeInUp">
         <div className="lang-splash-header">
           <div className="lang-logo">
-            <span>🎯</span> AI<span className="accent">Gov</span>Prep
+            <BookOpen className="logo-icon" size={32} />
+            Sarkari <span className="accent">AI</span> Exam
           </div>
           <div className="lang-splash-icon">
             <Globe size={40} />

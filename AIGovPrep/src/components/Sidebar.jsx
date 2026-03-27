@@ -13,6 +13,7 @@ const navSections = [
     label: 'Main',
     items: [
       { path: '/dashboard', icon: LayoutDashboard, label: 'nav.dashboard', iconColor: 'blue' },
+      { path: '/blog', icon: Newspaper, label: 'Blog', iconColor: 'green' },
     ]
   },
   {
@@ -85,7 +86,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   <span className={`link-icon ${item.iconColor}`}>
                     <item.icon size={16} />
                   </span>
-                  <span>{t(item.label)}</span>
+                  <span>{item.label.includes('.') ? t(item.label) : item.label}</span>
                 </NavLink>
               ))}
             </div>

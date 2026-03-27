@@ -63,10 +63,10 @@ export default function AboutUs() {
             <div className="story-content">
               <h2 style={{ marginBottom: '20px' }}>The Problem We're Solving</h2>
               <p style={{ marginBottom: '16px', fontSize: '1.05rem' }}>
-                Every year, millions of students across India spend countless hours and significant resources preparing for government exams like UPSC, SSC, and Banking. However, high-quality coaching is often expensive and geographically restricted.
+                Every year, millions of students across India spend countless hours and significant resources preparing for government exams like UPSC, SSC, and Banking. From mastering the rigorous <strong>UPSC syllabus</strong> to finding reliable <strong>UPSC examexamples</strong>, the journey is demanding. Similarly, aspirants looking for comprehensive <strong>MPSC syllabus</strong> coverage or accessible <strong>MPSC online classes</strong> often find that high-quality coaching is expensive and geographically restricted.
               </p>
               <p style={{ marginBottom: '24px', fontSize: '1.05rem' }}>
-                Sarkari AI was born out of a simple idea: <strong>Technology should be the great equalizer.</strong> We've built a platform that provides the same level of personalized attention as a private tutor, powered by AI, at a fraction of the cost.
+                Sarkari AI was born out of a simple idea: <strong>Technology should be the great equalizer.</strong> Whether you are preparing for the ultimate <strong>AI civil services exam</strong>, exploring <strong>MPSC online classes free</strong> of high costs, hunting for a quality <strong>MPSC examsc pyq book</strong>, or tackling <strong>UPMPSC</strong>, we've built a platform that provides the same level of personalized attention as a private tutor. It acts as your dedicated <strong>AI exam</strong> coach at a fraction of the cost.
               </p>
               <div style={{ display: 'flex', gap: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

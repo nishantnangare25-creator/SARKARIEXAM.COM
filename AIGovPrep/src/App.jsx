@@ -21,6 +21,8 @@ import PeerMatching from './pages/PeerMatching';
 import Settings from './pages/Settings';
 import AboutUs from './pages/AboutUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import Blog from './pages/Blog';
+import BlogPost from './pages/BlogPost';
 import './i18n';
 import './index.css';
 
@@ -48,6 +50,8 @@ function AppLayout() {
         <Route path="/settings" element={<Settings />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/privacy" element={<PrivacyPolicy />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/blog/:id" element={<BlogPost />} />
       </Routes>
       <MobileBottomNav />
     </Router>
