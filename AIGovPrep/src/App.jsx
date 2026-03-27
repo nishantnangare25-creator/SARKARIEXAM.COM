@@ -27,11 +27,9 @@ import BlogPost from './pages/BlogPost';
 import './i18n';
 import './index.css';
 
-function AppLayout() {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-
+function AppLayout({ sidebarOpen, setSidebarOpen }) {
   return (
-    <Router>
+    <>
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Routes>
@@ -56,7 +54,7 @@ function AppLayout() {
         <Route path="/blog/:id" element={<BlogPost />} />
       </Routes>
       <MobileBottomNav />
-    </Router>
+    </>
   );
 }
 
@@ -64,17 +62,17 @@ export default function App() {
   const [languageChosen, setLanguageChosen] = useState(
     () => localStorage.getItem('languageSelected') === 'true'
   );
-
-  // Show language selection splash on first visit
-  if (!languageChosen) {
-    return (
-      <LanguageSelector onSelect={() => setLanguageChosen(true)} />
-    );
-  }
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <AuthProvider>
-      <AppLayout />
-    </AuthProvider>
+    <Router>
+      <AuthProvider>
+        {!languageChosen ? (
+          <LanguageSelector onSelect={() => setLanguageChosen(true)} />
+        ) : (
+          <AppLayout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        )}
+      </AuthProvider>
+    </Router>
   );
 }

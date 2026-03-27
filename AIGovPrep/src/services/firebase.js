@@ -29,15 +29,16 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 // Firebase config — replace with your project credentials
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "YOUR_API_KEY",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "YOUR_PROJECT.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "YOUR_PROJECT_ID",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "YOUR_PROJECT.appspot.com",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "000000000000",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:000000000000:web:0000000000000000000000",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc",
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "govai-7ee5b.firebaseapp.com",
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "govai-7ee5b",
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "govai-7ee5b.firebasestorage.app",
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "868025142353",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:868025142353:web:d7687cdd6c8bd19c32fc70",
 };
 
 const app = initializeApp(firebaseConfig);
+console.log("Firebase initialized with:", firebaseConfig.projectId);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
