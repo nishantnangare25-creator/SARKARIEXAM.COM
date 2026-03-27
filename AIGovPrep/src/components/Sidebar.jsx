@@ -1,10 +1,11 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { logout } from '../services/firebase';
 import {
   LayoutDashboard, Brain, Target, BookOpen, FileText,
   GraduationCap, Bot, BarChart3, MessageSquare, Users,
-  Settings, X, Newspaper, Zap, FileDown
+  Settings, X, Newspaper, Zap, FileDown, LogOut
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -101,6 +102,12 @@ export default function Sidebar({ isOpen, onClose }) {
               {user ? `${user.displayName?.split(' ')[0] || 'Student'} · Active` : 'AI-Powered Prep'}
             </span>
           </div>
+          {user && (
+            <button className="sidebar-logout-btn" onClick={() => { logout(); onClose(); }} title={t('nav.logout')}>
+              <LogOut size={16} />
+              <span>{t('nav.logout')}</span>
+            </button>
+          )}
         </div>
       </aside>
     </>

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { HashRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import LanguageSelector from './components/LanguageSelector';
 import Navbar from './components/Navbar';
@@ -68,19 +68,17 @@ export default function App() {
   );
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // If we are at a direct link (like /login), but haven't picked a language, 
-  // just default to English for now so it doesn't stay blank/blocked.
   useEffect(() => {
-    if (!languageChosen && window.location.pathname !== '/') {
+    // If not at root, we assume they want to see the page and already bypassed/picked lang
+    if (!languageChosen && window.location.hash !== '' && window.location.hash !== '#/') {
       setLanguageChosen(true);
-      // Optional: set default lang in i18n
     }
   }, [languageChosen]);
 
   return (
     <Router>
       <AuthProvider>
-        {!languageChosen && window.location.pathname === '/' ? (
+        {!languageChosen && (window.location.hash === '' || window.location.hash === '#/') ? (
           <LanguageSelector onSelect={() => setLanguageChosen(true)} />
         ) : (
           <AppLayout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
