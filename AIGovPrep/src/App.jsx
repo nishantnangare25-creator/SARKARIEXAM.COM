@@ -29,7 +29,7 @@ import './index.css';
 
 function AppLayout({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
-  console.log("Current path:", location.pathname);
+  console.log("VERIFY_RUN_14: AppLayout Rendered at", location.pathname);
 
   return (
     <>
