@@ -1,0 +1,64 @@
+name: Blog Auto-Generate & Deploy
+
+on:
+  schedule:
+    # Run daily at 10:00 AM IST (04:30 AM UTC)
+    - cron: '30 4 * * *'
+  workflow_dispatch: # Allow manual trigger from GitHub Actions tab
+
+jobs:
+  generate-and-deploy:
+    name: Generate Blog Posts & Deploy
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./AIGovPrep
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Generate 2 New AI Blog Posts
+      run: node scripts/generate-blog.js --count=2
+
+    - name: Check for new blog posts
+      id: check_changes
+      run: |
+        git config --global user.name "Sarkari AI Bot"
+        git config --global user.email "bot@sarkariexamai.com"
+        git add src/data/blogPosts.json
+        if git diff --staged --quiet; then
+          echo "changed=false" >> $GITHUB_OUTPUT
+        else
+          echo "changed=true" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit new blog posts
+      if: steps.check_changes.outputs.changed == 'true'
+      run: |
+        git commit -m "chore(blog): auto-generate daily AI blog posts [skip ci]"
+        git push
+
+    - name: Build Project
+      if: steps.check_changes.outputs.changed == 'true'
+      run: npm run build
+
+    - name: Deploy to MilesWeb via FTP
+      if: steps.check_changes.outputs.changed == 'true'
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./AIGovPrep/dist/
+        server-dir: /public_html/
