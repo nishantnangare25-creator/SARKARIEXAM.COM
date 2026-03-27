@@ -5,7 +5,7 @@ import LanguageSelector from './components/LanguageSelector';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import MobileBottomNav from './components/MobileBottomNav';
-import Landing from './pages/Landing';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import StudyPlanner from './pages/StudyPlanner';
 import MockTest from './pages/MockTest';
@@ -35,6 +35,7 @@ function AppLayout() {
       <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       <Routes>
         <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard onToggleSidebar={() => setSidebarOpen(true)} />} />
         <Route path="/study-planner" element={<StudyPlanner />} />
         <Route path="/mock-test" element={<MockTest />} />

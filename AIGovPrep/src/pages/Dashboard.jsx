@@ -42,7 +42,7 @@ export default function Dashboard({ onToggleSidebar }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 8 }}>
-                <p className="badge badge-primary" style={{ margin: 0 }}>Dashboard Overview</p>
+                <p className="badge badge-primary" style={{ margin: 0 }}>{user ? 'Dashboard Overview' : 'Guest Mode'}</p>
                 <button 
                   className="btn btn-sm btn-outline" 
                   onClick={onToggleSidebar}
@@ -51,19 +51,32 @@ export default function Dashboard({ onToggleSidebar }) {
                   <Newspaper size={14} /> Open Menu
                 </button>
               </div>
-              <h1 style={{ marginBottom: 4 }}>{greeting}, {user?.displayName?.split(' ')[0] || 'Scholar'}! 👋</h1>
-              <p>Ready to continue your {profile?.exam || 'competitive'} exam preparation?</p>
+              <h1 style={{ marginBottom: 4 }}>
+                {user ? `${greeting}, ${user?.displayName?.split(' ')[0] || 'Scholar' }! 👋` : `${greeting}, Aspirant! 👋`}
+              </h1>
+              <p>{user ? 'Ready to continue your preparation?' : 'Start your prep today as a guest or login to track progress.'}</p>
             </div>
-            <div className="card" style={{ padding: '8px 16px', display: 'flex', gap: 24, borderRadius: 'var(--radius-md)' }}>
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Daily Streak</span>
-                <span style={{ fontWeight: 800, color: 'var(--accent-orange)' }}>🔥 12 Days</span>
+            
+            {user ? (
+              <div className="card" style={{ padding: '8px 16px', display: 'flex', gap: 24, borderRadius: 'var(--radius-md)' }}>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Daily Streak</span>
+                  <span style={{ fontWeight: 800, color: 'var(--accent-orange)' }}>🔥 12 Days</span>
+                </div>
+                <div style={{ textAlign: 'center' }}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Readiness</span>
+                  <span style={{ fontWeight: 800, color: 'var(--accent-green)' }}>📈 84%</span>
+                </div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Readiness</span>
-                <span style={{ fontWeight: 800, color: 'var(--accent-green)' }}>📈 84%</span>
-              </div>
-            </div>
+            ) : (
+              <Link to="/login" className="card" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 12, borderRadius: 'var(--radius-md)', textDecoration: 'none', background: 'var(--primary-bg)', border: '1px solid var(--border-blue)' }}>
+                <Sparkles className="text-blue" size={20} />
+                <div>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Personalize Prep</span>
+                  <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>Login to Sync Progress</span>
+                </div>
+              </Link>
+            )}
           </div>
         </header>
 
@@ -92,22 +105,31 @@ export default function Dashboard({ onToggleSidebar }) {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             
             {/* Performance Analytics */}
-            <section className="card">
+            <section className="card" style={{ position: 'relative', overflow: 'hidden' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <TrendingUp size={20} className="text-blue" /> Performance Analytics
                 </h3>
-                <button className="btn btn-sm btn-ghost">View Details</button>
+                {user && <button className="btn btn-sm btn-ghost">View Details</button>}
               </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              {!user && (
+                <div style={{ position: 'absolute', inset: 0, zIndex: 10, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20, textAlign: 'center' }}>
+                  <Sparkles size={32} className="text-blue" style={{ marginBottom: 12 }} />
+                  <p style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 12 }}>Analytics Locked</p>
+                  <Link to="/login" className="btn btn-sm btn-primary">Login to Unlock</Link>
+                </div>
+              )}
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, filter: user ? 'none' : 'blur(2px)', opacity: user ? 1 : 0.5 }}>
                 {subjects.map(sub => (
                   <div key={sub.name}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: '0.85rem' }}>
                       <span style={{ fontWeight: 500 }}>{sub.name}</span>
-                      <span className="text-muted">{sub.progress}%</span>
+                      <span className="text-muted">{user ? sub.progress : '??'}%</span>
                     </div>
                     <div className="progress-bar-wrap">
-                      <div className={`progress-bar-fill ${sub.color}`} style={{ width: `${sub.progress}%` }} />
+                      <div className={`progress-bar-fill ${sub.color}`} style={{ width: user ? `${sub.progress}%` : '30%' }} />
                     </div>
                   </div>
                 ))}

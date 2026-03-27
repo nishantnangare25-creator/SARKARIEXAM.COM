@@ -12,7 +12,7 @@ import { EXAMS, SUBJECTS } from '../utils/constants';
 
 export default function PYQSMockTest() {
   const { t, i18n } = useTranslation();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [exam, setExam] = useState(profile?.exam || '');
   const [subject, setSubject] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -197,6 +197,14 @@ export default function PYQSMockTest() {
               </button>
             </div>
           </div>
+
+          {!user && (
+            <div className="card animate-fadeInUp" style={{ marginBottom: 32, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
+              <h3 style={{ color: 'var(--primary)', marginBottom: 8 }}>Want to track your PYQ progress?</h3>
+              <p style={{ marginBottom: 20 }}>Logged-in users get detailed history, performance charts, and AI-powered preparation insights.</p>
+              <Link to="/login" className="btn btn-primary" style={{ margin: '0 auto' }}>Login / Create Account</Link>
+            </div>
+          )}
 
           <h3 style={{ marginBottom: 20 }}>Question Review</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>

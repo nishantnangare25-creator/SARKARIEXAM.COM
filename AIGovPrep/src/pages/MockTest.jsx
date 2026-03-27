@@ -9,7 +9,7 @@ import './Auth.css';
 
 export default function MockTest() {
   const { t, i18n } = useTranslation();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [exam, setExam] = useState(profile?.exam || '');
   const [subject, setSubject] = useState('');
   const [questions, setQuestions] = useState([]);
@@ -136,6 +136,13 @@ export default function MockTest() {
             <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => { setShowResult(false); setQuestions([]); }}>
               <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
             </button>
+            {!user && (
+              <div className="card" style={{ marginTop: 24, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
+                <h4 style={{ color: 'var(--primary)', marginBottom: 8 }}>Want to save these results?</h4>
+                <p style={{ fontSize: '0.9rem', marginBottom: 16 }}>Create a free account to track your performance over time and unlock AI analytics.</p>
+                <Link to="/login" className="btn btn-primary" style={{ margin: '0 auto' }}>Login / Create Account</Link>
+              </div>
+            )}
           </header>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {questions.map((q, i) => {

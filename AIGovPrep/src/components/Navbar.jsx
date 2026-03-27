@@ -59,6 +59,7 @@ export default function Navbar({ onToggleSidebar }) {
             <a href="#exams">{t('home.examTitle')}</a>
             <Link to="/blog">Blog</Link>
             <Link to="/about">About</Link>
+            {!user && <Link to="/login" style={{ fontWeight: 600, color: 'var(--primary)' }}>Login / Sign Up</Link>}
 
             <div className="mobile-menu-cta">
               <Link to="/dashboard" className="btn btn-sm btn-nav-dashboard">Go to Dashboard</Link>
@@ -107,10 +108,11 @@ export default function Navbar({ onToggleSidebar }) {
               </button>
             </div>
           ) : (
-            <div className="auth-btns">
-              <Link to="/dashboard" className="btn btn-sm btn-nav-dashboard">
-                <span className="btn-text-full">Go to Dashboard</span>
-                <span className="btn-text-short">Dashboard</span>
+            <div className="auth-btns" style={{ display: 'flex', gap: '8px' }}>
+              <Link to="/login" className="btn btn-sm btn-outline">Login</Link>
+              <Link to="/login" className="btn btn-sm btn-nav-dashboard">
+                <span className="btn-text-full">Sign Up Free</span>
+                <span className="btn-text-short">Sign Up</span>
               </Link>
             </div>
           )}
