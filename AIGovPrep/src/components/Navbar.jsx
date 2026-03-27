@@ -57,10 +57,19 @@ export default function Navbar({ onToggleSidebar }) {
           <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
             <a href="#features">{t('home.ctaSecondary')}</a>
             <a href="#exams">{t('home.examTitle')}</a>
-            
+            <Link to="/blog">Blog</Link>
+            <Link to="/about">About</Link>
+
             <div className="mobile-menu-cta">
               <Link to="/dashboard" className="btn btn-sm btn-nav-dashboard">Go to Dashboard</Link>
             </div>
+          </div>
+        )}
+
+        {/* Blog link visible on inner pages */}
+        {!isLanding && (
+          <div style={{ display: 'flex', gap: '4px' }}>
+            <Link to="/blog" className="btn btn-sm btn-outline" style={{ fontSize: '0.85rem' }}>📝 Blog</Link>
           </div>
         )}
 
