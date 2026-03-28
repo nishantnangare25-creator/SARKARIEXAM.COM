@@ -1,141 +1,142 @@
-import { initializeApp } from 'firebase/app';
-import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  GoogleAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged,
-  updateProfile,
-} from 'firebase/auth';
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  getDoc,
-  getDocs,
-  updateDoc,
-  deleteDoc,
-  collection,
-  query,
-  where,
-  orderBy,
-  limit,
-  addDoc,
-  serverTimestamp,
-} from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+/**
+ * MOCK FIREBASE BACKEND (Local Storage)
+ * 
+ * Yeh file Firebase ki local mock copy hai taaki aap bina Firebase setup kiye
+ * login, dashboard aur tests chala sakein. Original code "firebase-real.js" me saved hai.
+ */
 
-// Firebase config — replace with your project credentials
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc",
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "govai-7ee5b.firebaseapp.com",
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "govai-7ee5b",
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "govai-7ee5b.firebasestorage.app",
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "868025142353",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:868025142353:web:d7687cdd6c8bd19c32fc70",
-};
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+const generateId = () => Math.random().toString(36).substr(2, 9);
 
-const app = initializeApp(firebaseConfig);
-console.log("Firebase initialized with:", firebaseConfig.projectId);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const auth = { currentUser: null };
+export const db = {};
+export const storage = {};
 
-const googleProvider = new GoogleAuthProvider();
+const getLocal = (key, defaultVal) => JSON.parse(localStorage.getItem(key)) || defaultVal;
+const setLocal = (key, val) => localStorage.setItem(key, JSON.stringify(val));
 
 // ===== AUTH =====
-export const loginWithEmail = (email, password) =>
-  signInWithEmailAndPassword(auth, email, password);
+let authChangeCallback = null;
 
-export const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
+const notifyAuth = (user) => {
+  auth.currentUser = user;
+  if (authChangeCallback) authChangeCallback(user);
+};
 
-export const logout = () => signOut(auth);
+export const loginWithEmail = async (email, password) => {
+  await delay(800);
+  if (!email || !password) throw new Error('Email or Password missing.');
+  const user = { uid: email, email, displayName: email.split('@')[0] };
+  setLocal('currentUser', user);
+  notifyAuth(user);
+  return { user };
+};
 
-export const onAuthChange = (callback) => onAuthStateChanged(auth, callback);
+export const loginWithGoogle = async () => {
+  await delay(800);
+  const user = { uid: 'google_user', email: 'student@google.com', displayName: 'Google Student' };
+  setLocal('currentUser', user);
+  notifyAuth(user);
+  return { user };
+};
+
+export const logout = async () => {
+  await delay(400);
+  localStorage.removeItem('currentUser');
+  notifyAuth(null);
+};
+
+export const onAuthChange = (callback) => {
+  authChangeCallback = callback;
+  const user = getLocal('currentUser', null);
+  auth.currentUser = user;
+  setTimeout(() => callback(user), 100);
+  return () => { authChangeCallback = null; };
+};
 
 // ===== USER PROFILE =====
 export const saveUserProfile = async (uid, data) => {
-  await setDoc(doc(db, 'users', uid), { ...data, updatedAt: serverTimestamp() }, { merge: true });
+  await delay(500);
+  const profiles = getLocal('mockProfiles', {});
+  profiles[uid] = { ...profiles[uid], ...data, updatedAt: new Date().toISOString() };
+  setLocal('mockProfiles', profiles);
 };
 
 export const getUserProfile = async (uid) => {
-  const snap = await getDoc(doc(db, 'users', uid));
-  return snap.exists() ? snap.data() : null;
+  await delay(300);
+  const profiles = getLocal('mockProfiles', {});
+  return profiles[uid] || null;
 };
 
 // ===== STUDY PLANS =====
 export const saveStudyPlan = async (uid, plan) => {
-  await setDoc(doc(db, 'studyPlans', uid), { plan, updatedAt: serverTimestamp() }, { merge: true });
+  await delay(500);
+  const plans = getLocal('mockStudyPlans', {});
+  plans[uid] = { plan, updatedAt: new Date().toISOString() };
+  setLocal('mockStudyPlans', plans);
 };
 
 export const getStudyPlan = async (uid) => {
-  const snap = await getDoc(doc(db, 'studyPlans', uid));
-  return snap.exists() ? snap.data() : null;
+  await delay(300);
+  const plans = getLocal('mockStudyPlans', {});
+  return plans[uid] || null;
 };
 
 // ===== TEST HISTORY =====
 export const saveTestResult = async (uid, result) => {
-  return addDoc(collection(db, 'testResults'), {
-    uid,
-    ...result,
-    createdAt: serverTimestamp(),
-  });
+  await delay(500);
+  const results = getLocal('mockTestResults', []);
+  const newResult = { id: generateId(), uid, ...result, createdAt: new Date().toISOString() };
+  results.push(newResult);
+  setLocal('mockTestResults', results);
+  return newResult;
 };
 
 export const getTestHistory = async (uid) => {
-  const q = query(
-    collection(db, 'testResults'),
-    where('uid', '==', uid),
-    orderBy('createdAt', 'desc'),
-    limit(50)
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  await delay(400);
+  const results = getLocal('mockTestResults', []);
+  return results.filter(r => r.uid === uid).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 };
 
 // ===== FORUM =====
 export const createForumPost = async (data) => {
-  return addDoc(collection(db, 'forumPosts'), {
-    ...data,
-    createdAt: serverTimestamp(),
-    replies: [],
-  });
+  await delay(500);
+  const posts = getLocal('mockForumPosts', []);
+  const newPost = { id: generateId(), ...data, createdAt: new Date().toISOString(), replies: [] };
+  posts.push(newPost);
+  setLocal('mockForumPosts', posts);
+  return newPost;
 };
 
 export const getForumPosts = async (category = null) => {
-  let q;
-  if (category) {
-    q = query(collection(db, 'forumPosts'), where('category', '==', category), orderBy('createdAt', 'desc'), limit(50));
-  } else {
-    q = query(collection(db, 'forumPosts'), orderBy('createdAt', 'desc'), limit(50));
-  }
-  const snap = await getDocs(q);
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  await delay(400);
+  let posts = getLocal('mockForumPosts', []);
+  if (category) posts = posts.filter(p => p.category === category);
+  return posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 };
 
 export const addReplyToPost = async (postId, reply) => {
-  const postRef = doc(db, 'forumPosts', postId);
-  const postSnap = await getDoc(postRef);
-  if (postSnap.exists()) {
-    const replies = postSnap.data().replies || [];
-    replies.push({ ...reply, createdAt: new Date().toISOString() });
-    await updateDoc(postRef, { replies });
+  await delay(500);
+  const posts = getLocal('mockForumPosts', []);
+  const post = posts.find(p => p.id === postId);
+  if (post) {
+    post.replies = post.replies || [];
+    post.replies.push({ ...reply, createdAt: new Date().toISOString() });
+    setLocal('mockForumPosts', posts);
   }
 };
 
 // ===== STORAGE (PDF Upload) =====
 export const uploadFile = async (path, file) => {
-  const storageRef = ref(storage, path);
-  await uploadBytes(storageRef, file);
-  return getDownloadURL(storageRef);
+  await delay(1000);
+  return `https://mock-storage.local/${path.replace(/[^a-z0-9]/gi, '_')}`;
 };
 
 // ===== PEER MATCHING =====
 export const getAllUsers = async () => {
-  const snap = await getDocs(collection(db, 'users'));
-  return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  await delay(400);
+  const profiles = getLocal('mockProfiles', {});
+  return Object.entries(profiles).map(([id, data]) => ({ id, ...data }));
 };
 
-export default app;
+export default { app: 'mock-app' };

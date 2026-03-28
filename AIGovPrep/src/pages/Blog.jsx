@@ -15,7 +15,7 @@ export default function Blog() {
 
   return (
     <div className="page-wrapper animate-fadeIn">
-      <div className="page-container">
+      <div className="page-with-sidebar">
         <section className="page-header text-center" style={{ textAlign: 'center', marginBottom: '40px' }}>
           <div className="badge badge-primary animate-fadeInUp" style={{ marginBottom: '16px' }}>Sarkari AI Articles</div>
           <h1 className="animate-fadeInUp" style={{ animationDelay: '0.1s', marginBottom: '16px' }}>

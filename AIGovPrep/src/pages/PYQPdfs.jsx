@@ -118,16 +118,38 @@ export default function PYQPdfs() {
       });
 
       textContent += "*** End of AI Generated Mock Paper ***\n";
+      const filename = `${String(pdf.title).replace(/\s+/g, '_')}_${pdf.year}.txt`;
+      const mimeType = 'text/plain;charset=utf-8';
 
-      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = `${String(pdf.title).replace(/\s+/g, '_')}_${pdf.year}.txt`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
+      let shared = false;
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([textContent], filename, { type: mimeType });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({ title: 'PYQ Mock Paper', files: [file] });
+            shared = true;
+          }
+        } catch (err) {
+          console.log('Web Share failed', err);
+        }
+      }
+
+      if (!shared) {
+        const blob = new Blob([textContent], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.style.display = 'none';
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        
+        link.click();
+        
+        setTimeout(() => {
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        }, 1000);
+      }
       
     } catch (e) {
       console.error("Failed to generate targeted text questions:", e);

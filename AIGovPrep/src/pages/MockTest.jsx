@@ -144,7 +144,8 @@ export default function MockTest() {
               </div>
             )}
           </header>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {user && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
             {questions.map((q, i) => {
               const correctAnswer = q.correctAnswer;
               const isCorrect = answers[q.id] === correctAnswer;
@@ -170,6 +171,7 @@ export default function MockTest() {
               );
             })}
           </div>
+          )}
         </div>
       </main>
     );

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft, BookOpen, CheckCircle, XCircle, Loader2, Award, FileText } from 'lucide-react';
 import { convertPdfToQuiz, generatePYQSMockQuestions } from '../services/ai';
@@ -140,7 +140,7 @@ export default function PYQPractice() {
         <section className="card animate-fadeInUp" style={{ marginBottom: 24, padding: '32px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid var(--border-light)', paddingBottom: 16, marginBottom: 24 }}>
             <h3 style={{ margin: 0 }}>Question {currentIdx + 1} of {questions.length}</h3>
-            {isSubmitted && (
+            {isSubmitted && user && (
               <span className={`badge ${selectedAnswers[currentIdx]?.trim().toLowerCase() === currentQ.correctAnswer.trim().toLowerCase() ? 'badge-green' : 'badge-red'}`}>
                 {selectedAnswers[currentIdx]?.trim().toLowerCase() === currentQ.correctAnswer.trim().toLowerCase() ? 'Correct' : 'Incorrect'}
               </span>
@@ -152,8 +152,8 @@ export default function PYQPractice() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
             {currentQ.options.map((opt, i) => {
               const isSelected = selectedAnswers[currentIdx] === opt;
-              const holdsCorrectAnswer = isSubmitted && opt.trim().toLowerCase() === currentQ.correctAnswer.trim().toLowerCase();
-              const holdsWrongSelection = isSubmitted && isSelected && !holdsCorrectAnswer;
+              const holdsCorrectAnswer = isSubmitted && user && opt.trim().toLowerCase() === currentQ.correctAnswer.trim().toLowerCase();
+              const holdsWrongSelection = isSubmitted && user && isSelected && !holdsCorrectAnswer;
 
               let btnStyle = { textAlign: 'left', padding: '16px 20px', fontSize: '1.05rem', justifyContent: 'flex-start', border: '1px solid var(--border-light)' };
               
@@ -187,7 +187,7 @@ export default function PYQPractice() {
             })}
           </div>
 
-          {isSubmitted && currentQ.explanation && (
+          {isSubmitted && user && currentQ.explanation && (
             <div style={{ background: 'var(--bg-tertiary)', padding: 24, borderRadius: 12, marginTop: 24, borderLeft: '4px solid var(--primary)' }}>
               <h4 style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <BookOpen size={18} className="text-primary"/> AI Explanation:
@@ -195,6 +195,14 @@ export default function PYQPractice() {
               <div style={{ lineHeight: 1.6, color: 'var(--text-primary)', margin: 0 }}>
                 <ReactMarkdown>{currentQ.explanation}</ReactMarkdown>
               </div>
+            </div>
+          )}
+
+          {isSubmitted && !user && (
+            <div className="card" style={{ marginTop: 24, padding: 24, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
+              <h4 style={{ color: 'var(--primary)', marginBottom: 8, fontSize: '1.2rem' }}>Want to see the correct answers?</h4>
+              <p style={{ fontSize: '0.95rem', marginBottom: 16 }}>Create a free account to unlock detailed question breakdown, AI explanations, and performance tracking.</p>
+              <Link to="/login" className="btn btn-primary" style={{ margin: '0 auto' }}>Login / Create Account</Link>
             </div>
           )}
 
@@ -216,13 +224,22 @@ export default function PYQPractice() {
                 {isLastQ ? 'Submit Test' : 'Next Question'}
               </button>
             ) : (
-              <button 
-                className="btn btn-primary"
-                onClick={() => setCurrentIdx(prev => prev + 1)}
-                disabled={isLastQ}
-              >
-                Next Explanation
-              </button>
+              user ? (
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => setCurrentIdx(prev => prev + 1)}
+                  disabled={isLastQ}
+                >
+                  Next Explanation
+                </button>
+              ) : (
+                <button 
+                  className="btn btn-primary"
+                  onClick={() => navigate('/login')}
+                >
+                  Login for Answers
+                </button>
+              )
             )}
           </div>
         </section>

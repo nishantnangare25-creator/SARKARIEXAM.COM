@@ -29,12 +29,12 @@ import './index.css';
 
 function AppLayout({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
-  console.log("VERIFY_RUN_14: AppLayout Rendered at", location.pathname);
+  const isPublicPage = ['/', '/login', '/about', '/privacy'].includes(location.pathname);
 
   return (
     <>
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-      <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      {!isPublicPage && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />

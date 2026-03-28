@@ -61,23 +61,37 @@ export default function PastPaperAnalyzer() {
     setLoading(false);
   };
 
-  const downloadAnalysis = () => {
+  const downloadAnalysis = async () => {
     if (!analysis) return;
+    const filename = `Past_Paper_Analysis.md`;
+    const mimeType = 'text/markdown;charset=utf-8';
+
+    if (navigator.share && navigator.canShare) {
+      try {
+        const file = new File([analysis], filename, { type: mimeType });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ title: 'Past Paper Analysis', files: [file] });
+          return;
+        }
+      } catch (err) {
+        console.log('Web Share failed', err);
+      }
+    }
+
+    const fileBlob = new Blob([analysis], { type: mimeType });
+    const url = URL.createObjectURL(fileBlob);
     const textElement = document.createElement("a");
-    const file = new Blob([analysis], {type: 'text/markdown;charset=utf-8'});
-    const url = URL.createObjectURL(file);
+    textElement.style.display = 'none';
     textElement.href = url;
-    textElement.download = `Past_Paper_Analysis.md`;
-    textElement.target = '_blank';
+    textElement.download = filename;
     document.body.appendChild(textElement);
     
+    textElement.click();
+    
     setTimeout(() => {
-      textElement.click();
-      setTimeout(() => {
-        document.body.removeChild(textElement);
-        URL.revokeObjectURL(url);
-      }, 100);
-    }, 0);
+      document.body.removeChild(textElement);
+      URL.revokeObjectURL(url);
+    }, 1000);
   };
 
   return (

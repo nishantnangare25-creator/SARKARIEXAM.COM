@@ -206,8 +206,10 @@ export default function PYQSMockTest() {
             </div>
           )}
 
-          <h3 style={{ marginBottom: 20 }}>Question Review</h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {user && (
+            <>
+              <h3 style={{ marginBottom: 20 }}>Question Review</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
             {questions.map((q, i) => {
               const isCorrect = answers[q.id] === q.correctAnswer;
               return (
@@ -254,6 +256,8 @@ export default function PYQSMockTest() {
               );
             })}
           </div>
+          </>
+          )}
         </div>
       </main>
     );

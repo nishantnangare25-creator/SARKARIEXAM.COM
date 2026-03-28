@@ -97,27 +97,49 @@ export default function InteractiveTutor() {
     }
   };
 
-  const downloadChat = () => {
+  const downloadChat = async () => {
     if (messages.length === 0) return;
     let content = "===== Riya AI Tutor Session =====\n\n";
     messages.forEach((msg) => {
       content += `[${msg.role === 'user' ? 'You' : 'Riya'}]:\n${msg.content}\n\n`;
     });
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    
+    const filename = `riya_tutor_session.txt`;
+    const mimeType = 'text/plain;charset=utf-8';
+
+    // 1. Try Native Web Share API (Best for Mobile/WebViews)
+    if (navigator.share && navigator.canShare) {
+      try {
+        const file = new File([content], filename, { type: mimeType });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            title: 'Tutor Session Log',
+            files: [file]
+          });
+          return; // Success via native share/save sheet
+        }
+      } catch (err) {
+        console.log('Web Share failed or was cancelled', err);
+        // Fall through to standard download
+      }
+    }
+
+    // 2. Standard Blob Download (Fallback for Desktop)
+    const blob = new Blob([content], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
+    a.style.display = 'none';
     a.href = url;
-    a.download = `riya_tutor_session.txt`;
-    a.target = '_blank';
+    a.download = filename;
     document.body.appendChild(a);
     
+    // Synchronous click preserves the user gesture! (Crucial for mobile)
+    a.click();
+    
     setTimeout(() => {
-      a.click();
-      setTimeout(() => {
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 100);
-    }, 0);
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 1000);
   };
 
   const clearChat = () => setMessages([]);

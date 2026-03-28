@@ -400,10 +400,17 @@ select option { background: white; color: var(--text-primary); }
   padding-top: var(--navbar-height);
   min-height: 100vh;
   background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
 }
 .page-with-sidebar {
-  margin-left: var(--sidebar-width);
+  /* On desktop, this calculates the precise margin to center the 1200px max-width content 
+     in the remaining space next to the 240px sidebar. 
+     If the screen is smaller than 1440px, it defaults to just the sidebar width. */
+  margin-left: max(var(--sidebar-width), calc(50vw + var(--sidebar-width)/2 - 600px));
+  margin-right: auto;
   padding: var(--space-xl);
+  width: 100%;
   max-width: 1200px;
 }
 

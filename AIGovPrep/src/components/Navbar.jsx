@@ -57,7 +57,6 @@ export default function Navbar({ onToggleSidebar }) {
           <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
             <a href="#features">{t('home.ctaSecondary')}</a>
             <a href="#exams">{t('home.examTitle')}</a>
-            <Link to="/blog">Blog</Link>
             <Link to="/about">About</Link>
             {!user && <Link to="/login" style={{ fontWeight: 600, color: 'var(--primary)' }}>Login / Sign Up</Link>}
 
@@ -67,12 +66,7 @@ export default function Navbar({ onToggleSidebar }) {
           </div>
         )}
 
-        {/* Blog link visible on inner pages */}
-        {!isLanding && (
-          <div style={{ display: 'flex', gap: '4px' }}>
-            <Link to="/blog" className="btn btn-sm btn-outline" style={{ fontSize: '0.85rem' }}>📝 Blog</Link>
-          </div>
-        )}
+
 
         {/* Right */}
         <div className="navbar-right">

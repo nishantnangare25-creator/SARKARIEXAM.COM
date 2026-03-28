@@ -32,23 +32,37 @@ export default function StudyPlanner() {
     setLoading(false);
   };
 
-  const downloadPlan = () => {
+  const downloadPlan = async () => {
     if (!plan) return;
+    const filename = `${exam || 'Study'}_Plan.md`;
+    const mimeType = 'text/markdown;charset=utf-8';
+
+    if (navigator.share && navigator.canShare) {
+      try {
+        const file = new File([plan], filename, { type: mimeType });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ title: 'Study Plan', files: [file] });
+          return;
+        }
+      } catch (err) {
+        console.log('Web Share failed', err);
+      }
+    }
+
+    const fileBlob = new Blob([plan], { type: mimeType });
+    const url = URL.createObjectURL(fileBlob);
     const textElement = document.createElement("a");
-    const file = new Blob([plan], {type: 'text/markdown;charset=utf-8'});
-    const url = URL.createObjectURL(file);
+    textElement.style.display = 'none';
     textElement.href = url;
-    textElement.download = `${exam || 'Study'}_Plan.md`;
-    textElement.target = '_blank';
+    textElement.download = filename;
     document.body.appendChild(textElement);
     
+    textElement.click();
+    
     setTimeout(() => {
-      textElement.click();
-      setTimeout(() => {
-        document.body.removeChild(textElement);
-        URL.revokeObjectURL(url);
-      }, 100);
-    }, 0);
+      document.body.removeChild(textElement);
+      URL.revokeObjectURL(url);
+    }, 1000);
   };
 
   const dayColors = ['#4338CA', '#059669', '#EA6C10', '#0284C7', '#DB2777', '#F59E0B', '#6366F1'];
