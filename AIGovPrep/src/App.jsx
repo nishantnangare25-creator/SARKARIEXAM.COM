@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
@@ -58,7 +58,7 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
         <Route path="/privacy"        element={<PrivacyPolicy />} />
         <Route path="/blog"           element={<Blog />} />
         <Route path="/blog/:id"       element={<BlogPost />} />
-        <Route path="*" element={<div style={{ padding: 100, textAlign: 'center' }}><h2>Page Not Found</h2><Link to="/">Go Home</Link></div>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {/* Mobile bottom nav: only shown on phones (<768px), hidden on tablet/desktop */}
       {showSidebar && <MobileBottomNav />}
