@@ -41,6 +41,17 @@ export default function NotesGenerator() {
     );
   };
 
+  const downloadNotesText = () => {
+    const filename = `${subject || exam || 'study'}_notes.md`;
+    const blob = new Blob([notes], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="page-wrapper">
       <div className="page-with-sidebar">
@@ -80,9 +91,14 @@ export default function NotesGenerator() {
           <div className="animate-fadeInUp">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3>{t('notes.yourNotes')}</h3>
-              <button className="btn btn-secondary btn-sm" onClick={downloadNotes}>
-                <Download size={16} /> {t('notes.download')}
-              </button>
+              <div style={{ display: 'flex', gap: 12 }}>
+                <button className="btn btn-secondary btn-sm" onClick={downloadNotes}>
+                  <Download size={16} /> PDF
+                </button>
+                <button className="btn btn-outline btn-sm" onClick={downloadNotesText}>
+                  <Download size={16} /> MD/Text
+                </button>
+              </div>
             </div>
             <div id="notes-content" className="card" style={{ lineHeight: 1.8 }}>
               <ReactMarkdown>{notes}</ReactMarkdown>

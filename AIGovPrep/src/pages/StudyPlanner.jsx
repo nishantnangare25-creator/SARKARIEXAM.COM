@@ -7,6 +7,8 @@ import { BookOpen, Sparkles, Clock, CheckCircle } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './Auth.css';
+import { Download } from 'lucide-react';
+import { generateNotesPdf } from '../utils/pdfGenerator';
 
 export default function StudyPlanner() {
   const { t } = useTranslation();
@@ -65,6 +67,12 @@ export default function StudyPlanner() {
     }, 1000);
   };
 
+  const downloadPlanPdf = () => {
+    if (!plan) return;
+    const filename = `${exam || 'Study'}_Plan.pdf`;
+    generateNotesPdf(`${exam.toUpperCase()} Study Plan`, plan, filename);
+  };
+
   const dayColors = ['#4338CA', '#059669', '#EA6C10', '#0284C7', '#DB2777', '#F59E0B', '#6366F1'];
 
   return (
@@ -110,8 +118,11 @@ export default function StudyPlanner() {
               <h3>{t('studyPlanner.yourPlan')}</h3>
               <div style={{ display: 'flex', gap: 12 }}>
                 <div className="badge badge-primary">Target: {exam.toUpperCase()}</div>
-                <button className="btn btn-secondary btn-sm" onClick={downloadPlan}>
-                  Download Plan
+                <button className="btn btn-secondary btn-sm" onClick={downloadPlanPdf}>
+                  <Download size={14} style={{ marginRight: 4 }} /> PDF
+                </button>
+                <button className="btn btn-outline btn-sm" onClick={downloadPlan}>
+                  <Download size={14} style={{ marginRight: 4 }} /> Text/MD
                 </button>
               </div>
             </div>

@@ -137,7 +137,7 @@ export default function MockTest() {
                 {score}/{questions.length}
               </div>
               <p>{Math.round((score / questions.length) * 100)}% Accuracy</p>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16 }}>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16, flexWrap: 'wrap' }}>
                 <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); }}>
                   <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
                 </button>
@@ -153,7 +153,23 @@ export default function MockTest() {
                     `Mock_Test_${examName}_${Date.now()}.pdf`
                   );
                 }}>
-                  <Download size={16} aria-hidden="true" /> Download PDF
+                  <Download size={16} aria-hidden="true" /> PDF
+                </button>
+                <button className="btn btn-outline" onClick={() => {
+                   const examName = EXAMS.find(e => e.id === exam)?.name || 'Competitive';
+                   let text = `Mock Test Result: ${examName}\nScore: ${score}/${questions.length}\nAccuracy: ${Math.round((score/questions.length)*100)}%\n\n`;
+                   questions.forEach((q, i) => {
+                     text += `Q${i+1}: ${q.question}\nYour Answer: ${answers[q.id] || 'None'}\nCorrect Answer: ${q.correctAnswer}\nExplanation: ${q.explanation}\n\n`;
+                   });
+                   const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+                   const url = URL.createObjectURL(blob);
+                   const link = document.createElement('a');
+                   link.href = url;
+                   link.download = `Mock_Test_${examName}_${Date.now()}.txt`;
+                   link.click();
+                   URL.revokeObjectURL(url);
+                }}>
+                  <Download size={16} aria-hidden="true" /> Text
                 </button>
               </div>
               {!user && (

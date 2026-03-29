@@ -91,9 +91,6 @@ export default function PYQPdfs() {
         language: i18n?.language || 'en' 
       });
 
-      let textContent = `Exam: ${examName}\nTopic: ${pdf.title}\nYear: ${pdf.year}\nType: ${pdf.type}\n\n`;
-      textContent += "Section A: Core Subjects & Questions\n\n";
-
       const defaultQuestions = [
         { question: "No specific questions could be generated for this topic due to network timeout or filter restriction.", options: ["Try again", "Use Interactive Practice Mode"] }
       ];
@@ -107,10 +104,66 @@ export default function PYQPdfs() {
         questionsToRender, 
         pdfFilename
       );
-      
     } catch (e) {
       console.error("Failed to generate targeted text questions:", e);
       alert("There was an issue generating the mock paper. Please try again or use the Interactive Practice feature.");
+    } finally {
+      setIsDownloading(false);
+      setDownloadId(null);
+    }
+  };
+
+  const handleDownloadText = async (pdf) => {
+    setIsDownloading(true);
+    setDownloadId(pdf.id);
+    try {
+      const examName = EXAMS.find(e => e.id === pdf.examId)?.name || 'Exam';
+      
+      const aiResponse = await generatePYQSMockQuestions({ 
+        topic: pdf.title,
+        year: pdf.year,
+        count: 15, 
+        language: i18n?.language || 'en' 
+      });
+
+      let textContent = `Exam: ${examName}\nTopic: ${pdf.title}\nYear: ${pdf.year}\nType: ${pdf.type}\n\n`;
+      textContent += "Section A: Core Subjects & Questions\n\n";
+
+      const defaultQuestions = [
+        { question: "No specific questions could be generated for this topic due to network timeout or filter restriction.", options: ["Try again", "Use Interactive Practice Mode"] }
+      ];
+
+      const questionsToRender = aiResponse?.data?.questions?.length > 0 ? aiResponse.data.questions : defaultQuestions;
+
+      questionsToRender.forEach((q, index) => {
+          textContent += `Q${index + 1}. ${q.question}\n`;
+          if (Array.isArray(q.options)) {
+            q.options.forEach((opt, oIdx) => {
+              const optLetter = String.fromCharCode(97 + oIdx);
+              textContent += `   ${optLetter}) ${opt}\n`;
+            });
+          }
+          
+          if (q.correctAnswer) {
+             textContent += `\n   Answer: ${q.correctAnswer}\n`;
+          }
+          if (q.explanation) {
+             textContent += `   Explanation: ${q.explanation}\n`;
+          }
+          textContent += `\n-----------------------------------\n\n`;
+      });
+
+      textContent += "*** End of AI Generated Mock Paper ***\n";
+      const filename = `${String(pdf.title).replace(/\s+/g, '_')}_${pdf.year}.txt`;
+      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error("Failed to generate text questions:", e);
     } finally {
       setIsDownloading(false);
       setDownloadId(null);
@@ -203,19 +256,38 @@ export default function PYQPdfs() {
                      <FileText size={14} /> {pdf.type} • {pdf.size}
                   </p>
                   <div style={{ marginTop: 'auto', display: 'flex', gap: 12 }}>
-                    <button 
-                      className="btn btn-outline" 
-                      style={{ flex: 1, justifyContent: 'center', padding: '10px 0' }}
-                      onClick={() => handleDownload(pdf)}
-                      disabled={isDownloading && downloadId === pdf.id}
-                      title="Download Text Document"
-                    >
-                      {isDownloading && downloadId === pdf.id ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <DownloadCloud size={16} />
-                      )}
-                    </button>
+                    <div style={{ display: 'flex', gap: 8, flex: 2 }}>
+                        <button 
+                          className="btn btn-outline" 
+                          style={{ flex: 1, justifyContent: 'center', padding: '10px 0' }}
+                          onClick={() => handleDownload(pdf)}
+                          disabled={isDownloading && downloadId === pdf.id}
+                          title="Download PDF"
+                        >
+                          {isDownloading && downloadId === pdf.id ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
+                              <DownloadCloud size={16} /> PDF
+                            </div>
+                          )}
+                        </button>
+                        <button 
+                          className="btn btn-outline" 
+                          style={{ flex: 1, justifyContent: 'center', padding: '10px 0' }}
+                          onClick={() => handleDownloadText(pdf)}
+                          disabled={isDownloading && downloadId === pdf.id}
+                          title="Download TXT"
+                        >
+                          {isDownloading && downloadId === pdf.id ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
+                              <FileText size={16} /> TXT
+                            </div>
+                          )}
+                        </button>
+                    </div>
                     <button 
                       className="btn btn-primary" 
                       style={{ flex: 3, justifyContent: 'center' }}
