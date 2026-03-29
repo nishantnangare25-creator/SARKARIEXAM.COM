@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Link } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
-import LanguageSelector from './components/LanguageSelector';
 import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import MobileBottomNav from './components/MobileBottomNav';
@@ -64,26 +63,12 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
 }
 
 export default function App() {
-  const [languageChosen, setLanguageChosen] = useState(
-    () => localStorage.getItem('languageSelected') === 'true'
-  );
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
-  useEffect(() => {
-    // If not at root, we assume they want to see the page and already bypassed/picked lang
-    if (!languageChosen && window.location.hash !== '' && window.location.hash !== '#/') {
-      setLanguageChosen(true);
-    }
-  }, [languageChosen]);
 
   return (
     <Router>
       <AuthProvider>
-        {!languageChosen && (window.location.hash === '' || window.location.hash === '#/') ? (
-          <LanguageSelector onSelect={() => setLanguageChosen(true)} />
-        ) : (
-          <AppLayout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        )}
+        <AppLayout sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
       </AuthProvider>
     </Router>
   );
