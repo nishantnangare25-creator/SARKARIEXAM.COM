@@ -757,7 +757,8 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
 @media (max-width: 768px) {
   .immersive-tutor-layout {
     padding: 0 !important;
-    height: calc(100vh - var(--navbar-height)) !important;
+    /* Subtract both top navbar and bottom nav heights to prevent overflow */
+    height: calc(100vh - var(--navbar-height) - 86px) !important; 
   }
   
   .tutor-header {
@@ -765,9 +766,19 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
     margin-bottom: 8px !important;
   }
   
+  .tutor-chat-container {
+    height: 100% !important;
+  }
+  
   /* Pushes the disclaimer down and ensures chat takes the rest */
   .tutor-disclaimer {
     padding: 8px !important;
     margin: 0 !important;
+    font-size: 0.65rem !important;
+  }
+
+  /* Padding at the bottom of the chat to keep input above bottom nav if needed */
+  .tutor-chat-container form {
+    padding-bottom: 12px !important;
   }
 }
