@@ -33,6 +33,6 @@ jobs:
         with:
           server: sarkariexamai.com
           username: 253@sarkariexamai.com
-          password: "30nW=+YеЕ&G!m2&4"
+          password: "30nW=+YeE&G!m2&4"
           local-dir: ./AIGovPrep/dist/
           server-dir: ./
