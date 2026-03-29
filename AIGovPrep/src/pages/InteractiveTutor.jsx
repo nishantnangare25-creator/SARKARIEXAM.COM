@@ -175,11 +175,8 @@ export default function InteractiveTutor() {
             </p>
           </div>
           <div className="tutor-actions" style={{ display: 'flex', gap: 8 }}>
-            <button className="btn btn-sm btn-secondary btn-compact" onClick={downloadChatPdf} disabled={messages.length === 0} title="Download Chat (PDF)">
-              <Download size={16} /> <span className="hide-mobile">PDF</span>
-            </button>
-            <button className="btn btn-sm btn-outline btn-compact" onClick={downloadChat} disabled={messages.length === 0} title="Download Chat (MD)">
-              <Download size={16} /> <span className="hide-mobile">MD</span>
+            <button className="btn btn-sm btn-secondary btn-compact" onClick={downloadChatPdf} disabled={messages.length === 0} title="Download Notes">
+              <Download size={16} /> <span className="hide-mobile">Download Notes</span>
             </button>
             <button className="btn btn-sm btn-icon" onClick={clearChat} title="Clear Chat" style={{ marginLeft: 4 }}>
               <Trash2 size={16} />

@@ -121,97 +121,61 @@ export const generateQuestionPdf = (title, subtitle, questions, filename = 'docu
   doc.save(filename);
 };
 
+import html2pdf from 'html2pdf.js';
+import { marked } from 'marked';
+
 /**
- * Generate a professional PDF for Study Notes
+ * Generate a high quality, natively formatted PDF for Study Notes / Output text using html2pdf
+ * Solves jsPDF limitations with Hindi, Emojis, and Markdown.
  */
 export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
-  const contentWidth = pageWidth - 2 * margin;
-  let cursorY = margin;
+  const container = document.createElement('div');
+  container.style.padding = '40px';
+  container.style.fontFamily = `'Segoe UI', Roboto, Helvetica, Arial, sans-serif`;
+  container.style.color = '#1f2937';
+  container.style.lineHeight = '1.6';
+  container.style.backgroundColor = '#ffffff';
 
-  // Header Branding
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(22);
-  doc.setTextColor(244, 117, 33);
-  doc.text('Sarkari Exam AI', margin, cursorY);
-  cursorY += 10;
+  // Branding Header
+  const headerHtml = `
+    <div style="border-bottom: 2px solid #f47521; padding-bottom: 12px; margin-bottom: 24px;">
+      <h1 style="color: #f47521; margin: 0 0 4px 0; font-size: 28px;">Sarkari Exam AI</h1>
+      <p style="color: #6b7280; font-style: italic; margin: 0; font-size: 14px;">Study Notes | Elevate Your Learning</p>
+    </div>
+    <h2 style="font-size: 24px; color: #111827; margin-top: 0; margin-bottom: 16px;">${title}</h2>
+  `;
 
-  doc.setFontSize(10);
-  doc.setTextColor(100);
-  doc.setFont('helvetica', 'italic');
-  doc.text('Study Notes | Elevate Your Learning', margin, cursorY);
-  cursorY += 15;
+  // Parse markdown securely into HTML
+  const parsedMarkdown = marked.parse(content);
+  
+  // Format body
+  const bodyHtml = `
+    <div style="font-size: 14px;">
+      ${parsedMarkdown}
+    </div>
+  `;
 
-  // Title
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(18);
-  doc.setTextColor(0);
-  const splitTitle = doc.splitTextToSize(title, contentWidth);
-  doc.text(splitTitle, margin, cursorY);
-  cursorY += splitTitle.length * 10;
+  container.innerHTML = headerHtml + bodyHtml;
+  
+  // Scoped CSS for markdown styling so it prints beautiful bold, lists, etc.
+  const style = document.createElement('style');
+  style.textContent = `
+    h1, h2, h3, h4 { color: #111827; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
+    p { margin-bottom: 1em; }
+    ul, ol { padding-left: 24px; margin-bottom: 1em; }
+    li { margin-bottom: 0.25em; }
+    strong, b { color: #f47521; font-weight: 700; }
+    code { background: #f3f4f6; padding: 2px 4px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
+    pre { background: #f3f4f6; padding: 12px; border-radius: 8px; overflow-x: auto; }
+  `;
+  container.appendChild(style);
 
-  // Divider
-  doc.setDrawColor(244, 117, 33);
-  doc.setLineWidth(1);
-  doc.line(margin, cursorY, pageWidth - margin, cursorY);
-  cursorY += 15;
-
-  // Content (Markdown-like processing for basic bold/bullets)
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(11);
-  doc.setTextColor(60);
-
-  // Simple split by newline and wrap
-  const lines = content.split('\n');
-  lines.forEach(line => {
-    if (cursorY > pageHeight - 20) {
-      doc.addPage();
-      cursorY = margin;
-    }
-
-    let text = line.trim();
-    if (!text) {
-      cursorY += 5; // Paragraph space
-      return;
-    }
-
-    // Basic Header Detection
-    if (text.startsWith('#')) {
-      const level = (text.match(/^#+/) || [''])[0].length;
-      doc.setFont('helvetica', 'bold');
-      doc.setFontSize(16 - level);
-      text = text.replace(/^#+\s*/, '');
-      const split = doc.splitTextToSize(text, contentWidth);
-      doc.text(split, margin, cursorY);
-      cursorY += split.length * 10;
-      doc.setFontSize(11);
-      doc.setFont('helvetica', 'normal');
-    } else if (text.startsWith('* ') || text.startsWith('- ')) {
-      // Bullets
-      doc.setFont('helvetica', 'normal');
-      text = `  • ${text.substring(2)}`;
-      const split = doc.splitTextToSize(text, contentWidth - 5);
-      doc.text(split, margin, cursorY);
-      cursorY += split.length * 6;
-    } else {
-      // Normal text
-      const split = doc.splitTextToSize(text, contentWidth);
-      doc.text(split, margin, cursorY);
-      cursorY += split.length * 6;
-    }
-  });
-
-  // Footer
-  const pageCount = doc.internal.getNumberOfPages();
-  for(let i = 1; i <= pageCount; i++) {
-    doc.setPage(i);
-    doc.setFontSize(10);
-    doc.setTextColor(150);
-    doc.text(`Page ${i} of ${pageCount} | Sarkari Exam AI Study Material`, pageWidth / 2, pageHeight - 10, { align: 'center' });
-  }
-
-  doc.save(filename);
+  // Generate the PDF from HTML directly
+  html2pdf().set({
+    margin: [10, 10, 15, 10], // top, left, bottom, right
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(container).save();
 };

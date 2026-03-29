@@ -146,12 +146,9 @@ export default function PastPaperAnalyzer() {
 
         {analysis && (
           <div className="animate-fadeInUp">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginBottom: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
               <button className="btn btn-secondary btn-sm" onClick={downloadAnalysisPdf}>
-                <Download size={16} /> Download PDF
-              </button>
-              <button className="btn btn-outline btn-sm" onClick={downloadAnalysis}>
-                <Download size={16} /> Download MD
+                <Download size={16} /> Download Analysis
               </button>
             </div>
             <section className="card" style={{ marginBottom: 24 }}>
