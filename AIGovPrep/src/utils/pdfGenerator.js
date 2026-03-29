@@ -187,11 +187,23 @@ export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
-  html2pdf().set(opt).from(container).save().then(() => {
-    // Clean up
+  html2pdf().set(opt).from(container).toPdf().get('pdf').output('blob').then((blob) => {
+    // Manual download trigger for mobile compatibility
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    // Clean up container
     document.body.removeChild(container);
   }).catch(err => {
     console.error('PDF Generation Error:', err);
-    document.body.removeChild(container);
+    if (container.parentNode) {
+      document.body.removeChild(container);
+    }
   });
 };
