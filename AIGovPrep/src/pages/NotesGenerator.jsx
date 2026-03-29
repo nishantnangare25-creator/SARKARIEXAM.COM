@@ -6,6 +6,7 @@ import { EXAMS, SUBJECTS } from '../utils/constants';
 import { GraduationCap, Sparkles, Download } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import './Auth.css';
+import { generateNotesPdf } from '../utils/pdfGenerator';
 
 export default function NotesGenerator() {
   const { t, i18n } = useTranslation();
@@ -32,42 +33,12 @@ export default function NotesGenerator() {
   };
 
   const downloadNotes = async () => {
-    const filename = `${subject || exam || 'study'}_notes.md`;
-    const mimeType = 'text/markdown;charset=utf-8';
-
-    // 1. Try Native Web Share API (Best for Mobile/WebViews)
-    if (navigator.share && navigator.canShare) {
-      try {
-        const file = new File([notes], filename, { type: mimeType });
-        if (navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: 'My Study Notes',
-            files: [file]
-          });
-          return; // Success via native share/save sheet
-        }
-      } catch (err) {
-        console.log('Web Share failed or was cancelled', err);
-        // Fall through to standard download if fails
-      }
-    }
-
-    // 2. Standard Blob Download (Fallback for Desktop)
-    const blob = new Blob([notes], { type: mimeType });
-    const url = URL.createObjectURL(blob);
-    const textElement = document.createElement("a");
-    textElement.style.display = 'none';
-    textElement.href = url;
-    textElement.download = filename;
-    document.body.appendChild(textElement);
-    
-    // Synchronous click preserves the user gesture! (Crucial for mobile)
-    textElement.click();
-    
-    setTimeout(() => {
-      document.body.removeChild(textElement);
-      URL.revokeObjectURL(url);
-    }, 1000);
+    const filename = `${subject || exam || 'study'}_notes.pdf`;
+    generateNotesPdf(
+      `${subject || 'Study'} Notes`, 
+      notes, 
+      filename
+    );
   };
 
   return (

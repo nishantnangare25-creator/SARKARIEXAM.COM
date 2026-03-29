@@ -3,9 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { generateMockQuestions } from '../services/ai';
 import { EXAMS, SUBJECTS } from '../utils/constants';
-import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw } from 'lucide-react';
+import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import './Auth.css';
+import { generateQuestionPdf } from '../utils/pdfGenerator';
 
 export default function MockTest() {
   const { t, i18n } = useTranslation();
@@ -136,9 +137,25 @@ export default function MockTest() {
                 {score}/{questions.length}
               </div>
               <p>{Math.round((score / questions.length) * 100)}% Accuracy</p>
-              <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => { setShowResult(false); setQuestions([]); }}>
-                <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
-              </button>
+              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16 }}>
+                <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); }}>
+                  <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
+                </button>
+                <button className="btn btn-outline" onClick={() => {
+                  const examName = EXAMS.find(e => e.id === exam)?.name || 'Competitive';
+                  generateQuestionPdf(
+                    `Mock Test Result: ${examName}`,
+                    `Score: ${score}/${questions.length} (${Math.round((score/questions.length)*100)}%) | Subject: ${subject || 'All'}`,
+                    questions.map(q => ({
+                      ...q,
+                      question: `${q.question}${answers[q.id] === q.correctAnswer ? ' (Correct ✓)' : ` (Your Answer: ${answers[q.id] || 'None'} ✗)`}`
+                    })),
+                    `Mock_Test_${examName}_${Date.now()}.pdf`
+                  );
+                }}>
+                  <Download size={16} aria-hidden="true" /> Download PDF
+                </button>
+              </div>
               {!user && (
                 <div className="card" style={{ marginTop: 24, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
                   <h4 style={{ color: 'var(--primary)', marginBottom: 8 }}>Want to save these results?</h4>

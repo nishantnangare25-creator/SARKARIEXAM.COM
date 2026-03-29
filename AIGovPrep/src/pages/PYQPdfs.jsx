@@ -6,6 +6,7 @@ import { FileText, DownloadCloud, Search, Calendar, BookOpen, Loader2, UploadClo
 import { EXAMS } from '../utils/constants';
 import { generatePYQSMockQuestions } from '../services/ai';
 import { extractTextFromPdfFile } from '../utils/pdfParser';
+import { generateQuestionPdf } from '../utils/pdfGenerator';
 
 // Generate comprehensive 10-20 years of PYQs
 const MOCK_PDFS = [];
@@ -99,57 +100,13 @@ export default function PYQPdfs() {
 
       const questionsToRender = aiResponse?.data?.questions?.length > 0 ? aiResponse.data.questions : defaultQuestions;
 
-      questionsToRender.forEach((q, index) => {
-          textContent += `Q${index + 1}. ${q.question}\n`;
-          if (Array.isArray(q.options)) {
-            q.options.forEach((opt, oIdx) => {
-              const optLetter = String.fromCharCode(97 + oIdx);
-              textContent += `   ${optLetter}) ${opt}\n`;
-            });
-          }
-          
-          if (q.correctAnswer) {
-             textContent += `\n   Answer: ${q.correctAnswer}\n`;
-          }
-          if (q.explanation) {
-             textContent += `   Explanation: ${q.explanation}\n`;
-          }
-          textContent += `\n-----------------------------------\n\n`;
-      });
-
-      textContent += "*** End of AI Generated Mock Paper ***\n";
-      const filename = `${String(pdf.title).replace(/\s+/g, '_')}_${pdf.year}.txt`;
-      const mimeType = 'text/plain;charset=utf-8';
-
-      let shared = false;
-      if (navigator.share && navigator.canShare) {
-        try {
-          const file = new File([textContent], filename, { type: mimeType });
-          if (navigator.canShare({ files: [file] })) {
-            await navigator.share({ title: 'PYQ Mock Paper', files: [file] });
-            shared = true;
-          }
-        } catch (err) {
-          console.log('Web Share failed', err);
-        }
-      }
-
-      if (!shared) {
-        const blob = new Blob([textContent], { type: mimeType });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.style.display = 'none';
-        link.href = url;
-        link.download = filename;
-        document.body.appendChild(link);
-        
-        link.click();
-        
-        setTimeout(() => {
-          document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-        }, 1000);
-      }
+      const pdfFilename = `${String(pdf.title).replace(/\s+/g, '_')}_${pdf.year}.pdf`;
+      generateQuestionPdf(
+        pdf.title, 
+        `${examName} | ${pdf.year} | ${pdf.type}`, 
+        questionsToRender, 
+        pdfFilename
+      );
       
     } catch (e) {
       console.error("Failed to generate targeted text questions:", e);
