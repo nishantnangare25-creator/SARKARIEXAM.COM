@@ -93,13 +93,10 @@ export default function Navbar({ onToggleSidebar }) {
 
           {user ? (
             <div className="user-menu">
-              <Link to="/dashboard" className="profile-pill">
+              <Link to="/settings" className="profile-pill" title="Profile & Settings">
                 <div className="profile-avatar">{initials}</div>
-                <span>{user.displayName?.split(' ')[0] || 'Dashboard'}</span>
+                <span>{user.displayName?.split(' ')[0] || 'Profile'}</span>
               </Link>
-              <button className="btn-icon" onClick={logout} title={t('nav.logout')} aria-label="Logout">
-                <LogOut size={18} />
-              </button>
             </div>
           ) : (
             <div className="auth-btns" style={{ display: 'flex', gap: '8px' }}>

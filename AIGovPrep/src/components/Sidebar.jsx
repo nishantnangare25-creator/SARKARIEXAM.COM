@@ -102,12 +102,7 @@ export default function Sidebar({ isOpen, onClose }) {
               {user ? `${user.displayName?.split(' ')[0] || 'Student'} · Active` : 'AI-Powered Prep'}
             </span>
           </div>
-          {user && (
-            <button className="sidebar-logout-btn" onClick={() => { logout(); onClose(); }} title={t('nav.logout')}>
-              <LogOut size={16} />
-              <span>{t('nav.logout')}</span>
-            </button>
-          )}
+          {/* Logout removed, now resides in Settings */}
         </div>
       </aside>
     </>
