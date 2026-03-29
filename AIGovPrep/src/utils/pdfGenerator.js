@@ -170,12 +170,28 @@ export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
   `;
   container.appendChild(style);
 
+  // CRITICAL FOR MOBILE: Append to body to ensure capture works correctly
+  container.style.position = 'fixed';
+  container.style.left = '-9999px';
+  container.style.top = '0';
+  container.style.width = '800px'; // Force static width for consistent rendering
+  container.style.zIndex = '-1';
+  document.body.appendChild(container);
+
   // Generate the PDF from HTML directly
-  html2pdf().set({
+  const opt = {
     margin: [10, 10, 15, 10], // top, left, bottom, right
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+    html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-  }).from(container).save();
+  };
+
+  html2pdf().set(opt).from(container).save().then(() => {
+    // Clean up
+    document.body.removeChild(container);
+  }).catch(err => {
+    console.error('PDF Generation Error:', err);
+    document.body.removeChild(container);
+  });
 };

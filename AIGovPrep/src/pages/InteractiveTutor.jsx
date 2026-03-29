@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { 
-  Bot, Sparkles, Volume2, Download, Send, 
+  Bot, Sparkles, Download, Send, 
   MessageSquare, User, Info, Trash2, Languages, Loader2
 } from 'lucide-react';
 import { generateTutorLesson } from '../services/ai';
@@ -18,8 +18,6 @@ export default function InteractiveTutor() {
   const [currentInput, setCurrentInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [speakingIndex, setSpeakingIndex] = useState(null);
   const scrollRef = useRef(null);
 
   // Auto-scroll to bottom
@@ -32,46 +30,6 @@ export default function InteractiveTutor() {
     }
   }, [messages, loading]);
 
-  useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel();
-    };
-  }, []);
-
-  const toggleSpeech = (text, index) => {
-    if (isPlaying && speakingIndex === index) {
-      window.speechSynthesis.cancel();
-      setIsPlaying(false);
-      setSpeakingIndex(null);
-      return;
-    }
-
-    window.speechSynthesis.cancel(); 
-    if (!text) return;
-
-    const cleanText = text
-      .replace(/[#*`_]/g, '')
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-      .replace(/\n\n/g, '. ')
-      .replace(/\n/g, ' ');
-
-    const utterance = new SpeechSynthesisUtterance(cleanText);
-    const langMap = {
-      'en': 'en-IN', 'hi': 'hi-IN', 'pa': 'pa-IN', 'mr': 'mr-IN',
-      'ta': 'ta-IN', 'te': 'te-IN', 'bn': 'bn-IN', 'gu': 'gu-IN',
-      'kn': 'kn-IN', 'ml': 'ml-IN', 'or': 'or-IN', 'as': 'as-IN', 'ur': 'ur-IN'
-    };
-    
-    utterance.lang = langMap[i18n.language] || i18n.language;
-    utterance.rate = 1.0; 
-    
-    utterance.onend = () => { setIsPlaying(false); setSpeakingIndex(null); };
-    utterance.onerror = () => { setIsPlaying(false); setSpeakingIndex(null); };
-
-    window.speechSynthesis.speak(utterance);
-    setIsPlaying(true);
-    setSpeakingIndex(index);
-  };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -209,13 +167,6 @@ export default function InteractiveTutor() {
                     <div>{msg.content}</div>
                   )}
 
-                  {msg.role === 'assistant' && (
-                    <div style={{ marginTop: 12, paddingTop: 10, borderTop: '1px dotted rgba(0,0,0,0.1)', display: 'flex', justifyContent: 'flex-end' }}>
-                      <button onClick={() => toggleSpeech(msg.content, idx)} className="btn-icon" style={{ padding: 4 }}>
-                        <Volume2 size={16} className={isPlaying && speakingIndex === idx ? 'text-blue' : 'text-muted'} />
-                      </button>
-                    </div>
-                  )}
                 </div>
               </div>
             ))
