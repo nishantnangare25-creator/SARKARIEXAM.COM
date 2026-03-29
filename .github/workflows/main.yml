@@ -35,4 +35,4 @@ jobs:
           username: 253@sarkariexamai.com
           password: "NA45&#$re123"
           local-dir: ./AIGovPrep/dist/
-          server-dir: ./public_html/
+          server-dir: ./
