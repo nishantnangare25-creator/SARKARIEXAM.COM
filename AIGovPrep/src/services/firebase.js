@@ -35,10 +35,11 @@ const firebaseConfig = {
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "govai-7ee5b.firebasestorage.app",
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "868025142353",
   appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:868025142353:web:d7687cdd6c8bd19c32fc70",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-H4LJTCNN2V",
 };
 
 const app = initializeApp(firebaseConfig);
-console.log("Firebase initialized with:", firebaseConfig.projectId);
+console.log("Firebase initialized with project:", firebaseConfig.projectId);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
@@ -49,7 +50,34 @@ const googleProvider = new GoogleAuthProvider();
 export const loginWithEmail = (email, password) =>
   signInWithEmailAndPassword(auth, email, password);
 
-export const loginWithGoogle = () => signInWithPopup(auth, googleProvider);
+export const registerWithEmail = async (email, password) => {
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const user = userCredential.user;
+  // Initialize default profile
+  await saveUserProfile(user.uid, {
+    email: user.email,
+    displayName: user.email.split('@')[0],
+    createdAt: new Date().toISOString()
+  });
+  return userCredential;
+};
+
+export const loginWithGoogle = async () => {
+  const result = await signInWithPopup(auth, googleProvider);
+  const user = result.user;
+  
+  // Create profile if it doesn't exist
+  const existingProfile = await getUserProfile(user.uid);
+  if (!existingProfile) {
+    await saveUserProfile(user.uid, {
+      displayName: user.displayName || 'Student',
+      email: user.email,
+      photoURL: user.photoURL,
+      createdAt: new Date().toISOString()
+    });
+  }
+  return result;
+};
 
 export const logout = () => signOut(auth);
 
