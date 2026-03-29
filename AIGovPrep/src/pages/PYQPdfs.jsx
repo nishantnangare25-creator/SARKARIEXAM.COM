@@ -272,7 +272,21 @@ export default function PYQPdfs() {
                             </div>
                           )}
                         </button>
-
+                        <button 
+                          className="btn btn-outline" 
+                          style={{ flex: 1, justifyContent: 'center', padding: '10px 0' }}
+                          onClick={() => handleDownloadText(pdf)}
+                          disabled={isDownloading && downloadId === pdf.id}
+                          title="Download TXT"
+                        >
+                          {isDownloading && downloadId === pdf.id ? (
+                            <Loader2 size={16} className="animate-spin" />
+                          ) : (
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
+                              <FileText size={16} /> TXT
+                            </div>
+                          )}
+                        </button>
                     </div>
                     <button 
                       className="btn btn-primary" 
