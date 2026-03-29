@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { LayoutDashboard, Brain, Target, Bot, Settings } from 'lucide-react';
+import { LayoutDashboard, Brain, Target, Bot, BarChart3 } from 'lucide-react';
 import './MobileBottomNav.css';
 
 export default function MobileBottomNav() {
@@ -11,7 +11,7 @@ export default function MobileBottomNav() {
     { path: '/mock-test', icon: Brain, label: 'nav.mockTest' },
     { path: '/pyqs-mock-test', icon: Target, label: 'PYQs' },
     { path: '/tutor', icon: Bot, label: 'AI Riya' },
-    { path: '/settings', icon: Settings, label: 'Settings' }
+    { path: '/analytics', icon: BarChart3, label: 'Analytics' }
   ];
 
   return (
@@ -24,7 +24,7 @@ export default function MobileBottomNav() {
         >
           <item.icon size={22} className="nav-icon" />
           <span className="nav-label">
-            {['PYQs', 'AI Riya', 'Settings'].includes(item.label) ? item.label : t(item.label)}
+            {['PYQs', 'AI Riya', 'Analytics'].includes(item.label) ? item.label : t(item.label)}
           </span>
         </NavLink>
       ))}
