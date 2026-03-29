@@ -1,63 +1,60 @@
+/* Mobile Bottom Nav — only shown on phones */
 .mobile-bottom-nav {
-  display: none;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 64px;
+  background: #ffffff;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: stretch;
+  z-index: 990;
+  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
 }
 
-@media (max-width: 768px) {
+.bottom-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  text-decoration: none;
+  color: var(--text-muted);
+  font-size: 0.65rem;
+  font-weight: 500;
+  transition: color 0.15s ease;
+  padding: 6px 2px;
+  min-height: 44px;
+}
+
+.bottom-nav-item .nav-icon {
+  transition: transform 0.15s ease;
+}
+
+.bottom-nav-item:hover {
+  color: var(--primary);
+}
+
+.bottom-nav-item.active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.bottom-nav-item.active .nav-icon {
+  transform: scale(1.1);
+}
+
+.nav-label {
+  font-size: 0.62rem;
+  line-height: 1;
+  text-align: center;
+}
+
+/* Hide MobileBottomNav on tablet and desktop — sidebar takes over */
+@media (min-width: 768px) {
   .mobile-bottom-nav {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 72px; /* standard touch target height */
-    background: rgba(255, 255, 255, 0.85); /* semi-transparent white */
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    border-top: 1px solid rgba(0, 0, 0, 0.05); /* very soft border */
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04); /* premium float feel */
-    z-index: 1000;
-    padding-bottom: env(safe-area-inset-bottom, 10px);
-    padding-top: 6px;
-    transition: all var(--transition-base);
-  }
-
-  .bottom-nav-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-decoration: none;
-    color: var(--text-muted);
-    width: 20%;
-    gap: 4px;
-    transition: color var(--transition-fast);
-  }
-
-  .nav-icon {
-    transition: transform var(--transition-fast), stroke var(--transition-fast);
-    stroke-width: 2;
-  }
-
-  .nav-label {
-    font-size: 0.65rem;
-    font-weight: 500;
-    font-family: var(--font-primary);
-    letter-spacing: 0.2px;
-  }
-
-  .bottom-nav-item.active {
-    color: var(--primary);
-  }
-
-  .bottom-nav-item.active .nav-icon {
-    transform: translateY(-2px);
-    color: var(--primary);
-    fill: rgba(26, 86, 219, 0.12); /* nice filled primary glow */
-  }
-
-  .bottom-nav-item.active .nav-label {
-    font-weight: 600;
+    display: none !important;
   }
 }

@@ -91,7 +91,7 @@ export default function NotesGenerator() {
           <div className="animate-fadeInUp">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3>{t('notes.yourNotes')}</h3>
-              <div style={{ display: 'flex', gap: 12 }}>
+              <div className="download-actions">
                 <button className="btn btn-secondary btn-sm" onClick={downloadNotes}>
                   <Download size={16} /> PDF
                 </button>

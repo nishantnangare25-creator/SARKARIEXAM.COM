@@ -57,7 +57,6 @@ export default function Navbar({ onToggleSidebar }) {
           <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
             <a href="#features">{t('home.ctaSecondary')}</a>
             <a href="#exams">{t('home.examTitle')}</a>
-            <Link to="/about">About</Link>
             {!user && <Link to="/login" style={{ fontWeight: 600, color: 'var(--primary)' }}>Login / Sign Up</Link>}
 
             <div className="mobile-menu-cta">

@@ -116,7 +116,7 @@ export default function StudyPlanner() {
           <div className="animate-fadeInUp">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3>{t('studyPlanner.yourPlan')}</h3>
-              <div style={{ display: 'flex', gap: 12 }}>
+              <div className="download-actions">
                 <div className="badge badge-primary">Target: {exam.toUpperCase()}</div>
                 <button className="btn btn-secondary btn-sm" onClick={downloadPlanPdf}>
                   <Download size={14} style={{ marginRight: 4 }} /> PDF

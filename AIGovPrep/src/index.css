@@ -403,10 +403,21 @@ select option { background: white; color: var(--text-primary); }
   display: flex;
   flex-direction: column;
 }
+
+/* Desktop: push content right of fixed sidebar */
 .page-with-sidebar {
   margin-left: var(--sidebar-width);
   padding: var(--space-xl);
   width: calc(100% - var(--sidebar-width));
+}
+
+/* Tablet: sidebar is 220px wide and always visible */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .page-with-sidebar {
+    margin-left: 220px;
+    width: calc(100% - 220px);
+    padding: var(--space-lg);
+  }
 }
 
 /* Inner container for actual content: center ONLY when specifically used */
@@ -414,6 +425,30 @@ select option { background: white; color: var(--text-primary); }
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+/* ===== DOWNLOAD ACTIONS UTILITY ===== */
+/* Use this wrapper around download buttons for consistent layout */
+.download-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.download-actions .btn {
+  flex: 0 0 auto;
+}
+/* On mobile phones: stack vertically, each full width */
+@media (max-width: 600px) {
+  .download-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .download-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .dashboard-layout { display: grid; grid-template-columns: 1.6fr 1.4fr; gap: var(--space-lg); width: 100%; }
@@ -675,14 +710,15 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
 .auth-switch a { color: var(--accent-saffron); font-weight: 600; }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1024px) {
+/* Mobile phones only: sidebar hidden, content full-width */
+@media (max-width: 767px) {
   .page-with-sidebar { 
     margin-left: 0; 
     width: 100%;
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   :root {
     --navbar-height: 56px;
     --space-xl: 24px;
@@ -693,7 +729,7 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
   h2 { font-size: 1.35rem; }
   h3 { font-size: 1.1rem; }
   
-  /* ADDED: offset content for bottom nav */
+  /* offset content for bottom nav (phone only) */
   .page-container { padding: var(--space-md); padding-bottom: 90px; }
   .page-wrapper { padding-bottom: 90px; }
   .page-with-sidebar { padding: var(--space-md); margin-left: 0; padding-bottom: 90px; }

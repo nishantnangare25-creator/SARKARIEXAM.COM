@@ -1,11 +1,10 @@
 import { NavLink } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
-import { logout } from '../services/firebase';
 import {
   LayoutDashboard, Brain, Target, BookOpen, FileText,
   GraduationCap, Bot, BarChart3, MessageSquare, Users,
-  Settings, X, Newspaper, Zap, FileDown, LogOut
+  Settings, X, Newspaper, FileDown
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -13,38 +12,38 @@ const navSections = [
   {
     label: 'Main',
     items: [
-      { path: '/dashboard', icon: LayoutDashboard, label: 'nav.dashboard', iconColor: 'blue' },
-      { path: '/blog', icon: Newspaper, label: 'Blog', iconColor: 'green' },
+      { path: '/dashboard',  icon: LayoutDashboard, label: 'nav.dashboard',  iconColor: 'blue'    },
+      { path: '/blog',       icon: Newspaper,       label: 'Blog',           iconColor: 'green'   },
     ]
   },
   {
     label: 'Tests',
     items: [
-      { path: '/mock-test', icon: Brain, label: 'nav.mockTest', iconColor: 'blue' },
-      { path: '/pyqs-mock-test', icon: Target, label: 'nav.pyqsMockTest', iconColor: 'saffron' },
+      { path: '/mock-test',      icon: Brain,  label: 'nav.mockTest',      iconColor: 'blue'    },
+      { path: '/pyqs-mock-test', icon: Target, label: 'nav.pyqsMockTest',  iconColor: 'saffron' },
     ]
   },
   {
     label: 'Study Tools',
     items: [
-      { path: '/study-planner', icon: BookOpen, label: 'nav.studyPlanner', iconColor: 'green' },
-      { path: '/notes', icon: GraduationCap, label: 'nav.notes', iconColor: 'green' },
-      { path: '/past-papers', icon: FileText, label: 'nav.pastPaper', iconColor: 'saffron' },
-      { path: '/pyq-pdfs', icon: FileDown, label: 'nav.pyqPdfs', iconColor: 'saffron' },
+      { path: '/study-planner', icon: BookOpen,     label: 'nav.studyPlanner', iconColor: 'green'   },
+      { path: '/notes',         icon: GraduationCap, label: 'nav.notes',       iconColor: 'green'   },
+      { path: '/past-papers',   icon: FileText,      label: 'nav.pastPaper',   iconColor: 'saffron' },
+      { path: '/pyq-pdfs',      icon: FileDown,      label: 'nav.pyqPdfs',     iconColor: 'saffron' },
     ]
   },
   {
     label: 'AI',
     items: [
-      { path: '/tutor', icon: Bot, label: 'nav.tutor', iconColor: 'blue' },
+      { path: '/tutor',     icon: Bot,      label: 'nav.tutor',     iconColor: 'blue'  },
       { path: '/analytics', icon: BarChart3, label: 'nav.analytics', iconColor: 'green' },
     ]
   },
   {
     label: 'Community',
     items: [
-      { path: '/forum', icon: MessageSquare, label: 'nav.forum', iconColor: 'saffron' },
-      { path: '/peer-matching', icon: Users, label: 'nav.peerMatch', iconColor: 'green' },
+      { path: '/forum',         icon: MessageSquare, label: 'nav.forum',     iconColor: 'saffron' },
+      { path: '/peer-matching', icon: Users,         label: 'nav.peerMatch', iconColor: 'green'   },
     ]
   },
   {
@@ -61,19 +60,32 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {isOpen && <div className="sidebar-overlay" onClick={onClose} />}
-      <aside className={`sidebar ${isOpen ? 'open' : ''}`} id="main-sidebar" aria-label="Main navigation">
+      {/* Overlay only appears on mobile when drawer is open */}
+      <div
+        className={`sidebar-overlay ${isOpen ? 'visible' : ''}`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
 
+      <aside
+        className={`sidebar ${isOpen ? 'open' : ''}`}
+        id="main-sidebar"
+        aria-label="Main navigation"
+      >
         {/* Brand strip */}
         <div className="sidebar-brand">
           <span className="sidebar-brand-name">🎯 Sarkari Exam AI</span>
-          <button className="btn-icon sidebar-close" onClick={onClose} aria-label="Close sidebar">
+          <button
+            className="sidebar-close"
+            onClick={onClose}
+            aria-label="Close sidebar"
+          >
             <X size={16} />
           </button>
         </div>
 
         {/* Nav sections */}
-        <nav style={{ flex: 1 }}>
+        <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
           {navSections.map(section => (
             <div key={section.label} className="sidebar-section">
               <div className="sidebar-section-label">{section.label}</div>
@@ -99,10 +111,11 @@ export default function Sidebar({ isOpen, onClose }) {
           <div className="sidebar-footer-info">
             <div className="dot" />
             <span className="sidebar-footer-text">
-              {user ? `${user.displayName?.split(' ')[0] || 'Student'} · Active` : 'AI-Powered Prep'}
+              {user
+                ? `${user.displayName?.split(' ')[0] || 'Student'} · Active`
+                : 'AI-Powered Prep'}
             </span>
           </div>
-          {/* Logout removed, now resides in Settings */}
         </div>
       </aside>
     </>
