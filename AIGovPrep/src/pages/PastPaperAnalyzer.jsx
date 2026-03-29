@@ -3,11 +3,12 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { analyzePastPaper } from '../services/ai';
 import { EXAMS } from '../utils/constants';
-import { FileText, Upload, Sparkles, TrendingUp, BarChart2, Target, BookOpen } from 'lucide-react';
+import { FileText, Upload, Sparkles, TrendingUp, BarChart2, Target, BookOpen, Download } from 'lucide-react';
 import './Auth.css';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { generateNotesPdf } from '../utils/pdfGenerator';
 
 export default function PastPaperAnalyzer() {
   const { t, i18n } = useTranslation();
@@ -94,6 +95,15 @@ export default function PastPaperAnalyzer() {
     }, 1000);
   };
 
+  const downloadAnalysisPdf = () => {
+    if (!analysis) return;
+    generateNotesPdf(
+      'Past Paper Analysis',
+      analysis,
+      'Past_Paper_Analysis.pdf'
+    );
+  };
+
   return (
     <main className="page-wrapper" id="past-paper-analyzer">
       <div className="page-with-sidebar">
@@ -136,9 +146,12 @@ export default function PastPaperAnalyzer() {
 
         {analysis && (
           <div className="animate-fadeInUp">
-            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
-              <button className="btn btn-secondary btn-sm" onClick={downloadAnalysis}>
-                <BookOpen size={16} /> Download Analysis
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12, marginBottom: 16 }}>
+              <button className="btn btn-secondary btn-sm" onClick={downloadAnalysisPdf}>
+                <Download size={16} /> Download PDF
+              </button>
+              <button className="btn btn-outline btn-sm" onClick={downloadAnalysis}>
+                <Download size={16} /> Download MD
               </button>
             </div>
             <section className="card" style={{ marginBottom: 24 }}>

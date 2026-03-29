@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { generateTutorLesson } from '../services/ai';
 import { useAuth } from '../contexts/AuthContext';
+import { generateNotesPdf } from '../utils/pdfGenerator';
 
 export default function InteractiveTutor() {
   const { t, i18n } = useTranslation();
@@ -142,6 +143,20 @@ export default function InteractiveTutor() {
     }, 1000);
   };
 
+  const downloadChatPdf = () => {
+    if (messages.length === 0) return;
+    let content = "===== Riya AI Tutor Session =====\n\n";
+    messages.forEach((msg) => {
+      content += `**[${msg.role === 'user' ? 'You' : 'Riya'}]:**\n${msg.content}\n\n`;
+    });
+    
+    generateNotesPdf(
+      'Tutor Session Log',
+      content,
+      'riya_tutor_session.pdf'
+    );
+  };
+
   const clearChat = () => setMessages([]);
 
   return (
@@ -160,10 +175,13 @@ export default function InteractiveTutor() {
             </p>
           </div>
           <div className="tutor-actions" style={{ display: 'flex', gap: 8 }}>
-            <button className="btn btn-sm btn-secondary btn-compact" onClick={downloadChat} disabled={messages.length === 0} title="Download Notes">
-              <Download size={16} /> <span className="hide-mobile">Download</span>
+            <button className="btn btn-sm btn-secondary btn-compact" onClick={downloadChatPdf} disabled={messages.length === 0} title="Download Chat (PDF)">
+              <Download size={16} /> <span className="hide-mobile">PDF</span>
             </button>
-            <button className="btn btn-sm btn-icon" onClick={clearChat} title="Clear Chat">
+            <button className="btn btn-sm btn-outline btn-compact" onClick={downloadChat} disabled={messages.length === 0} title="Download Chat (MD)">
+              <Download size={16} /> <span className="hide-mobile">MD</span>
+            </button>
+            <button className="btn btn-sm btn-icon" onClick={clearChat} title="Clear Chat" style={{ marginLeft: 4 }}>
               <Trash2 size={16} />
             </button>
           </div>
