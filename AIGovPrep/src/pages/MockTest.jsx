@@ -97,26 +97,28 @@ export default function MockTest() {
             <h1><Brain size={28} style={{ verticalAlign: 'middle' }} aria-hidden="true" /> {t('mockTest.title')}</h1>
             <p>{t('mockTest.subtitle')}</p>
           </header>
-          <section className="card animate-fadeInUp" style={{ maxWidth: 500 }}>
-            <div className="input-group" style={{ marginBottom: 16 }}>
-              <label htmlFor="exam-select">{t('studyPlanner.exam')}</label>
-              <select id="exam-select" value={exam} onChange={e => { setExam(e.target.value); setSubject(''); }}>
-                <option value="">Select Exam</option>
-                {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
-              </select>
-            </div>
-            <div className="input-group" style={{ marginBottom: 16 }}>
-              <label htmlFor="subject-select">{t('mockTest.selectSubject')}</label>
-              <select id="subject-select" value={subject} onChange={e => setSubject(e.target.value)}>
-                <option value="">All Subjects</option>
-                {subjects.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-            <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={startQuiz} disabled={loading || !exam} aria-busy={loading}>
-              {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} aria-hidden="true" /> Generating questions...</> : <><Sparkles size={18} aria-hidden="true" /> {t('mockTest.start')}</>}
-            </button>
-            {error && <p role="alert" style={{ color: '#ff6b6b', marginTop: 12, fontSize: '0.85rem' }}>{error}</p>}
-          </section>
+          <div className="content-area">
+            <section className="card animate-fadeInUp" style={{ maxWidth: 500, margin: '0 auto' }}>
+              <div className="input-group" style={{ marginBottom: 16 }}>
+                <label htmlFor="exam-select">{t('studyPlanner.exam')}</label>
+                <select id="exam-select" value={exam} onChange={e => { setExam(e.target.value); setSubject(''); }}>
+                  <option value="">Select Exam</option>
+                  {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
+                </select>
+              </div>
+              <div className="input-group" style={{ marginBottom: 16 }}>
+                <label htmlFor="subject-select">{t('mockTest.selectSubject')}</label>
+                <select id="subject-select" value={subject} onChange={e => setSubject(e.target.value)}>
+                  <option value="">All Subjects</option>
+                  {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+                </select>
+              </div>
+              <button className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }} onClick={startQuiz} disabled={loading || !exam} aria-busy={loading}>
+                {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} aria-hidden="true" /> Generating questions...</> : <><Sparkles size={18} aria-hidden="true" /> {t('mockTest.start')}</>}
+              </button>
+              {error && <p role="alert" style={{ color: '#ff6b6b', marginTop: 12, fontSize: '0.85rem' }}>{error}</p>}
+            </section>
+          </div>
         </div>
       </main>
     );
@@ -127,51 +129,53 @@ export default function MockTest() {
     return (
       <main className="page-wrapper" id="mock-test-result">
         <div className="page-with-sidebar">
-          <header className="animate-fadeInUp" style={{ textAlign: 'center', marginBottom: 32 }}>
-            <h1>{t('mockTest.result')}</h1>
-            <div style={{ fontSize: '3rem', fontWeight: 900, color: score / questions.length >= 0.7 ? 'var(--accent-green)' : score / questions.length >= 0.4 ? 'var(--accent-orange)' : '#ff6b6b', margin: '16px 0' }}>
-              {score}/{questions.length}
-            </div>
-            <p>{Math.round((score / questions.length) * 100)}% Accuracy</p>
-            <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => { setShowResult(false); setQuestions([]); }}>
-              <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
-            </button>
-            {!user && (
-              <div className="card" style={{ marginTop: 24, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
-                <h4 style={{ color: 'var(--primary)', marginBottom: 8 }}>Want to save these results?</h4>
-                <p style={{ fontSize: '0.9rem', marginBottom: 16 }}>Create a free account to track your performance over time and unlock AI analytics.</p>
-                <Link to="/login" className="btn btn-primary" style={{ margin: '0 auto' }}>Login / Create Account</Link>
+          <div className="content-area">
+            <header className="animate-fadeInUp" style={{ textAlign: 'center', marginBottom: 32 }}>
+              <h1>{t('mockTest.result')}</h1>
+              <div style={{ fontSize: '3rem', fontWeight: 900, color: score / questions.length >= 0.7 ? 'var(--accent-green)' : score / questions.length >= 0.4 ? 'var(--accent-orange)' : '#ff6b6b', margin: '16px 0' }}>
+                {score}/{questions.length}
               </div>
+              <p>{Math.round((score / questions.length) * 100)}% Accuracy</p>
+              <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={() => { setShowResult(false); setQuestions([]); }}>
+                <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
+              </button>
+              {!user && (
+                <div className="card" style={{ marginTop: 24, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
+                  <h4 style={{ color: 'var(--primary)', marginBottom: 8 }}>Want to save these results?</h4>
+                  <p style={{ fontSize: '0.9rem', marginBottom: 16 }}>Create a free account to track your performance over time and unlock AI analytics.</p>
+                  <Link to="/login" className="btn btn-primary" style={{ margin: '0 auto' }}>Login / Create Account</Link>
+                </div>
+              )}
+            </header>
+            {user && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {questions.map((q, i) => {
+                const correctAnswer = q.correctAnswer;
+                const isCorrect = answers[q.id] === correctAnswer;
+                return (
+                  <article key={q.id} className="card animate-fadeInUp" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-green)' : '#ff6b6b'}` }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      {isCorrect ? <CheckCircle size={18} color="var(--accent-green)" aria-hidden="true" /> : <XCircle size={18} color="#ff6b6b" aria-hidden="true" />}
+                      <strong>Q{i + 1}.</strong> {q.question}
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
+                      {q.options?.map((opt, oi) => {
+                        const isSelected = answers[q.id] === opt;
+                        const isAnswer = correctAnswer === opt;
+                        return (
+                          <div key={oi} style={{ padding: '6px 12px', borderRadius: 8, fontSize: '0.9rem', background: isAnswer ? 'rgba(0,201,167,0.1)' : isSelected && !isAnswer ? 'rgba(255,64,64,0.1)' : 'transparent', color: isAnswer ? 'var(--accent-green)' : isSelected && !isAnswer ? '#ff6b6b' : 'var(--text-secondary)', fontWeight: isAnswer || isSelected ? 600 : 400 }}>
+                            {opt} {isAnswer && '✓'} {isSelected && !isAnswer && '✗'}
+                          </div>
+                        );
+                      })}
+                    </div>
+                    {q.explanation && <div style={{ padding: '10px 14px', background: 'var(--bg-glass)', borderRadius: 8, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>💡 {q.explanation}</div>}
+                  </article>
+                );
+              })}
+            </div>
             )}
-          </header>
-          {user && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            {questions.map((q, i) => {
-              const correctAnswer = q.correctAnswer;
-              const isCorrect = answers[q.id] === correctAnswer;
-              return (
-                <article key={q.id} className="card animate-fadeInUp" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-green)' : '#ff6b6b'}` }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                    {isCorrect ? <CheckCircle size={18} color="var(--accent-green)" aria-hidden="true" /> : <XCircle size={18} color="#ff6b6b" aria-hidden="true" />}
-                    <strong>Q{i + 1}.</strong> {q.question}
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
-                    {q.options?.map((opt, oi) => {
-                      const isSelected = answers[q.id] === opt;
-                      const isAnswer = correctAnswer === opt;
-                      return (
-                        <div key={oi} style={{ padding: '6px 12px', borderRadius: 8, fontSize: '0.9rem', background: isAnswer ? 'rgba(0,201,167,0.1)' : isSelected && !isAnswer ? 'rgba(255,64,64,0.1)' : 'transparent', color: isAnswer ? 'var(--accent-green)' : isSelected && !isAnswer ? '#ff6b6b' : 'var(--text-secondary)', fontWeight: isAnswer || isSelected ? 600 : 400 }}>
-                          {opt} {isAnswer && '✓'} {isSelected && !isAnswer && '✗'}
-                        </div>
-                      );
-                    })}
-                  </div>
-                  {q.explanation && <div style={{ padding: '10px 14px', background: 'var(--bg-glass)', borderRadius: 8, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>💡 {q.explanation}</div>}
-                </article>
-              );
-            })}
           </div>
-          )}
         </div>
       </main>
     );
@@ -181,51 +185,71 @@ export default function MockTest() {
   return (
     <main className="page-wrapper" id="mock-test-active">
       <div className="page-with-sidebar">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('mockTest.question')} {current + 1} {t('mockTest.of')} ∞ ({questions.length} Loaded)</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: timer < 60 ? '#ff6b6b' : 'var(--accent-orange)', fontWeight: 700, fontSize: '1.2rem' }}>
-              <Clock size={20} aria-hidden="true" /> {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+        <div className="content-area">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{t('mockTest.question')} {current + 1} {t('mockTest.of')} ∞ ({questions.length} Loaded)</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, color: timer < 60 ? '#ff6b6b' : 'var(--accent-orange)', fontWeight: 700, fontSize: '1.2rem' }}>
+                <Clock size={20} aria-hidden="true" /> {Math.floor(timer / 60)}:{(timer % 60).toString().padStart(2, '0')}
+              </div>
+              <button className="btn btn-secondary" onClick={handleSubmit}>
+                <RotateCcw size={16} aria-hidden="true" /> Finish Early
+              </button>
             </div>
-            <button className="btn btn-secondary" onClick={handleSubmit}>
-              <RotateCcw size={16} aria-hidden="true" /> Finish Early
-            </button>
           </div>
-        </div>
 
-        {timer === 0 && (
-          <div className="card animate-fadeIn" style={{ marginBottom: 20, borderLeft: '4px solid #ff6b6b' }}>
-            <h3 style={{ color: '#ff6b6b', display: 'flex', alignItems: 'center', gap: 8 }}>
-              <XCircle size={20} /> Time's Up!
-            </h3>
-            <p style={{ marginTop: 8 }}>Your 10 minutes are over. Submitting your test automatically.</p>
-          </div>
-        )}
-
-        {/* Removed conversation block per user request */}
-        <article className="card animate-fadeIn">
-          <h2 style={{ marginBottom: 20, fontSize: '1.5rem' }}>{q?.question}</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {q?.options?.map((opt, i) => {
-              return (
-                <button key={i} onClick={() => selectAnswer(q.id, opt)}
-                  style={{ padding: '14px 18px', background: answers[q.id] === opt ? 'var(--primary-glow)' : 'var(--bg-glass)', border: `2px solid ${answers[q.id] === opt ? 'var(--primary)' : 'var(--border-color)'}`, borderRadius: 12, color: answers[q.id] === opt ? 'var(--primary-light)' : 'var(--text-secondary)', fontSize: '0.95rem', cursor: 'pointer', textAlign: 'left', transition: 'all 0.2s', fontWeight: answers[q.id] === opt ? 600 : 400 }}
-                  aria-pressed={answers[q.id] === opt}>
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
-        </article>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
-          <button className="btn btn-secondary" disabled={current === 0} onClick={() => setCurrent(current - 1)}>Previous</button>
-          {current < questions.length - 1 ? (
-            <button className="btn btn-primary" onClick={() => setCurrent(current + 1)}>{t('mockTest.next')} <ArrowRight size={16} aria-hidden="true" /></button>
-          ) : (
-            <button className="btn btn-primary" onClick={fetchMoreQuestions} disabled={loadingMore}>
-              {loadingMore ? 'Loading More...' : 'Load Next Questions'} <ArrowRight size={16} aria-hidden="true" />
-            </button>
+          {timer === 0 && (
+            <div className="card animate-fadeIn" style={{ marginBottom: 20, borderLeft: '4px solid #ff6b6b' }}>
+              <h3 style={{ color: '#ff6b6b', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <XCircle size={20} /> Time's Up!
+              </h3>
+              <p style={{ marginTop: 8 }}>Your 10 minutes are over. Submitting your test automatically.</p>
+            </div>
           )}
+
+          {/* Removed conversation block per user request */}
+          <article className="card animate-fadeIn">
+            <h2 style={{ marginBottom: 20, fontSize: '1.5rem', lineHeight: '1.4' }}>{q?.question}</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {q?.options?.map((opt, i) => {
+                const isSelected = answers[q.id] === opt;
+                return (
+                  <button 
+                    key={i} 
+                    onClick={() => selectAnswer(q.id, opt)}
+                    className="btn btn-secondary"
+                    style={{ 
+                      padding: '16px 20px', 
+                      background: isSelected ? 'var(--primary-glow)' : 'var(--bg-secondary)', 
+                      borderColor: isSelected ? 'var(--primary)' : 'var(--border-color)', 
+                      borderRadius: 12, 
+                      color: isSelected ? 'var(--primary)' : 'var(--text-secondary)', 
+                      fontSize: '1rem', 
+                      textAlign: 'left', 
+                      whiteSpace: 'normal',
+                      height: 'auto',
+                      fontWeight: isSelected ? 600 : 400 
+                    }}
+                    aria-pressed={isSelected}>
+                    <div style={{ display: 'flex', gap: 12 }}>
+                      <span style={{ opacity: 0.5, fontWeight: 700 }}>{String.fromCharCode(65 + i)}.</span>
+                      <span>{opt}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </article>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 32 }}>
+            <button className="btn btn-secondary btn-lg" disabled={current === 0} onClick={() => setCurrent(current - 1)}>Previous</button>
+            {current < questions.length - 1 ? (
+              <button className="btn btn-primary btn-lg" onClick={() => setCurrent(current + 1)}>{t('mockTest.next')} <ArrowRight size={18} aria-hidden="true" /></button>
+            ) : (
+              <button className="btn btn-primary btn-lg" onClick={fetchMoreQuestions} disabled={loadingMore}>
+                {loadingMore ? 'Loading More...' : 'Load Next Questions'} <ArrowRight size={18} aria-hidden="true" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </main>
