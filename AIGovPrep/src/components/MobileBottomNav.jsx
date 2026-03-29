@@ -10,7 +10,7 @@ export default function MobileBottomNav() {
     { path: '/dashboard', icon: LayoutDashboard, label: 'nav.dashboard' },
     { path: '/mock-test', icon: Brain, label: 'nav.mockTest' },
     { path: '/pyqs-mock-test', icon: Target, label: 'PYQs' },
-    { path: '/tutor', icon: Bot, label: 'AI Tutor' },
+    { path: '/tutor', icon: Bot, label: 'AI Riya' },
     { path: '/settings', icon: Settings, label: 'Settings' }
   ];
 
@@ -24,7 +24,7 @@ export default function MobileBottomNav() {
         >
           <item.icon size={22} className="nav-icon" />
           <span className="nav-label">
-            {['PYQs', 'AI Tutor', 'Settings'].includes(item.label) ? item.label : t(item.label)}
+            {['PYQs', 'AI Riya', 'Settings'].includes(item.label) ? item.label : t(item.label)}
           </span>
         </NavLink>
       ))}
