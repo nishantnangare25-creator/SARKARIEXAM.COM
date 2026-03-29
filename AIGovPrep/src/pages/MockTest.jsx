@@ -137,7 +137,7 @@ export default function MockTest() {
                 {score}/{questions.length}
               </div>
               <p>{Math.round((score / questions.length) * 100)}% Accuracy</p>
-              <div style={{ display: 'flex', gap: 12, justifyContent: 'center', marginTop: 16, flexWrap: 'wrap' }}>
+              <div className="download-actions" style={{ marginTop: 24 }}>
                 <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); }}>
                   <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
                 </button>

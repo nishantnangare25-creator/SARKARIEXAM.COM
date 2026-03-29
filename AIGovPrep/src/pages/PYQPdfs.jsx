@@ -255,45 +255,44 @@ export default function PYQPdfs() {
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 6 }}>
                      <FileText size={14} /> {pdf.type} • {pdf.size}
                   </p>
-                  <div style={{ marginTop: 'auto', display: 'flex', gap: 12 }}>
-                    <div style={{ display: 'flex', gap: 8, flex: 2 }}>
-                        <button 
-                          className="btn btn-outline" 
-                          style={{ flex: 1, justifyContent: 'center', padding: '10px 0' }}
-                          onClick={() => handleDownload(pdf)}
-                          disabled={isDownloading && downloadId === pdf.id}
-                          title="Download PDF"
-                        >
-                          {isDownloading && downloadId === pdf.id ? (
-                            <Loader2 size={16} className="animate-spin" />
-                          ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
-                              <DownloadCloud size={16} /> PDF
-                            </div>
-                          )}
-                        </button>
-                        <button 
-                          className="btn btn-outline" 
-                          style={{ flex: 1, justifyContent: 'center', padding: '10px 0' }}
-                          onClick={() => handleDownloadText(pdf)}
-                          disabled={isDownloading && downloadId === pdf.id}
-                          title="Download TXT"
-                        >
-                          {isDownloading && downloadId === pdf.id ? (
-                            <Loader2 size={16} className="animate-spin" />
-                          ) : (
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
-                              <FileText size={16} /> TXT
-                            </div>
-                          )}
-                        </button>
-                    </div>
+                  <div className="download-actions" style={{ marginTop: 'auto' }}>
+                    <button 
+                      className="btn btn-outline" 
+                      style={{ flex: 1, padding: '10px 0' }}
+                      onClick={() => handleDownload(pdf)}
+                      disabled={isDownloading && downloadId === pdf.id}
+                      title="Download PDF"
+                    >
+                      {isDownloading && downloadId === pdf.id ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
+                          <DownloadCloud size={16} /> PDF
+                        </div>
+                      )}
+                    </button>
+                    <button 
+                      className="btn btn-outline" 
+                      style={{ flex: 1, padding: '10px 0' }}
+                      onClick={() => handleDownloadText(pdf)}
+                      disabled={isDownloading && downloadId === pdf.id}
+                      title="Download TXT"
+                    >
+                      {isDownloading && downloadId === pdf.id ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
+                          <FileText size={16} /> TXT
+                        </div>
+                      )}
+                    </button>
+                   
                     <button 
                       className="btn btn-primary" 
-                      style={{ flex: 3, justifyContent: 'center' }}
+                      style={{ flex: 2 }}
                       onClick={() => navigate('/pyq-practice', { state: { pdfInfo: pdf } })}
                     >
-                      <BookOpen size={16} style={{ marginRight: 8 }} /> Practice Now
+                      <BookOpen size={16} /> Practice
                     </button>
                   </div>
                 </div>
