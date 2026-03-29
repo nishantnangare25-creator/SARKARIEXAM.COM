@@ -15,6 +15,9 @@ export default function Landing() {
     { icon: <GraduationCap size={24} />, title: t('home.feature4Title'), desc: t('home.feature4Desc'), color: 'blue', link: '/notes' },
     { icon: <BarChart3 size={24} />, title: t('home.feature5Title'), desc: t('home.feature5Desc'), color: 'pink', link: '/analytics' },
     { icon: <Users size={24} />, title: t('home.feature6Title'), desc: t('home.feature6Desc'), color: 'purple', link: '/peer-matching' },
+    { icon: <Zap size={24} />, title: 'AI Riya Tutor', desc: 'Get instant personalized lessons on any topic in your own language using our AI tutor Riya.', color: 'orange', link: '/tutor' },
+    { icon: <Target size={24} />, title: 'PYQs Practice', desc: 'Practice previous year questions from real government exam papers with AI-powered quiz mode.', color: 'green', link: '/pyq-pdfs' },
+    { icon: <Shield size={24} />, title: 'PYQs Mock Test', desc: 'Take full-length mock tests based on real PYQ patterns to simulate actual exam conditions.', color: 'blue', link: '/pyqs-mock-test' },
   ];
 
   const stats = [
