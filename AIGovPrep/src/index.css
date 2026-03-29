@@ -742,3 +742,39 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
   .btn { font-size: 0.82rem; }
   .page-container, .page-with-sidebar { padding: 8px; }
 }
+/* ===== TUTOR MOBILE OPTIMIZATIONS ===== */
+@media (max-width: 768px) {
+  .tutor-header {
+    flex-direction: row !important;
+    align-items: center !important;
+    margin-bottom: 12px !important;
+  }
+  .hide-mobile { display: none !important; }
+  .btn-compact { padding: 8px 10px !important; }
+  .tutor-brand h1 { font-size: 1.25rem !important; gap: 8px !important; }
+  .tutor-lang-info { font-size: 0.7rem !important; }
+  
+  /* Immersive Chat: remove side padding from page-with-sidebar only for tutor */
+  .page-with-sidebar:has(.tutor-chat-container) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: var(--navbar-height) !important;
+  }
+  
+  /* Make the chat container touch the edges */
+  .tutor-chat-container {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+  }
+  
+  .tutor-header, .tutor-disclaimer {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .tutor-brand h1 { font-size: 1.1rem !important; }
+  .tutor-actions { gap: 6px !important; }
+}

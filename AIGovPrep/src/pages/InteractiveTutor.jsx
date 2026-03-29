@@ -149,28 +149,28 @@ export default function InteractiveTutor() {
       <div className="page-with-sidebar" style={{ height: 'calc(100vh - var(--navbar-height))', display: 'flex', flexDirection: 'column' }}>
         
         {/* Tutor Header */}
-        <header className="page-header" style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div>
-            <h1 style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: '1.75rem' }}>
-              <Bot size={28} className="text-blue" /> Riya AI Tutor
+        <header className="page-header tutor-header" style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 1000 }}>
+          <div className="tutor-brand">
+            <h1 style={{ display: 'flex', alignItems: 'center', gap: 12, margin: 0 }}>
+              <Bot size={28} className="text-blue" /> Riya AI
             </h1>
-            <p style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <p className="tutor-lang-info" style={{ display: 'flex', alignItems: 'center', gap: 6, margin: 0 }}>
               <Languages size={14} className="text-muted" /> 
               Selected Language: <strong className="text-blue">{i18n.language.toUpperCase()}</strong>
             </p>
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button className="btn btn-sm btn-outline" onClick={downloadChat} disabled={messages.length === 0}>
-              <Download size={14} /> Download Notes
+          <div className="tutor-actions" style={{ display: 'flex', gap: 8 }}>
+            <button className="btn btn-sm btn-secondary btn-compact" onClick={downloadChat} disabled={messages.length === 0} title="Download Notes">
+              <Download size={16} /> <span className="hide-mobile">Download</span>
             </button>
             <button className="btn btn-sm btn-icon" onClick={clearChat} title="Clear Chat">
-              <Trash2 size={14} />
+              <Trash2 size={16} />
             </button>
           </div>
         </header>
 
         {/* Chat Container */}
-        <section className="card" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#FFFFFF' }}>
+        <section className="card tutor-chat-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#FFFFFF', width: '100%', maxWidth: 1000 }}>
           
           {/* Scroll Area */}
           <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: 24, background: '#F9FAFB' }}>
@@ -263,7 +263,7 @@ export default function InteractiveTutor() {
         </section>
 
         {/* Disclaimer */}
-        <p style={{ textAlign: 'center', fontSize: '0.72rem', marginTop: 12, color: 'var(--text-muted)' }}>
+        <p className="tutor-disclaimer" style={{ textAlign: 'center', fontSize: '0.72rem', marginTop: 12, color: 'var(--text-muted)', width: '100%' }}>
           <Info size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} /> 
           Riya AI can make mistakes. Verify important info with official sources.
         </p>
