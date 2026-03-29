@@ -136,13 +136,13 @@ export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
   container.style.lineHeight = '1.6';
   container.style.backgroundColor = '#ffffff';
 
-  // Branding Header
+  // Branding Header (High Contrast Black & White)
   const headerHtml = `
-    <div style="border-bottom: 2px solid #f47521; padding-bottom: 12px; margin-bottom: 24px;">
-      <h1 style="color: #f47521; margin: 0 0 4px 0; font-size: 28px;">Sarkari Exam AI</h1>
-      <p style="color: #6b7280; font-style: italic; margin: 0; font-size: 14px;">Study Notes | Elevate Your Learning</p>
+    <div style="border-bottom: 2px solid #000000; padding-bottom: 12px; margin-bottom: 24px;">
+      <h1 style="color: #000000; margin: 0 0 4px 0; font-size: 28px;">Sarkari Exam AI</h1>
+      <p style="color: #4b5563; font-style: italic; margin: 0; font-size: 14px;">Study Notes | Study Session Log</p>
     </div>
-    <h2 style="font-size: 24px; color: #111827; margin-top: 0; margin-bottom: 16px;">${title}</h2>
+    <h2 style="font-size: 24px; color: #000000; margin-top: 0; margin-bottom: 16px;">${title}</h2>
   `;
 
   // Parse markdown securely into HTML
@@ -150,7 +150,7 @@ export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
   
   // Format body
   const bodyHtml = `
-    <div style="font-size: 14px;">
+    <div style="font-size: 14px; color: #000000;">
       ${parsedMarkdown}
     </div>
   `;
@@ -160,11 +160,11 @@ export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
   // Scoped CSS for markdown styling so it prints beautiful bold, lists, etc.
   const style = document.createElement('style');
   style.textContent = `
-    h1, h2, h3, h4 { color: #111827; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
-    p { margin-bottom: 1em; }
+    h1, h2, h3, h4 { color: #000000; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
+    p { margin-bottom: 1em; color: #000000; }
     ul, ol { padding-left: 24px; margin-bottom: 1em; }
-    li { margin-bottom: 0.25em; }
-    strong, b { color: #f47521; font-weight: 700; }
+    li { margin-bottom: 0.25em; color: #000000; }
+    strong, b { color: #000000; font-weight: 700; }
     code { background: #f3f4f6; padding: 2px 4px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
     pre { background: #f3f4f6; padding: 12px; border-radius: 8px; overflow-x: auto; }
   `;
@@ -174,36 +174,39 @@ export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
   container.style.position = 'fixed';
   container.style.left = '-9999px';
   container.style.top = '0';
-  container.style.width = '800px'; // Force static width for consistent rendering
+  container.style.width = '800px'; 
   container.style.zIndex = '-1';
   document.body.appendChild(container);
 
   // Generate the PDF from HTML directly
   const opt = {
-    margin: [10, 10, 15, 10], // top, left, bottom, right
+    margin: [10, 10, 15, 10], 
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
     jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
   };
 
-  html2pdf().set(opt).from(container).toPdf().get('pdf').output('blob').then((blob) => {
-    // Manual download trigger for mobile compatibility
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-    
-    // Clean up container
-    document.body.removeChild(container);
-  }).catch(err => {
-    console.error('PDF Generation Error:', err);
-    if (container.parentNode) {
+  // Give the browser 150ms to finish rendering the content before capture
+  setTimeout(() => {
+    html2pdf().set(opt).from(container).toPdf().get('pdf').output('blob').then((blob) => {
+      // Manual download trigger for mobile compatibility
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      // Clean up container
       document.body.removeChild(container);
-    }
-  });
+    }).catch(err => {
+      console.error('PDF Generation Error:', err);
+      if (container.parentNode) {
+        document.body.removeChild(container);
+      }
+    });
+  }, 150);
 };
