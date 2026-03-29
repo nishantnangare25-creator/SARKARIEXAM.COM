@@ -95,9 +95,6 @@ export default function NotesGenerator() {
                 <button className="btn btn-secondary btn-sm" onClick={downloadNotes}>
                   <Download size={16} /> PDF
                 </button>
-                <button className="btn btn-outline btn-sm" onClick={downloadNotesText}>
-                  <Download size={16} /> MD/Text
-                </button>
               </div>
             </div>
             <div id="notes-content" className="card" style={{ lineHeight: 1.8 }}>

@@ -121,9 +121,6 @@ export default function StudyPlanner() {
                 <button className="btn btn-secondary btn-sm" onClick={downloadPlanPdf}>
                   <Download size={14} style={{ marginRight: 4 }} /> PDF
                 </button>
-                <button className="btn btn-outline btn-sm" onClick={downloadPlan}>
-                  <Download size={14} style={{ marginRight: 4 }} /> Text/MD
-                </button>
               </div>
             </div>
             <section className="card" style={{ marginBottom: 24 }}>
