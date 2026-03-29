@@ -742,39 +742,32 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
   .btn { font-size: 0.82rem; }
   .page-container, .page-with-sidebar { padding: 8px; }
 }
-/* ===== TUTOR MOBILE OPTIMIZATIONS ===== */
-@media (max-width: 768px) {
-  .tutor-header {
-    flex-direction: row !important;
-    align-items: center !important;
-    margin-bottom: 12px !important;
-  }
-  .hide-mobile { display: none !important; }
-  .btn-compact { padding: 8px 10px !important; }
-  .tutor-brand h1 { font-size: 1.25rem !important; gap: 8px !important; }
-  .tutor-lang-info { font-size: 0.7rem !important; }
-  
-  /* Immersive Chat: remove side padding from page-with-sidebar only for tutor */
-  .page-with-sidebar:has(.tutor-chat-container) {
-    padding-left: 0 !important;
-    padding-right: 0 !important;
-    padding-top: var(--navbar-height) !important;
-  }
-  
-  /* Make the chat container touch the edges */
-  .tutor-chat-container {
-    border-radius: 0 !important;
-    border-left: none !important;
-    border-right: none !important;
-  }
-  
-  .tutor-header, .tutor-disclaimer {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-  }
+/* Immersive Tutor Layout: remove sidebar margin for full page */
+.immersive-tutor-layout {
+  margin-left: 0 !important;
+  width: 100% !important;
+  max-width: none !important;
+  padding: 16px !important;
 }
 
-@media (max-width: 480px) {
-  .tutor-brand h1 { font-size: 1.1rem !important; }
-  .tutor-actions { gap: 6px !important; }
+.tutor-page-wrapper {
+  padding-bottom: 0 !important;
+}
+
+@media (max-width: 768px) {
+  .immersive-tutor-layout {
+    padding: 0 !important;
+    height: calc(100vh - var(--navbar-height)) !important;
+  }
+  
+  .tutor-header {
+    padding-top: 8px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  /* Pushes the disclaimer down and ensures chat takes the rest */
+  .tutor-disclaimer {
+    padding: 8px !important;
+    margin: 0 !important;
+  }
 }

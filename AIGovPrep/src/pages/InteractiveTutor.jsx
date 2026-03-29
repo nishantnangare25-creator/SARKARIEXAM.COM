@@ -145,11 +145,11 @@ export default function InteractiveTutor() {
   const clearChat = () => setMessages([]);
 
   return (
-    <main className="page-wrapper">
-      <div className="page-with-sidebar" style={{ height: 'calc(100vh - var(--navbar-height))', display: 'flex', flexDirection: 'column' }}>
+    <main className="page-wrapper tutor-page-wrapper">
+      <div className="page-with-sidebar immersive-tutor-layout" style={{ height: 'calc(100vh - var(--navbar-height))', display: 'flex', flexDirection: 'column' }}>
         
         {/* Tutor Header */}
-        <header className="page-header tutor-header" style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: 1000 }}>
+        <header className="page-header tutor-header" style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%' }}>
           <div className="tutor-brand">
             <h1 style={{ display: 'flex', alignItems: 'center', gap: 12, margin: 0 }}>
               <Bot size={28} className="text-blue" /> Riya AI
@@ -170,7 +170,7 @@ export default function InteractiveTutor() {
         </header>
 
         {/* Chat Container */}
-        <section className="card tutor-chat-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#FFFFFF', width: '100%', maxWidth: 1000 }}>
+        <section className="card tutor-chat-container" style={{ flex: 1, display: 'flex', flexDirection: 'column', padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)', background: '#FFFFFF', width: '100%' }}>
           
           {/* Scroll Area */}
           <div ref={scrollRef} style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: 24, background: '#F9FAFB' }}>

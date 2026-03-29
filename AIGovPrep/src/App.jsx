@@ -30,11 +30,12 @@ import './index.css';
 function AppLayout({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
   const isPublicPage = ['/', '/login', '/about', '/privacy'].includes(location.pathname);
+  const isImmersivePage = ['/tutor'].includes(location.pathname);
 
   return (
     <>
       <Navbar onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-      {!isPublicPage && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
+      {(!isPublicPage && !isImmersivePage) && <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />}
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={<Login />} />
