@@ -141,36 +141,6 @@ export default function MockTest() {
                 <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); }}>
                   <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
                 </button>
-                <button className="btn btn-outline" onClick={() => {
-                  const examName = EXAMS.find(e => e.id === exam)?.name || 'Competitive';
-                  generateQuestionPdf(
-                    `Mock Test Result: ${examName}`,
-                    `Score: ${score}/${questions.length} (${Math.round((score/questions.length)*100)}%) | Subject: ${subject || 'All'}`,
-                    questions.map(q => ({
-                      ...q,
-                      question: `${q.question}${answers[q.id] === q.correctAnswer ? ' (Correct ✓)' : ` (Your Answer: ${answers[q.id] || 'None'} ✗)`}`
-                    })),
-                    `Mock_Test_${examName}_${Date.now()}.pdf`
-                  );
-                }}>
-                  <Download size={16} aria-hidden="true" /> PDF
-                </button>
-                <button className="btn btn-outline" onClick={() => {
-                   const examName = EXAMS.find(e => e.id === exam)?.name || 'Competitive';
-                   let text = `Mock Test Result: ${examName}\nScore: ${score}/${questions.length}\nAccuracy: ${Math.round((score/questions.length)*100)}%\n\n`;
-                   questions.forEach((q, i) => {
-                     text += `Q${i+1}: ${q.question}\nYour Answer: ${answers[q.id] || 'None'}\nCorrect Answer: ${q.correctAnswer}\nExplanation: ${q.explanation}\n\n`;
-                   });
-                   const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
-                   const url = URL.createObjectURL(blob);
-                   const link = document.createElement('a');
-                   link.href = url;
-                   link.download = `Mock_Test_${examName}_${Date.now()}.txt`;
-                   link.click();
-                   URL.revokeObjectURL(url);
-                }}>
-                  <Download size={16} aria-hidden="true" /> Text
-                </button>
               </div>
               {!user && (
                 <div className="card" style={{ marginTop: 24, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>

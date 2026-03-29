@@ -257,42 +257,11 @@ export default function PYQPdfs() {
                   </p>
                   <div className="download-actions" style={{ marginTop: 'auto' }}>
                     <button 
-                      className="btn btn-outline" 
-                      style={{ flex: 1, padding: '10px 0' }}
-                      onClick={() => handleDownload(pdf)}
-                      disabled={isDownloading && downloadId === pdf.id}
-                      title="Download PDF"
-                    >
-                      {isDownloading && downloadId === pdf.id ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
-                          <DownloadCloud size={16} /> PDF
-                        </div>
-                      )}
-                    </button>
-                    <button 
-                      className="btn btn-outline" 
-                      style={{ flex: 1, padding: '10px 0' }}
-                      onClick={() => handleDownloadText(pdf)}
-                      disabled={isDownloading && downloadId === pdf.id}
-                      title="Download TXT"
-                    >
-                      {isDownloading && downloadId === pdf.id ? (
-                        <Loader2 size={16} className="animate-spin" />
-                      ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', fontSize: '0.7rem' }}>
-                          <FileText size={16} /> TXT
-                        </div>
-                      )}
-                    </button>
-                   
-                    <button 
                       className="btn btn-primary" 
-                      style={{ flex: 2 }}
+                      style={{ flex: 1 }}
                       onClick={() => navigate('/pyq-practice', { state: { pdfInfo: pdf } })}
                     >
-                      <BookOpen size={16} /> Practice
+                      <BookOpen size={16} /> Start Practice Test
                     </button>
                   </div>
                 </div>
