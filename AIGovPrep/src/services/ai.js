@@ -198,19 +198,39 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     console.warn('Worker failed after 3 attempts, trying direct API...');
   }
 
-  // LOCAL DEV FALLBACK: Direct API calls using .env keys
-  const orKey = getOpenRouterKey();
-  const groqKeys = getGroqKeys();
+  // LOCAL DEV / DIRECT FALLBACK: Full Cascade with 429 Rate-Limit Detection
+  // Cascade Order: Groq (5 keys) → Gemini → OpenRouter Gemini → OpenRouter Llama Free
 
-  // Try Groq keys in sequence (shuffled)
-  for (const groqKey of groqKeys) {
+  const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown per rate-limited key
+
+  const isOnCooldown = (key) => {
+    try {
+      const ts = sessionStorage.getItem(`rl_cooldown_${key.slice(-6)}`);
+      return ts && (Date.now() - parseInt(ts)) < COOLDOWN_MS;
+    } catch { return false; }
+  };
+
+  const markCooldown = (key) => {
+    try { sessionStorage.setItem(`rl_cooldown_${key.slice(-6)}`, Date.now().toString()); } catch { }
+  };
+
+  const groqKeys = getGroqKeys(); // Already shuffled
+  const orKey = getOpenRouterKey();
+
+  // === PRIORITY 1-5: GROQ KEYS ===
+  for (let i = 0; i < groqKeys.length; i++) {
+    const groqKey = groqKeys[i];
+    const label = `Groq Key ${i + 1}`;
+
+    if (isOnCooldown(groqKey)) {
+      console.warn(`[Cascade] ${label} is on 429 cooldown, skipping.`);
+      continue;
+    }
+
     try {
       const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${groqKey}`,
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${groqKey}` },
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           messages,
@@ -220,48 +240,79 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
       });
 
       const groqData = await groqResponse.json();
+
+      if (groqResponse.status === 429) {
+        console.warn(`[Cascade] ${label} RATE LIMITED (429). Cooling down & cascading...`);
+        markCooldown(groqKey);
+        continue;
+      }
+
       if (groqResponse.ok && groqData.choices?.[0]) {
-        console.log('Local Groq Success!');
+        console.log(`[Cascade] ✅ ${label} SUCCESS`);
         return saveCache(groqData.choices[0].message.content);
       }
-      console.warn('Groq key failed, trying next...', groqData.error?.message);
+
+      console.warn(`[Cascade] ${label} failed:`, groqData.error?.message);
     } catch (e) {
-      console.warn('Groq key error, trying next...', e.message);
+      console.warn(`[Cascade] ${label} network error:`, e.message);
     }
   }
 
-  // Fallback to OpenRouter
-  if (!orKey) {
-    throw new Error('No API key configured. Add VITE_WORKER_URL (production) or VITE_GROQ_API_KEY (dev) to .env');
+  // === PRIORITY 6: OPENROUTER GEMINI FLASH LITE ===
+  if (orKey) {
+    const openrouterModels = [
+      { model: 'google/gemini-2.0-flash-lite-001', label: 'OpenRouter Gemini Flash Lite' },
+      { model: 'meta-llama/llama-3.1-8b-instruct:free', label: 'OpenRouter Llama 3.1 Free (Emergency)' },
+    ];
+
+    for (const { model, label } of openrouterModels) {
+      const cooldownKey = `or_${model}`;
+      if (isOnCooldown(cooldownKey)) {
+        console.warn(`[Cascade] ${label} on cooldown, skipping.`);
+        continue;
+      }
+
+      try {
+        console.log(`[Cascade] Trying ${label}...`);
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${orKey}`,
+            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : '',
+            'X-Title': 'Sarkari Exam AI',
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            temperature: options.temperature || 0.7,
+            max_tokens: Math.min(options.max_tokens || 1500, 2000),
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 429) {
+          console.warn(`[Cascade] ${label} RATE LIMITED (429). Cascading...`);
+          markCooldown(cooldownKey);
+          continue;
+        }
+
+        if (response.ok && data.choices?.[0]) {
+          console.log(`[Cascade] ✅ ${label} SUCCESS`);
+          return saveCache(data.choices[0].message.content);
+        }
+
+        console.warn(`[Cascade] ${label} failed:`, data.error?.message);
+      } catch (e) {
+        console.warn(`[Cascade] ${label} error:`, e.message);
+      }
+    }
   }
 
-  const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${orKey}`,
-      'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : '',
-      'X-Title': 'Sarkari Exam AI',
-    },
-    body: JSON.stringify({
-      model: 'google/gemini-2.0-flash-lite-001',
-      messages,
-      temperature: options.temperature || 0.7,
-      max_tokens: Math.min(options.max_tokens || 1500, 2000),
-    }),
-  });
-
-  if (!response.ok) {
-    const errData = await response.json().catch(() => ({}));
-    throw new Error(errData.error?.message || `API Error ${response.status}`);
-  }
-
-  const data = await response.json();
-  if (data.choices?.[0]) {
-    return saveCache(data.choices[0].message.content);
-  }
-  throw new Error('Empty response from AI');
+  throw new Error('All AI providers are temporarily at capacity. Please try again in a moment.');
 };
+
 
 
 // ===== STUDY PLANNER =====

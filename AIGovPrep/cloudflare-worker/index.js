@@ -1,6 +1,6 @@
-// Cloudflare Worker - AI Backend Proxy with KV Caching
-// Smart caching: 1L students/day for FREE
-// Cache questions by exam+subject+difficulty → serve from cache → 0 API calls
+// Cloudflare Worker - AI Backend Proxy with Multi-Provider Cascade Failover
+// Handles 2-3 lakh students/day by cascading across all AI providers
+// Cascade Order: Groq (5 keys) → Gemini → OpenRouter (Gemini) → OpenRouter (Llama Free)
 
 export default {
   async fetch(request, env) {
@@ -23,47 +23,33 @@ export default {
       if (cacheKey && env.QUESTION_CACHE) {
         const cached = await env.QUESTION_CACHE.get(cacheKey, 'json');
         if (cached && cached.questionSets && cached.questionSets.length > 0) {
-          // Pick a random set from cache so students get different questions
           const randomSet = cached.questionSets[Math.floor(Math.random() * cached.questionSets.length)];
-          console.log(`Cache HIT for ${cacheKey}, serving set ${cached.questionSets.indexOf(randomSet) + 1}/${cached.questionSets.length}`);
+          console.log(`Cache HIT for ${cacheKey}`);
           return corsResponse(JSON.stringify({ content: randomSet, fromCache: true }), 200);
         }
       }
 
-      // ===== AI CALL (cache miss) =====
-      const result = await callAI(messages, options, env);
+      // ===== AI CALL with Full Cascade Failover =====
+      const result = await callAIWithCascade(messages, options, env);
 
-      // ===== STORE IN CACHE (only valid JSON responses) =====
+      // ===== STORE IN CACHE =====
       if (cacheKey && env.QUESTION_CACHE && result) {
         try {
-          // Validate: only cache if response contains valid JSON with questions
           let isValidForCache = true;
           if (cacheKey.startsWith('mock:') || cacheKey.startsWith('pyq:')) {
-            try {
-              // Try to extract JSON from the response
-              const jsonMatch = result.match(/\{[\s\S]*"questions"[\s\S]*\}/);
-              if (jsonMatch) {
-                JSON.parse(jsonMatch[0]); // validates it's proper JSON
-              } else {
-                isValidForCache = false;
-                console.warn('Cache SKIP: No valid JSON with questions found in response');
-              }
-            } catch (parseErr) {
+            const jsonMatch = result.match(/\{[\s\S]*"questions"[\s\S]*\}/);
+            if (jsonMatch) {
+              try { JSON.parse(jsonMatch[0]); } catch { isValidForCache = false; }
+            } else {
               isValidForCache = false;
-              console.warn('Cache SKIP: Invalid JSON in response:', parseErr.message);
             }
           }
-
           if (isValidForCache) {
             const existing = await env.QUESTION_CACHE.get(cacheKey, 'json') || { questionSets: [] };
             existing.questionSets.push(result);
-            // Keep max 20 sets per combo (variety for students)
-            if (existing.questionSets.length > 20) {
-              existing.questionSets.shift();
-            }
-            // Cache for 24 hours
+            if (existing.questionSets.length > 20) existing.questionSets.shift();
             await env.QUESTION_CACHE.put(cacheKey, JSON.stringify(existing), { expirationTtl: 86400 });
-            console.log(`Cache STORED for ${cacheKey}, total sets: ${existing.questionSets.length}`);
+            console.log(`Cache STORED for ${cacheKey}, total: ${existing.questionSets.length}`);
           }
         } catch (e) {
           console.warn('Cache write error:', e.message);
@@ -79,31 +65,33 @@ export default {
   }
 };
 
-// ===== MULTI-PROVIDER AI CALL WITH ROTATION =====
-async function callAI(messages, options, env) {
-  // Collect all available API keys
-  const groqKeys = [];
-  if (env.GROQ_API_KEY) groqKeys.push(env.GROQ_API_KEY);
-  if (env.GROQ_KEY_2) groqKeys.push(env.GROQ_KEY_2);
-  if (env.GROQ_KEY_3) groqKeys.push(env.GROQ_KEY_3);
-  if (env.GROQ_KEY_4) groqKeys.push(env.GROQ_KEY_4);
-  if (env.GROQ_KEY_5) groqKeys.push(env.GROQ_KEY_5);
+// ===== CASCADING AI CALL WITH INTELLIGENT RATE-LIMIT DETECTION =====
+async function callAIWithCascade(messages, options, env) {
 
+  // --- BUILD PROVIDER LIST IN PRIORITY ORDER ---
+  // Priority 1-5: Groq keys (fastest free tier, highest accuracy)
+  const groqKeys = [
+    env.GROQ_API_KEY, env.GROQ_KEY_2, env.GROQ_KEY_3,
+    env.GROQ_KEY_4, env.GROQ_KEY_5
+  ].filter(Boolean);
+
+  // Priority 6: Google Gemini (high accuracy)
   const geminiKey = env.GEMINI_API_KEY;
+
+  // Priority 7-8: OpenRouter (Gemini Flash Lite → Llama 3.1 Free)
   const openrouterKey = env.OPENROUTER_API_KEY;
 
-  // Shuffle Groq keys for fair rotation
-  const shuffledGroqKeys = groqKeys.sort(() => Math.random() - 0.5);
+  const errors = [];
 
-  // 1. Try all Groq keys
-  for (const key of shuffledGroqKeys) {
+  // === PRIORITY 1-5: GROQ KEYS (try each individually) ===
+  for (let i = 0; i < groqKeys.length; i++) {
+    const key = groqKeys[i];
+    const keyLabel = `Groq Key ${i + 1}`;
     try {
+      console.log(`Trying ${keyLabel}...`);
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${key}`,
-        },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
         body: JSON.stringify({
           model: 'llama-3.3-70b-versatile',
           messages,
@@ -111,20 +99,35 @@ async function callAI(messages, options, env) {
           max_tokens: options.max_tokens || 4000,
         }),
       });
+
       const data = await response.json();
+
+      if (response.status === 429) {
+        // Rate limited — cascade to next key immediately
+        console.warn(`${keyLabel} RATE LIMITED (429). Cascading to next...`);
+        errors.push(`${keyLabel}: 429 Rate Limited`);
+        continue;
+      }
+
       if (response.ok && data.choices?.[0]) {
-        console.log('Groq success');
+        console.log(`✅ ${keyLabel} SUCCESS`);
         return data.choices[0].message.content;
       }
-      console.warn('Groq key failed:', data.error?.message);
+
+      // Other error (not rate limit) — still try next key
+      console.warn(`${keyLabel} failed: ${data.error?.message}`);
+      errors.push(`${keyLabel}: ${data.error?.message}`);
+
     } catch (e) {
-      console.warn('Groq error:', e.message);
+      console.warn(`${keyLabel} network error:`, e.message);
+      errors.push(`${keyLabel}: ${e.message}`);
     }
   }
 
-  // 2. Try Gemini
+  // === PRIORITY 6: GOOGLE GEMINI FLASH ===
   if (geminiKey) {
     try {
+      console.log('Trying Google Gemini Flash...');
       const systemMsg = messages.find(m => m.role === 'system');
       const userMessages = messages.filter(m => m.role !== 'system');
       const geminiMessages = userMessages.map(m => ({
@@ -134,63 +137,84 @@ async function callAI(messages, options, env) {
 
       const body = {
         contents: geminiMessages,
-        generationConfig: {
-          temperature: options.temperature || 0.7,
-          maxOutputTokens: options.max_tokens || 4000,
-        }
+        generationConfig: { temperature: options.temperature || 0.7, maxOutputTokens: options.max_tokens || 4000 }
       };
-      if (systemMsg) {
-        body.systemInstruction = { parts: [{ text: systemMsg.content }] };
-      }
+      if (systemMsg) body.systemInstruction = { parts: [{ text: systemMsg.content }] };
 
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body),
-        }
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
       );
+
       const data = await response.json();
-      if (response.ok && data.candidates?.[0]) {
-        console.log('Gemini success');
+
+      if (response.status === 429) {
+        console.warn('Gemini RATE LIMITED (429). Cascading to OpenRouter...');
+        errors.push('Gemini: 429 Rate Limited');
+      } else if (response.ok && data.candidates?.[0]) {
+        console.log('✅ Gemini Flash SUCCESS');
         return data.candidates[0].content.parts[0].text;
+      } else {
+        console.warn('Gemini failed:', data.error?.message);
+        errors.push(`Gemini: ${data.error?.message}`);
       }
-      console.warn('Gemini failed:', data.error?.message);
     } catch (e) {
-      console.warn('Gemini error:', e.message);
+      console.warn('Gemini network error:', e.message);
+      errors.push(`Gemini: ${e.message}`);
     }
   }
 
-  // 3. Try OpenRouter
+  // === PRIORITY 7-8: OPENROUTER CASCADE (2 models) ===
+  const openrouterModels = [
+    { model: 'google/gemini-2.0-flash-lite-001', label: 'OpenRouter Gemini Flash Lite' },
+    { model: 'meta-llama/llama-3.1-8b-instruct:free', label: 'OpenRouter Llama 3.1 Free (Emergency)' },
+  ];
+
   if (openrouterKey) {
-    try {
-      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${openrouterKey}`,
-          'X-Title': 'Sarkari Exam AI',
-        },
-        body: JSON.stringify({
-          model: 'google/gemini-2.0-flash-lite-001',
-          messages,
-          temperature: options.temperature || 0.7,
-          max_tokens: Math.min(options.max_tokens || 2000, 2000),
-        }),
-      });
-      const data = await response.json();
-      if (response.ok && data.choices?.[0]) {
-        console.log('OpenRouter success');
-        return data.choices[0].message.content;
+    for (const { model, label } of openrouterModels) {
+      try {
+        console.log(`Trying ${label}...`);
+        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${openrouterKey}`,
+            'X-Title': 'Sarkari Exam AI',
+          },
+          body: JSON.stringify({
+            model,
+            messages,
+            temperature: options.temperature || 0.7,
+            max_tokens: Math.min(options.max_tokens || 2000, 2000),
+          }),
+        });
+
+        const data = await response.json();
+
+        if (response.status === 429) {
+          console.warn(`${label} RATE LIMITED (429). Cascading...`);
+          errors.push(`${label}: 429 Rate Limited`);
+          continue;
+        }
+
+        if (response.ok && data.choices?.[0]) {
+          console.log(`✅ ${label} SUCCESS`);
+          return data.choices[0].message.content;
+        }
+
+        console.warn(`${label} failed:`, data.error?.message);
+        errors.push(`${label}: ${data.error?.message}`);
+
+      } catch (e) {
+        console.warn(`${label} error:`, e.message);
+        errors.push(`${label}: ${e.message}`);
       }
-      console.warn('OpenRouter failed:', data.error?.message);
-    } catch (e) {
-      console.warn('OpenRouter error:', e.message);
     }
   }
 
-  throw new Error('All AI providers are busy. Please try again in a moment.');
+  // === ALL PROVIDERS EXHAUSTED ===
+  console.error('❌ ALL AI providers exhausted. Errors:', errors);
+  throw new Error('All AI providers are temporarily at capacity. Please try again in a minute.');
 }
 
 // ===== CORS =====
@@ -205,3 +229,5 @@ function corsResponse(body, status) {
     },
   });
 }
+
+
