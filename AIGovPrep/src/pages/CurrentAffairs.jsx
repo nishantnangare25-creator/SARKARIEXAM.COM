@@ -9,6 +9,7 @@ export default function CurrentAffairs() {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const fetchNews = async (force = false) => {
     if (force) setRefreshing(true);
@@ -28,6 +29,10 @@ export default function CurrentAffairs() {
   useEffect(() => {
     fetchNews();
   }, [i18n.language]);
+
+  const filteredNews = selectedCategory === 'All' 
+    ? news 
+    : news.filter(item => item.category.toLowerCase().includes(selectedCategory.toLowerCase()));
 
   const handleShare = async (item) => {
     if (navigator.share) {
@@ -93,36 +98,55 @@ export default function CurrentAffairs() {
           </div>
         </section>
 
-        {/* News Feed */}
         <div className="grid-news animate-fadeInUp" style={{ animationDelay: '0.2s' }}>
-          {news.map((item, i) => (
-            <article key={i} className="card news-card" style={{ marginBottom: 20, transition: 'transform 0.2s', borderLeft: i === 0 ? '4px solid var(--accent-orange)' : 'none' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                <span className="badge badge-saffron" style={{ fontSize: '0.65rem' }}>{item.category.toUpperCase()}</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <Calendar size={12} /> {item.date} Mar
-                </span>
-              </div>
-              <h3 style={{ fontSize: '1.2rem', marginBottom: 16, lineHeight: 1.4 }}>{item.title}</h3>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: 20 }}>
-                {item.desc}
-              </p>
-              
-              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
-                <button className="btn btn-ghost btn-sm" style={{ padding: '4px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)', fontWeight: 600 }} onClick={() => handleShare(item)}>
-                  <Share2 size={16} /> Share News
-                </button>
-              </div>
-            </article>
-          ))}
+          {filteredNews.length > 0 ? (
+            filteredNews.map((item, i) => (
+              <article key={i} className="card news-card" style={{ marginBottom: 20, transition: 'transform 0.2s', borderLeft: i === 0 && selectedCategory === 'All' ? '4px solid var(--accent-orange)' : 'none' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                  <span className="badge badge-saffron" style={{ fontSize: '0.65rem' }}>{item.category.toUpperCase()}</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <Calendar size={12} /> {item.date}
+                  </span>
+                </div>
+                <h3 style={{ fontSize: '1.2rem', marginBottom: 16, lineHeight: 1.4 }}>{item.title}</h3>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem', lineHeight: 1.7, marginBottom: 20 }}>
+                  {item.desc}
+                </p>
+                
+                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
+                  <button className="btn btn-ghost btn-sm" style={{ padding: '4px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)', fontWeight: 600 }} onClick={() => handleShare(item)}>
+                    <Share2 size={16} /> Share News
+                  </button>
+                </div>
+              </article>
+            ))
+          ) : (
+            <div className="card text-center" style={{ padding: '40px' }}>
+              <p className="text-muted">No news found in this category for today.</p>
+              <button className="btn btn-link" onClick={() => setSelectedCategory('All')}>Show all news</button>
+            </div>
+          )}
         </div>
 
         {/* Categories Sidebar/Section */}
         <section className="card animate-fadeInUp" style={{ marginTop: 24, animationDelay: '0.3s' }}>
           <h4>Browse by Category</h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 16 }}>
-            {['National', 'State Specific', 'Economy', 'Science & Tech', 'International', 'Sports', 'Environment'].map(cat => (
-              <button key={cat} className="chip">{cat}</button>
+            {['All', 'National', 'Economy', 'Science & Tech', 'International', 'Sports', 'Policy'].map(cat => (
+              <button 
+                key={cat} 
+                className={`chip ${selectedCategory === cat ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(cat)}
+                style={{ 
+                  cursor: 'pointer',
+                  border: selectedCategory === cat ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                  background: selectedCategory === cat ? 'var(--bg-accent-blue)' : 'var(--bg-secondary)',
+                  color: selectedCategory === cat ? 'var(--primary)' : 'var(--text-primary)',
+                  fontWeight: selectedCategory === cat ? '600' : '400'
+                }}
+              >
+                {cat}
+              </button>
             ))}
           </div>
         </section>
