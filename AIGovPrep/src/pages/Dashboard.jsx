@@ -23,7 +23,7 @@ export default function Dashboard({ onToggleSidebar }) {
 
     const fetchCA = async () => {
       try {
-        const data = await getLatestCurrentAffairs();
+        const data = await getLatestCurrentAffairs(false, i18n.language);
         setCurrentAffairs(data.slice(0, 3));
       } catch (err) {
         console.error(err);
@@ -32,7 +32,7 @@ export default function Dashboard({ onToggleSidebar }) {
       }
     };
     fetchCA();
-  }, []);
+  }, [i18n.language]);
 
   const quickActions = [
     { id: 'mock', title: 'Start Mock Test', desc: 'Full length test', icon: Brain, color: 'blue', path: '/mock-test' },

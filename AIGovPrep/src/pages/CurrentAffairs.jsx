@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { getLatestCurrentAffairs } from '../services/currentAffairs';
 
 export default function CurrentAffairs() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -15,7 +15,7 @@ export default function CurrentAffairs() {
     else setLoading(true);
     
     try {
-      const data = await getLatestCurrentAffairs(force);
+      const data = await getLatestCurrentAffairs(force, i18n.language);
       setNews(data);
     } catch (err) {
       console.error("Failed to fetch news:", err);
@@ -27,7 +27,7 @@ export default function CurrentAffairs() {
 
   useEffect(() => {
     fetchNews();
-  }, []);
+  }, [i18n.language]);
 
   const handleShare = async (item) => {
     if (navigator.share) {
