@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import { 
   Bot, Sparkles, Download, Send, 
-  MessageSquare, User, Info, Trash2, Languages, Loader2
+  MessageSquare, User, Info, Trash2, Languages, Loader2, FileText
 } from 'lucide-react';
 import { generateTutorLesson } from '../services/ai';
 import { useAuth } from '../contexts/AuthContext';
@@ -59,17 +59,77 @@ export default function InteractiveTutor() {
   };
 
   const downloadChatPdf = () => {
-    if (messages.length === 0) return;
-    let content = "# Riya AI Tutor Session Log\n\n";
-    messages.forEach((msg) => {
-      content += `### ${msg.role === 'user' ? 'You' : 'Riya'}\n${msg.content}\n\n`;
-    });
-    
-    generateNotesPdf(
-      'Riya AI Tutor Session',
-      content,
-      'riya_tutor_session.pdf'
-    );
+    try {
+      if (messages.length === 0) return;
+      
+      const sessionDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+      const filename = `Riya_Session_${sessionDate.replace(' ', '_')}.pdf`;
+      
+      let content = "# Riya AI Tutor Session Log\n\n";
+      messages.forEach((msg) => {
+        const roleName = msg.role === 'user' ? 'You' : 'Riya';
+        content += `### ${roleName}\n${msg.content}\n\n`;
+      });
+      
+      generateNotesPdf(
+        'Riya AI Tutor Session',
+        content,
+        filename
+      );
+    } catch (err) {
+      console.error("PDF Download Error:", err);
+      setError("Unable to generate PDF. Please try the Text download.");
+    }
+  };
+
+  const downloadChatText = async () => {
+    try {
+      if (messages.length === 0) return;
+      
+      const sessionDate = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
+      const filename = `Riya_Session_${sessionDate.replace(' ', '_')}.md`;
+      
+      let content = "# Riya AI Tutor Session Log\n\n";
+      messages.forEach((msg) => {
+        const roleName = msg.role === 'user' ? 'You' : 'Riya';
+        content += `### ${roleName}\n${msg.content}\n\n`;
+      });
+
+      const mimeType = 'text/markdown;charset=utf-8';
+
+      // Mobile Sharing Support (Best for avoids file number/naming issues)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([content], filename, { type: mimeType });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              title: `Riya AI Session (${sessionDate})`,
+              text: 'My study session log with Riya AI Tutor',
+              files: [file]
+            });
+            return;
+          }
+        } catch (err) {
+          console.warn('Navigator share failed, using fallback:', err);
+        }
+      }
+
+      // Fallback Download (Traditional)
+      const blob = new Blob([content], { type: mimeType });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }, 100);
+    } catch (err) {
+      console.error("Text Download Error:", err);
+      setError("Download failed. Please check your browser permissions.");
+    }
   };
 
   const clearChat = () => {
@@ -107,17 +167,25 @@ export default function InteractiveTutor() {
               className="btn-riya-action" 
               onClick={downloadChatPdf} 
               disabled={messages.length === 0}
-              title="Download Session PDF"
+              title="Download PDF"
             >
-              <Download size={16} />
+              <Download size={15} />
+            </button>
+            <button 
+              className="btn-riya-action" 
+              onClick={downloadChatText} 
+              disabled={messages.length === 0}
+              title="Download Text"
+            >
+              <FileText size={15} />
             </button>
             <button 
               className="btn-riya-action danger" 
               onClick={clearChat} 
               disabled={messages.length === 0}
-              title="Clear Chat History"
+              title="Clear History"
             >
-              <Trash2 size={16} />
+              <Trash2 size={15} />
             </button>
           </div>
         </header>
