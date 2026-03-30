@@ -9,7 +9,7 @@ import {
 import { getLatestCurrentAffairs } from '../services/currentAffairs';
 
 export default function Dashboard({ onToggleSidebar }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
   const [greeting, setGreeting] = useState('');
   const [currentAffairs, setCurrentAffairs] = useState([]);
