@@ -108,17 +108,9 @@ export default function CurrentAffairs() {
                 {item.desc}
               </p>
               
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
-                <div style={{ display: 'flex', gap: 12 }}>
-                  <button className="btn btn-ghost btn-sm" style={{ padding: '4px 8px', fontSize: '0.8rem' }} onClick={() => handleShare(item)}>
-                    <Share2 size={14} /> Share
-                  </button>
-                  <button className="btn btn-ghost btn-sm" style={{ padding: '4px 8px', fontSize: '0.8rem' }}>
-                    <BookOpen size={14} /> Save for Notes
-                  </button>
-                </div>
-                <button className="btn btn-sm btn-link" style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 4 }}>
-                  Read Detail <ArrowLeft size={14} style={{ transform: 'rotate(180deg)' }} />
+              <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
+                <button className="btn btn-ghost btn-sm" style={{ padding: '4px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)', fontWeight: 600 }} onClick={() => handleShare(item)}>
+                  <Share2 size={16} /> Share News
                 </button>
               </div>
             </article>
