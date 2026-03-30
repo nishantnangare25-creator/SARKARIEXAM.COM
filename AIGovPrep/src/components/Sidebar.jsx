@@ -12,8 +12,9 @@ const navSections = [
   {
     label: 'Main',
     items: [
-      { path: '/dashboard',  icon: LayoutDashboard, label: 'nav.dashboard',  iconColor: 'blue'    },
-      { path: '/blog',       icon: Newspaper,       label: 'Blog',           iconColor: 'green'   },
+      { path: '/dashboard',       icon: LayoutDashboard, label: 'nav.dashboard',  iconColor: 'blue'    },
+      { path: '/current-affairs', icon: Newspaper,       label: 'Current Affairs', iconColor: 'saffron' },
+      { path: '/blog',            icon: Newspaper,       label: 'Blog',           iconColor: 'green'   },
     ]
   },
   {

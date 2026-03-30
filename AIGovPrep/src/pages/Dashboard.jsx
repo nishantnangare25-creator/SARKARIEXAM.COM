@@ -4,19 +4,34 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
   Zap, Brain, Target, Sparkles, TrendingUp, 
-  Clock, ArrowRight, Play, BookOpen, Newspaper 
+  Clock, ArrowRight, Play, BookOpen, Newspaper, RefreshCcw 
 } from 'lucide-react';
+import { getLatestCurrentAffairs } from '../services/currentAffairs';
 
 export default function Dashboard({ onToggleSidebar }) {
   const { t } = useTranslation();
   const { user, profile } = useAuth();
   const [greeting, setGreeting] = useState('');
+  const [currentAffairs, setCurrentAffairs] = useState([]);
+  const [caLoading, setCaLoading] = useState(true);
 
   useEffect(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('Good Morning');
     else if (hour < 17) setGreeting('Good Afternoon');
     else setGreeting('Good Evening');
+
+    const fetchCA = async () => {
+      try {
+        const data = await getLatestCurrentAffairs();
+        setCurrentAffairs(data.slice(0, 3));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setCaLoading(false);
+      }
+    };
+    fetchCA();
   }, []);
 
   const quickActions = [
@@ -174,23 +189,27 @@ export default function Dashboard({ onToggleSidebar }) {
                 <span className="badge badge-orange">Latest</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                {[
-                  { date: '17 Mar', title: 'New policy update on Digital India 2.0' },
-                  { date: '16 Mar', title: 'Election Commission guidelines 2026' },
-                  { date: '15 Mar', title: 'G20 summit highlights for aspirants' }
-                ].map((news, i) => (
-                  <div key={i} style={{ display: 'flex', gap: 12, padding: 8, borderRadius: 8, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-tertiary)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
-                    <div style={{ width: 44, height: 44, background: 'var(--bg-accent-saffron)', color: 'var(--accent-orange)', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, flexShrink: 0 }}>
-                      {news.date.split(' ')[0]} <br/> {news.date.split(' ')[1]}
-                    </div>
-                    <div style={{ fontSize: '0.85rem', fontWeight: 500, alignSelf: 'center' }}>
-                      {news.title}
-                    </div>
+                {caLoading ? (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <RefreshCcw className="animate-spin text-saffron" size={24} />
                   </div>
-                ))}
-                <button className="btn btn-ghost btn-sm" style={{ width: '100%', justifyContent: 'center', marginTop: 8 }}>
+                ) : (
+                  currentAffairs.map((news, i) => (
+                    <Link key={i} to="/current-affairs" style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <div style={{ display: 'flex', gap: 12, padding: 8, borderRadius: 8, cursor: 'pointer', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-tertiary)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                        <div style={{ width: 44, height: 44, background: 'var(--bg-accent-saffron)', color: 'var(--accent-orange)', borderRadius: 8, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', fontWeight: 700, flexShrink: 0 }}>
+                          {news.date.split(' ')[0]} <br/> {news.date.split(' ')[1]}
+                        </div>
+                        <div style={{ fontSize: '0.85rem', fontWeight: 500, alignSelf: 'center' }}>
+                          {news.title}
+                        </div>
+                      </div>
+                    </Link>
+                  ))
+                )}
+                <Link to="/current-affairs" className="btn btn-ghost btn-sm" style={{ width: '100%', justifyContent: 'center', marginTop: 8, textDecoration: 'none' }}>
                   View All Updates <ArrowRight size={14} />
-                </button>
+                </Link>
               </div>
             </section>
           </div>

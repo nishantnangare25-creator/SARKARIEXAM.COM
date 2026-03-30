@@ -23,6 +23,7 @@ import AboutUs from './pages/AboutUs';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Blog from './pages/Blog';
 import BlogPost from './pages/BlogPost';
+import CurrentAffairs from './pages/CurrentAffairs';
 import './i18n';
 import './index.css';
 
@@ -57,7 +58,7 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
         <Route path="/about"          element={<AboutUs />} />
         <Route path="/privacy"        element={<PrivacyPolicy />} />
         <Route path="/blog"           element={<Blog />} />
-        <Route path="/blog/:id"       element={<BlogPost />} />
+        <Route path="/current-affairs"  element={<CurrentAffairs />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
       {/* Mobile bottom nav: only shown on phones (<768px), hidden on tablet/desktop */}
