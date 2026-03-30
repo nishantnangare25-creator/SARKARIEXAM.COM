@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { 
   Bot, Sparkles, Download, Send, 
-  MessageSquare, User, Info, Trash2, Languages, Loader2, FileText
+  MessageSquare, User, Info, Trash2, Languages, Loader2, FileText,
+  ArrowLeft
 } from 'lucide-react';
 import { generateTutorLesson } from '../services/ai';
 import { useAuth } from '../contexts/AuthContext';
@@ -13,6 +15,7 @@ import './InteractiveTutor.css';
 export default function InteractiveTutor() {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [messages, setMessages] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
@@ -146,6 +149,14 @@ export default function InteractiveTutor() {
         {/* Modern Compact Header */}
         <header className="riya-header">
           <div className="riya-brand-group">
+            <button 
+              className="btn btn-icon btn-ghost riya-back-btn" 
+              onClick={() => navigate('/dashboard')} 
+              title="Back to Dashboard"
+              style={{ marginRight: '12px', padding: '8px', color: 'var(--text-muted)' }}
+            >
+              <ArrowLeft size={20} />
+            </button>
             <div className="riya-brand-title">
               <Bot size={22} className="text-blue" />
               <span>Riya AI</span>
