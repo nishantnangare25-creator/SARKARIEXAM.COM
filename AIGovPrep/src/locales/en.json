@@ -11,7 +11,7 @@
     "pastPaper": "Past Paper Analyzer",
     "notes": "Notes Generator",
     "analytics": "Analytics",
-    "forum": "Community Forum",
+    "forum": "Community",
     "peerMatch": "Study Partners",
     "settings": "Settings",
     "login": "Login",
@@ -126,7 +126,7 @@
     "noData": "Take some mock tests to see your analytics"
   },
   "forum": {
-    "title": "Community Forum",
+    "title": "Community",
     "subtitle": "Discuss, learn, and grow together",
     "currentAffairs": "Current Affairs",
     "examStrategies": "Exam Strategies",
