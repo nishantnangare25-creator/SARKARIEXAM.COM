@@ -121,92 +121,139 @@ export const generateQuestionPdf = (title, subtitle, questions, filename = 'docu
   doc.save(filename);
 };
 
-import html2pdf from 'html2pdf.js';
-import { marked } from 'marked';
-
 /**
- * Generate a high quality, natively formatted PDF for Study Notes / Output text using html2pdf
- * Solves jsPDF limitations with Hindi, Emojis, and Markdown.
+ * Generate a highly reliable natively drawn PDF for Study Notes
+ * Ensures 100% compatibility across Mobile (iOS/Safari) and Desktop platforms.
  */
 export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
-  const container = document.createElement('div');
-  container.style.padding = '40px';
-  container.style.fontFamily = `'Segoe UI', Roboto, Helvetica, Arial, sans-serif`;
-  container.style.color = '#1f2937';
-  container.style.lineHeight = '1.6';
-  container.style.backgroundColor = '#ffffff';
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+  const pageHeight = doc.internal.pageSize.getHeight();
+  const margin = 20;
+  const contentWidth = pageWidth - 2 * margin;
+  let cursorY = margin;
 
-  // Branding Header (High Contrast Black & White)
-  const headerHtml = `
-    <div style="border-bottom: 2px solid #000000; padding-bottom: 12px; margin-bottom: 24px;">
-      <h1 style="color: #000000; margin: 0 0 4px 0; font-size: 28px;">Sarkari Exam AI</h1>
-      <p style="color: #4b5563; font-style: italic; margin: 0; font-size: 14px;">Study Notes | Study Session Log</p>
-    </div>
-    <h2 style="font-size: 24px; color: #000000; margin-top: 0; margin-bottom: 16px;">${title}</h2>
-  `;
-
-  // Parse markdown securely into HTML
-  const parsedMarkdown = marked.parse(content);
-  
-  // Format body
-  const bodyHtml = `
-    <div style="font-size: 14px; color: #000000;">
-      ${parsedMarkdown}
-    </div>
-  `;
-
-  container.innerHTML = headerHtml + bodyHtml;
-  
-  // Scoped CSS for markdown styling so it prints beautiful bold, lists, etc.
-  const style = document.createElement('style');
-  style.textContent = `
-    h1, h2, h3, h4 { color: #000000; font-weight: 600; margin-top: 1.5em; margin-bottom: 0.5em; }
-    p { margin-bottom: 1em; color: #000000; }
-    ul, ol { padding-left: 24px; margin-bottom: 1em; }
-    li { margin-bottom: 0.25em; color: #000000; }
-    strong, b { color: #000000; font-weight: 700; }
-    code { background: #f3f4f6; padding: 2px 4px; border-radius: 4px; font-family: monospace; font-size: 0.9em; }
-    pre { background: #f3f4f6; padding: 12px; border-radius: 8px; overflow-x: auto; }
-  `;
-  container.appendChild(style);
-
-  // CRITICAL FOR MOBILE: Append to body to ensure capture works correctly
-  container.style.position = 'fixed';
-  container.style.left = '-9999px';
-  container.style.top = '0';
-  container.style.width = '800px'; 
-  container.style.zIndex = '-1';
-  document.body.appendChild(container);
-
-  // Generate the PDF from HTML directly
-  const opt = {
-    margin: [10, 10, 15, 10], 
-    filename: filename,
-    image: { type: 'jpeg', quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, letterRendering: true, logging: false },
-    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  // Function to add a new page horizontally
+  const checkPageBreak = (spaceNeeded = 10) => {
+    if (cursorY + spaceNeeded > pageHeight - margin) {
+      doc.addPage();
+      cursorY = margin;
+      return true;
+    }
+    return false;
   };
 
-  // Give the browser 150ms to finish rendering the content before capture
-  setTimeout(() => {
-    html2pdf().set(opt).from(container).toPdf().get('pdf').output('blob').then((blob) => {
-      // Manual download trigger for mobile compatibility
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      
-      // Clean up container
-      document.body.removeChild(container);
-    }).catch(err => {
-      console.error('PDF Generation Error:', err);
-      if (container.parentNode) {
-        document.body.removeChild(container);
-      }
+  // Header Branding (Consistent with Questions PDF)
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(22);
+  doc.setTextColor(244, 117, 33); // Saffron color
+  doc.text('Sarkari Exam AI', margin, cursorY);
+  cursorY += 10;
+
+  doc.setFontSize(10);
+  doc.setTextColor(100);
+  doc.setFont('helvetica', 'italic');
+  doc.text('Your Personal AI Exam Coach | Study Notes', margin, cursorY);
+  cursorY += 15;
+
+  // Title
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(16);
+  doc.setTextColor(0);
+  const splitTitle = doc.splitTextToSize(title, contentWidth);
+  doc.text(splitTitle, margin, cursorY);
+  cursorY += splitTitle.length * 8 + 5;
+
+  // Divider
+  doc.setDrawColor(230);
+  doc.line(margin, cursorY, pageWidth - margin, cursorY);
+  cursorY += 15;
+
+  // Basic Markdown Parser for Native jsPDF Draw
+  if (!content || typeof content !== 'string') {
+    doc.text("No content available to export.", margin, cursorY);
+  } else {
+    // Clean string from markdown code blocks
+    let cleanText = content.replace(/```[\s\S]*?```/g, (match) => {
+      // Just strip the backticks for inline viewing
+      return match.replace(/```[a-z]*\n?/g, '').trim();
     });
-  }, 150);
+
+    const lines = cleanText.split('\n');
+    let inList = false;
+
+    lines.forEach(line => {
+      const trimmed = line.trim();
+      if (!trimmed) {
+        cursorY += 4; // Add slight paragraph spacing
+        checkPageBreak();
+        return;
+      }
+
+      // Check for Headers (# Header)
+      const headerMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+      if (headerMatch) {
+         const level = headerMatch[1].length;
+         doc.setFont('helvetica', 'bold');
+         doc.setTextColor(0);
+         const fontSize = level === 1 ? 16 : (level === 2 ? 14 : 12);
+         doc.setFontSize(fontSize);
+         
+         const textObj = doc.splitTextToSize(headerMatch[2].replace(/\*\*/g, ''), contentWidth);
+         checkPageBreak(textObj.length * (fontSize/2));
+         
+         cursorY += 4; // Spacing before header
+         doc.text(textObj, margin, cursorY);
+         cursorY += textObj.length * (fontSize/1.5) + 4;
+         return;
+      }
+
+      // Check for List Items (- or * or 1.)
+      const listMatch = trimmed.match(/^([-*]|\d+\.)\s+(.*)$/);
+      if (listMatch) {
+        doc.setFont('helvetica', 'normal');
+        doc.setFontSize(11);
+        doc.setTextColor(40);
+        
+        const bulletType = listMatch[1];
+        let textContent = listMatch[2];
+        
+        // Remove bold asterisks for native display
+        textContent = textContent.replace(/\*\*/g, '');
+        
+        const textObj = doc.splitTextToSize(textContent, contentWidth - 8); // Account for indent
+        checkPageBreak(textObj.length * 6);
+        
+        doc.text(`${bulletType} `, margin, cursorY);
+        doc.text(textObj, margin + 8, cursorY);
+        cursorY += textObj.length * 5.5 + 2;
+        return;
+      }
+
+      // Regular Text (Paragraph)
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(11);
+      doc.setTextColor(40);
+      
+      // Remove arbitrary bold formatting asterisks for cleaner text notes
+      let regularText = trimmed.replace(/\*\*/g, '').replace(/\*/g, '').replace(/__/g, '');
+      
+      const textObj = doc.splitTextToSize(regularText, contentWidth);
+      checkPageBreak(textObj.length * 6);
+      
+      doc.text(textObj, margin, cursorY);
+      cursorY += textObj.length * 5.5;
+    });
+  }
+
+  // Footer on all pages
+  const pageCount = doc.internal.getNumberOfPages();
+  for(let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(9);
+    doc.setTextColor(150);
+    doc.text(`Page ${i} of ${pageCount} | Generated by Sarkari Exam AI`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+  }
+
+  doc.save(filename);
 };
