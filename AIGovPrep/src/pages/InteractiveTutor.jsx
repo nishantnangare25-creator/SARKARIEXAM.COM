@@ -149,14 +149,6 @@ export default function InteractiveTutor() {
         {/* Modern Compact Header */}
         <header className="riya-header">
           <div className="riya-brand-group">
-            <button 
-              className="btn btn-icon btn-ghost riya-back-btn" 
-              onClick={() => navigate('/dashboard')} 
-              title="Back to Dashboard"
-              style={{ marginRight: '12px', padding: '8px', color: 'var(--text-muted)' }}
-            >
-              <ArrowLeft size={20} />
-            </button>
             <div className="riya-brand-title">
               <Bot size={22} className="text-blue" />
               <span>Riya AI</span>
@@ -276,6 +268,27 @@ export default function InteractiveTutor() {
 
         {/* Pinned Input Footer */}
         <section className="riya-input-wrapper">
+          <button 
+            type="button" 
+            className="btn btn-icon" 
+            onClick={() => navigate('/dashboard')}
+            title="Exit to Dashboard"
+            style={{ 
+              background: 'var(--bg-tertiary)', 
+              color: 'var(--text-primary)', 
+              width: '44px', 
+              height: '44px', 
+              borderRadius: '50%',
+              border: '1.5px solid var(--border-color)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              flexShrink: 0
+            }}
+          >
+            <ArrowLeft size={20} />
+          </button>
+
           <form className="riya-input-container" onSubmit={handleSendMessage}>
             <input
               className="riya-input-field"
