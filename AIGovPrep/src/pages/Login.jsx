@@ -1,41 +1,57 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { loginWithEmail, loginWithGoogle, registerWithEmail } from '../services/firebase';
 import { Mail, Lock, Eye, EyeOff, UserPlus, LogIn } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 import './Auth.css';
 
 export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [isRegister, setIsRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // If already logged in, redirect to dashboard immediately
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     setLoading(true);
     try {
       if (isRegister) {
         await registerWithEmail(email, password);
+        setSuccess('Account created successfully! Redirecting...');
       } else {
         await loginWithEmail(email, password);
+        setSuccess('Login successful! Welcome back.');
       }
-      navigate('/dashboard');
+      // Small delay to let user see the success message
+      setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err) {
       setError(err.message);
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleGoogle = async () => {
+    setError('');
     try {
       await loginWithGoogle();
-      navigate('/dashboard');
+      setSuccess('Signed in with Google! Redirecting...');
+      setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err) {
       setError(err.message);
     }
@@ -53,6 +69,7 @@ export default function Login() {
         </div>
 
         {error && <div className="auth-error">{error}</div>}
+        {success && <div className="auth-success" style={{ background: 'var(--bg-accent-green)', color: 'var(--accent-green)', padding: '12px', borderRadius: '8px', marginBottom: '20px', fontSize: '0.9rem', textAlign: 'center', border: '1px solid var(--accent-green)' }}>{success}</div>}
 
         <form onSubmit={handleSubmit} className="auth-form">
           <div className="input-group">
