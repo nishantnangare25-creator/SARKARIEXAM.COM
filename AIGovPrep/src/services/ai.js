@@ -288,6 +288,7 @@ export const generateStudyPlan = async ({ exam, hours, level, weakSubjects, stro
 // ===== MOCK TEST QUESTIONS =====
 export const generateMockQuestions = async ({ exam, subject, difficulty, count, language }) => {
   const lang = getLanguageName(language);
+  const randomSeed = Math.floor(Math.random() * 100000); // Prevent AI determinism
   const messages = [
     {
       role: 'system',
@@ -308,14 +309,15 @@ Explanation: [1-2 sentences of explanation]`
       content: `Generate ${count || 5} practice MCQ questions for ${exam} exam.
 - Subject: ${subject || 'General'}
 - Difficulty: ${difficulty || 'medium'}
+- Randomization Seed: ${randomSeed} (Ensure these questions are highly diverse and different from previous sets)
 - Keep explanations SHORT (1-2 sentences).
 - CRITICAL: Return ONLY the structured text, no extra conversational filler.
 - Respond in: ${lang}`
     }
   ];
   try {
-    const cacheKey = `mock:${exam}:${subject || 'general'}:${difficulty || 'medium'}:${lang}:text`;
-    const result = await callAI(messages, { max_tokens: 4000 }, cacheKey);
+    // Intentionally removed cacheKey to prevent students from getting repeating questions
+    const result = await callAI(messages, { max_tokens: 4000 });
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
       // Fallback for strict JSON parser if text parsing didn't catch anything due to model ignoring formatting
@@ -334,6 +336,7 @@ Explanation: [1-2 sentences of explanation]`
 export const generatePYQSMockQuestions = async ({ topic, year, count, language }) => {
   const lang = getLanguageName(language);
   const yearContext = year ? ` from the year ${year}` : '';
+  const randomSeed = Math.floor(Math.random() * 100000); // Prevent AI determinism
   const messages = [
     {
       role: 'system',
@@ -352,6 +355,7 @@ Explanation: [1-2 sentences of explanation]`
     {
       role: 'user',
       content: `Generate ${count || 5} Past Year Questions (PYQs) for: ${topic}${yearContext}.
+- Randomization Seed: ${randomSeed} (Randomly select a unique batch of questions from that paper, DO NOT select the exact same first 10 questions)
 - Use real historical questions if available.
 - Keep explanations SHORT (1-2 sentences).
 - CRITICAL: Return ONLY the structured text, no extra conversational filler.
@@ -359,8 +363,8 @@ Explanation: [1-2 sentences of explanation]`
     }
   ];
   try {
-    const cacheKey = `pyq:${topic}:${year || 'any'}:${lang}:text`;
-    const result = await callAI(messages, { max_tokens: 4000 }, cacheKey);
+    // Intentionally removed cacheKey so multiple attempts of the same PYQ give different question batches
+    const result = await callAI(messages, { max_tokens: 4000 });
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
       const fallbackParsed = extractJSON(result);
