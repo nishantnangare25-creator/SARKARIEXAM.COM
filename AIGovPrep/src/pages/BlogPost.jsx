@@ -37,6 +37,26 @@ export default function BlogPost() {
           </Link>
 
           <article>
+            {post.featuredImage && (
+              <div 
+                className="animate-fadeIn" 
+                style={{ 
+                  width: '100%', 
+                  height: '400px', 
+                  borderRadius: '24px', 
+                  overflow: 'hidden', 
+                  marginBottom: '32px',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
+                  border: '1px solid var(--border-color)'
+                }}
+              >
+                <img 
+                  src={post.featuredImage} 
+                  alt={post.title} 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                />
+              </div>
+            )}
             <div style={{ marginBottom: '40px' }}>
               <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
                 {post.tags?.map(tag => (
@@ -44,7 +64,7 @@ export default function BlogPost() {
                 ))}
               </div>
               
-              <h1 style={{ fontSize: '2.5rem', lineHeight: 1.2, marginBottom: '20px' }}>
+              <h1 style={{ fontSize: '2.5rem', lineHeight: 1.2, marginBottom: '20px', color: 'var(--text-primary)' }}>
                 {post.title}
               </h1>
               

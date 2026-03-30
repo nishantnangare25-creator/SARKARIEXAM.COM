@@ -14,6 +14,10 @@ const countArg = process.argv.find(a => a.startsWith('--count='));
 const POSTS_TO_GENERATE = countArg ? parseInt(countArg.split('=')[1], 10) : 1;
 
 const KEYWORDS = [
+  // AI & Technology Keywords (User Requested)
+  'AI', 'Midjourney', 'Artificial Intelligence', 'Midjourney AI', 'ChatGPT 4', 'AI Chat', 'OpenAI', 'Open AI', 'Generative AI', 'AI Website', 'AI Chatbot Online', 'Conversational AI', 'AI Assistant', 'AI Generated', 'AI GPT', 'AI Robot', 'ChatGPT 4 AI Chatbot',
+  
+  // Government Exam Keywords (Original)
   'UPSC syllabus 2025 complete guide',
   'UPSC exam samples and previous year papers',
   'MPSC online classes free resources',
@@ -35,37 +39,38 @@ async function generateBlogPost(keyword) {
   console.log(`🤖 Generating SEO blog post for keyword: "${keyword}"...`);
 
   const prompt = `
-  You are a senior SEO content writer and educator for Sarkari Exam AI — India's #1 AI-powered government exam preparation platform (UPSC, SSC, Banking, MPSC, Railway, etc.).
+  You are a senior SEO content writer and educator for Sarkari Exam AI — India's #1 AI-powered government exam preparation platform and AI Hub.
   
   Write a comprehensive, engaging, and highly informative blog post targeting the search keyword: "${keyword}".
   
-  The content MUST strictly adhere to Google's Helpful Content Guidelines:
-  - Write for real students, not just for search engines
-  - Include actionable advice, study tips, and real strategies
-  - Be accurate, trustworthy, and educational
-  - Use a warm, encouraging, expert tone
+  The content MUST strictly adhere to Google's Helpful Content Guidelines (E-E-A-T):
+  - Experience: Share real-world examples and practical insights.
+  - Expertise: Provide accurate, well-researched information.
+  - Authoritativeness: Write with confidence and clarity.
+  - Trustworthiness: Be transparent, cite reputable facts, and avoid clickbait.
   
   Structure the article with:
-  1. A compelling introduction (explain the challenge aspirants face)
-  2. 3-4 main sections with H2 headings covering key aspects of the topic
-  3. At least one FAQ section (H2: "Frequently Asked Questions") with 3 Q&A pairs
-  4. A motivating conclusion with a call-to-action to use Sarkari Exam AI
+  1. A compelling introduction (hook the reader immediately).
+  2. 4-5 detailed sections with H2/H3 headings.
+  3. A dedicated section on "How Sarkari Exam AI can help" (even for AI tech topics, link it back to personal growth or study aid).
+  4. At least one FAQ section (H2: "Frequently Asked Questions") with 3-4 Q&A pairs.
+  5. A motivating conclusion with a solid Call-To-Action (CTA).
 
-  IMPORTANT: Naturally weave in mentions of Sarkari Exam AI's features as practical solutions:
-  - Smart AI Mock Tests & PYQ Analysis
-  - AI Study Planner & Customizable Timetables
-  - Instant Notes Generator & PDF Downloads
-  - Interactive AI Tutor for instant doubt resolution
-  - Deep Performance Analytics & Tracking
-  - Free multi-lingual support (Hindi, Marathi, Tamil, Telugu, etc.)
+  IMPORTANT:
+  - Use high-quality HTML markup (<h2>, <h3>, <p>, <ul>, <li>, <strong>).
+  - Include a "Featured Image Description" that describes a professional, eye-catching image for this topic.
   
   Format the response STRICTLY as a JSON object:
   {
     "title": "A catchy, SEO-optimized H1 title (60-70 chars)",
     "excerpt": "A compelling 150-160 character meta description naturally including the target keyword",
-    "content": "The full blog post in well-formatted HTML using <h2>, <h3>, <p>, <ul>, <li>, <strong>. Do NOT use markdown code blocks — only raw HTML string.",
-    "tags": ["tag1", "tag2", "tag3", "tag4"]
+    "content": "The full blog post in well-formatted HTML. (Do NOT use markdown code blocks).",
+    "tags": ["tag1", "tag2", "tag3", "tag4"],
+    "featuredImage": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200",
+    "imagePrompt": "A highly detailed, professional digital art of [keyword topic], cinematic lighting, 8k resolution."
   }
+  
+  *Note: For the featuredImage, use a relevant Unsplash URL or a placeholder that matches the topic.*
   
   Only output the validated JSON object. No other text.
   `;
@@ -78,11 +83,12 @@ async function generateBlogPost(keyword) {
         'Authorization': `Bearer ${API_KEY}`,
         'X-Title': 'Sarkari Exam AI Blog Generator',
       },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        response_format: { type: "json_object" }
-      }),
+        body: JSON.stringify({
+          model: MODEL,
+          messages: [{ role: 'user', content: prompt }],
+          response_format: { type: "json_object" },
+          max_tokens: 3000
+        }),
     });
 
     const data = await response.json();
@@ -98,6 +104,17 @@ async function generateBlogPost(keyword) {
       newPost.readTime = Math.ceil(newPost.content.split(' ').length / 200) + ' min read';
       newPost.keyword = keyword;
       
+      // Select a more specific image if it's an AI keyword
+      const aiKeywords = ['ai', 'chatgpt', 'midjourney', 'openai', 'bot', 'gpt'];
+      if (aiKeywords.some(k => keyword.toLowerCase().includes(k))) {
+        if (!newPost.featuredImage.includes('photo-1677')) { // If it's a default, give it a techy one
+           newPost.featuredImage = "https://images.unsplash.com/photo-1620712943543-bccffef48332?auto=format&fit=crop&q=80&w=1200";
+        }
+      } else {
+        // Education/Exam image
+        newPost.featuredImage = "https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=1200";
+      }
+
       let posts = [];
       if (fs.existsSync(BLOG_DATA_PATH)) {
         posts = JSON.parse(fs.readFileSync(BLOG_DATA_PATH, 'utf8'));
