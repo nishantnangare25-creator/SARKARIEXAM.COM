@@ -89,7 +89,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
           {navSections.map(section => (
             <div key={section.label} className="sidebar-section">
-              <div className="sidebar-section-label">{t(`nav.sections.${section.label.toLowerCase().replace(' ', '')}`) || section.label}</div>
+              <div className="sidebar-section-label">{t(`nav.sections.${section.label.toLowerCase().replace(' ', '')}`, { defaultValue: section.label })}</div>
               {section.items.map(item => (
                 <NavLink
                   key={item.path}
@@ -100,7 +100,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   <span className={`link-icon ${item.iconColor}`}>
                     <item.icon size={16} />
                   </span>
-                  <span>{t(`nav.${item.label}`) || item.label}</span>
+                  <span>{t(`nav.${item.label}`, { defaultValue: item.label === 'currentAffairs' ? 'Current Affairs' : item.label.charAt(0).toUpperCase() + item.label.slice(1) })}</span>
                 </NavLink>
               ))}
             </div>

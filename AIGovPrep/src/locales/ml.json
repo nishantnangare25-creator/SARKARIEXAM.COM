@@ -6,6 +6,8 @@
   "nav": {
     "home": "ഹോം",
     "dashboard": "ഡാഷ്‌ബോർഡ്",
+    "currentAffairs": "കരന്റ് അഫയേഴ്സ്",
+    "blog": "ബ്ലോഗ്",
     "studyPlanner": "പഠന പദ്ധതി",
     "mockTest": "മോക്ക് ടെസ്റ്റ്",
     "pastPaper": "കഴിഞ്ഞ വർഷത്തെ പേപ്പർ വിശ്ലേഷകൻ",

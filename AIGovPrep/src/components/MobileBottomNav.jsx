@@ -7,11 +7,11 @@ export default function MobileBottomNav() {
   const { t } = useTranslation();
 
   const navItems = [
-    { path: '/dashboard', icon: LayoutDashboard, label: 'nav.dashboard' },
-    { path: '/mock-test', icon: Brain, label: 'nav.mockTest' },
-    { path: '/pyqs-mock-test', icon: Target, label: 'PYQs' },
-    { path: '/tutor', icon: Bot, label: 'AI Riya' },
-    { path: '/analytics', icon: BarChart3, label: 'Analytics' }
+    { path: '/dashboard', icon: LayoutDashboard, label: 'dashboard' },
+    { path: '/mock-test', icon: Brain, label: 'mockTest' },
+    { path: '/pyqs-mock-test', icon: Target, label: 'pyqsMockTest' },
+    { path: '/tutor', icon: Bot, label: 'tutor' },
+    { path: '/analytics', icon: BarChart3, label: 'analytics' }
   ];
 
   return (
@@ -24,7 +24,7 @@ export default function MobileBottomNav() {
         >
           <item.icon size={22} className="nav-icon" />
           <span className="nav-label">
-            {['PYQs', 'AI Riya', 'Analytics'].includes(item.label) ? item.label : t(item.label)}
+            {t(`nav.${item.label}`, { defaultValue: item.label === 'pyqsMockTest' ? 'PYQs' : item.label })}
           </span>
         </NavLink>
       ))}
