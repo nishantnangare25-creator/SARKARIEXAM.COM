@@ -147,6 +147,8 @@
   line-height: 1.6;
   position: relative;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 .user .chat-bubble {
   background: var(--primary);
@@ -231,17 +233,22 @@
     height: calc(100vh - var(--navbar-height));
   }
   .riya-chat-area {
-    padding: 16px 12px;
+    padding: 16px 12px 100px;
     gap: 20px;
   }
-  .chat-msg-wrapper { max-width: 90%; }
+  .tutor-suggestions-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .chat-msg-wrapper { max-width: 92%; }
   .chat-bubble {
     padding: 12px 14px;
     font-size: 0.9rem;
   }
   .riya-input-wrapper {
-    padding: 12px;
+    padding: 12px 12px 24px;
     gap: 8px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(8px);
   }
   .riya-brand-title { font-size: 1rem; }
   .riya-lang-badge { font-size: 0.6rem; padding: 1px 6px; }

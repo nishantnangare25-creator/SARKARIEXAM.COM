@@ -103,8 +103,16 @@
 }
 @media (max-width: 768px) {
   .analytics-grid { grid-template-columns: 1fr; gap: var(--space-md); }
+  .grid-2 { grid-template-columns: 1fr !important; gap: var(--space-lg); }
   .ai-report-banner { flex-direction: column; text-align: center; }
   .ai-report-banner .btn { width: 100%; justify-content: center; }
   .gauge-container { width: 120px; height: 120px; }
   .gauge-value { font-size: 1.35rem; }
+  .analytics-card { padding: var(--space-lg); }
+}
+
+@media (max-width: 480px) {
+  .gauge-container { width: 100px; height: 100px; }
+  .gauge-value { font-size: 1.15rem; }
+  .gauge-label { font-size: 0.6rem; }
 }
