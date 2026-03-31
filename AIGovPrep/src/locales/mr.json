@@ -6,6 +6,8 @@
   "nav": {
     "home": "होम",
     "dashboard": "डॅशबोर्ड",
+    "currentAffairs": "चालू घडामोडी",
+    "blog": "ब्लॉग",
     "studyPlanner": "अभ्यास नियोजक",
     "mockTest": "मॉक टेस्ट",
     "pastPaper": "मागील पेपर विश्लेषक",

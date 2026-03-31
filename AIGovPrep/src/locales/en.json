@@ -6,6 +6,8 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "currentAffairs": "Current Affairs",
+    "blog": "Blog",
     "studyPlanner": "Study Planner",
     "mockTest": "Mock Test",
     "pastPaper": "Past Paper Analyzer",

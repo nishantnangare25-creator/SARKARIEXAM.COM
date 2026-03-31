@@ -12,45 +12,45 @@ const navSections = [
   {
     label: 'Main',
     items: [
-      { path: '/dashboard',       icon: LayoutDashboard, label: 'nav.dashboard',  iconColor: 'blue'    },
-      { path: '/current-affairs', icon: Newspaper,       label: 'Current Affairs', iconColor: 'saffron' },
-      { path: '/blog',            icon: Newspaper,       label: 'Blog',           iconColor: 'green'   },
+      { path: '/dashboard',       icon: LayoutDashboard, label: 'dashboard',       iconColor: 'blue'    },
+      { path: '/current-affairs', icon: Newspaper,       label: 'currentAffairs', iconColor: 'saffron' },
+      { path: '/blog',            icon: Newspaper,       label: 'blog',           iconColor: 'green'   },
     ]
   },
   {
     label: 'Tests',
     items: [
-      { path: '/mock-test',      icon: Brain,  label: 'nav.mockTest',      iconColor: 'blue'    },
-      { path: '/pyqs-mock-test', icon: Target, label: 'nav.pyqsMockTest',  iconColor: 'saffron' },
+      { path: '/mock-test',      icon: Brain,  label: 'mockTest',      iconColor: 'blue'    },
+      { path: '/pyqs-mock-test', icon: Target, label: 'pyqsMockTest',  iconColor: 'saffron' },
     ]
   },
   {
     label: 'Study Tools',
     items: [
-      { path: '/study-planner', icon: BookOpen,     label: 'nav.studyPlanner', iconColor: 'green'   },
-      { path: '/notes',         icon: GraduationCap, label: 'nav.notes',       iconColor: 'green'   },
-      { path: '/past-papers',   icon: FileText,      label: 'nav.pastPaper',   iconColor: 'saffron' },
-      { path: '/pyq-pdfs',      icon: FileDown,      label: 'nav.pyqPdfs',     iconColor: 'saffron' },
+      { path: '/study-planner', icon: BookOpen,     label: 'studyPlanner', iconColor: 'green'   },
+      { path: '/notes',         icon: GraduationCap, label: 'notes',        iconColor: 'green'   },
+      { path: '/past-papers',   icon: FileText,      label: 'pastPaper',    iconColor: 'saffron' },
+      { path: '/pyq-pdfs',      icon: FileDown,      label: 'pyqPdfs',      iconColor: 'saffron' },
     ]
   },
   {
     label: 'AI',
     items: [
-      { path: '/tutor',     icon: Bot,      label: 'nav.tutor',     iconColor: 'blue'  },
-      { path: '/analytics', icon: BarChart3, label: 'nav.analytics', iconColor: 'green' },
+      { path: '/tutor',     icon: Bot,      label: 'tutor',     iconColor: 'blue'  },
+      { path: '/analytics', icon: BarChart3, label: 'analytics', iconColor: 'green' },
     ]
   },
   {
     label: 'Community',
     items: [
-      { path: '/forum',         icon: MessageSquare, label: 'nav.forum',     iconColor: 'saffron' },
-      { path: '/peer-matching', icon: Users,         label: 'nav.peerMatch', iconColor: 'green'   },
+      { path: '/forum',         icon: MessageSquare, label: 'forum',     iconColor: 'saffron' },
+      { path: '/peer-matching', icon: Users,         label: 'peerMatch', iconColor: 'green'   },
     ]
   },
   {
     label: 'Account',
     items: [
-      { path: '/settings', icon: Settings, label: 'nav.settings', iconColor: 'gray' },
+      { path: '/settings', icon: Settings, label: 'settings', iconColor: 'gray' },
     ]
   }
 ];
@@ -100,7 +100,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   <span className={`link-icon ${item.iconColor}`}>
                     <item.icon size={16} />
                   </span>
-                  <span>{item.label.includes('.') ? t(item.label) : t(`nav.${item.label.toLowerCase().replace(' ', '')}`) || item.label}</span>
+                  <span>{t(`nav.${item.label}`) || item.label}</span>
                 </NavLink>
               ))}
             </div>
