@@ -321,6 +321,11 @@
     "subjectPlaceholder": "e.g., Indian History, Geography",
     "keywordsLabel": "Specific Keywords (Optional)",
     "keywordsPlaceholder": "e.g., Mughal Empire, Rivers of India",
+    "suggestions": [
+      "Explain UPSC Syllabus",
+      "What are Ashok's Edicts?",
+      "2024 Current Affairs"
+    ],
     "generate": "Start Lesson",
     "generating": "Preparing your lesson...",
     "yourLesson": "Your Lesson"
