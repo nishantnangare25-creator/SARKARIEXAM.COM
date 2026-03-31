@@ -240,13 +240,29 @@
   "analytics": {
     "title": "Performance Analytics",
     "subtitle": "Track your progress and identify areas for improvement",
-    "readinessScore": "Exam Readiness Score",
-    "strengths": "Strengths",
-    "weaknesses": "Weaknesses",
-    "trend": "Performance Trend",
-    "subjectWise": "Subject-wise Performance",
-    "improvement": "Tips for Improvement",
-    "noData": "Take some mock tests to see your analytics"
+    "stats": {
+      "accuracy": "Accuracy",
+      "consistency": "Consistency",
+      "completion": "Completion",
+      "excellent": "Excellent",
+      "steady": "Steady",
+      "needsFocus": "Needs Focus"
+    },
+    "locked": {
+      "title": "Analytics Locked",
+      "desc": "Create an account to unlock personalized performance tracking and AI insights.",
+      "join": "Join to Unlock",
+      "tryMock": "Try a Mock Test"
+    },
+    "breakdown": { "title": "Subject-wise Performance" },
+    "milestones": {
+      "title": "Recent Milestones",
+      "builder": { "title": "Foundation Builder", "desc": "Completed early preparation modules." },
+      "time": { "title": "Time Master", "desc": "Improved test completion speed by 15%." }
+    },
+    "proTip": { "title": "AI Pro-Tip", "desc": "Focus on Indian Polity this week. Based on your trend, it's your biggest growth opportunity." },
+    "deepDive": { "title": "AI Performance Deep Dive", "desc": "Let our AI analyze your entire test history to find hidden patterns and bottlenecks.", "button": "Generate Detailed Report" },
+    "demoMode": "Showing sample data. Start testing to see your own analysis!"
   },
   "forum": {
     "title": "Community",
