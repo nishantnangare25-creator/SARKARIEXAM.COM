@@ -27,7 +27,7 @@ const MOCK_STATS = {
   ]
 };
 
-const Gauge = ({ value, label, icon: Icon, color = 'var(--primary)' }) => {
+const Gauge = ({ value, label, icon: Icon, color = 'var(--primary)', t }) => {
   const radius = 60;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (value / 100) * circumference;

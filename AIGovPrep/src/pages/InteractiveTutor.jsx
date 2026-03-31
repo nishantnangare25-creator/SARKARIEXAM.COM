@@ -206,7 +206,7 @@ export default function InteractiveTutor() {
               <p style={{ color: 'var(--text-muted)', marginBottom: 32 }}>{t('tutor.welcome.subtitle')}</p>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {(t('tutor.suggestions', { returnObjects: true }) || []).map(suggest => (
+                {Array.isArray(t('tutor.suggestions', { returnObjects: true })) && t('tutor.suggestions', { returnObjects: true }).map(suggest => (
                   <button 
                     key={suggest} 
                     className="chip" 
