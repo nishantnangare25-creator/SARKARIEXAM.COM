@@ -1,17 +1,21 @@
-name: Automated Blog Generation
+name: Automated AI Newsroom
 
 on:
   schedule:
-    - cron: '30 2 * * *'  # 08:00 AM IST (Slot 0)
-    - cron: '30 4 * * *'  # 10:00 AM IST (Slot 1)
-    - cron: '30 6 * * *'  # 12:00 PM IST (Slot 2)
-    - cron: '30 8 * * *'  # 02:00 PM IST (Slot 3)
-    - cron: '30 10 * * *' # 04:00 PM IST (Slot 4)
-    - cron: '30 12 * * *' # 06:00 PM IST (Slot 5)
+    - cron: '0 0 * * *'   # 05:30 AM IST (Slot 0)
+    - cron: '0 2 * * *'   # 07:30 AM IST (Slot 1)
+    - cron: '0 4 * * *'   # 09:30 AM IST (Slot 2)
+    - cron: '0 6 * * *'   # 11:30 AM IST (Slot 3)
+    - cron: '0 8 * * *'   # 01:30 PM IST (Slot 4)
+    - cron: '0 10 * * *'  # 03:30 PM IST (Slot 5)
+    - cron: '0 12 * * *'  # 05:30 PM IST (Slot 6)
+    - cron: '0 14 * * *'  # 07:30 PM IST (Slot 7)
+    - cron: '0 16 * * *'  # 09:30 PM IST (Slot 8)
+    - cron: '0 18 * * *'  # 11:30 PM IST (Slot 9)
   workflow_dispatch:
     inputs:
       slot:
-        description: 'Slot ID (0-5)'
+        description: 'Slot ID (0-9)'
         required: false
         default: '0'
 
@@ -40,11 +44,14 @@ jobs:
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
             echo "id=${{ github.event.inputs.slot }}" >> $GITHUB_OUTPUT
           else
-            # Calculate slot based on UTC hour (2, 4, 6, 8, 10, 12)
+            # Calculate slot based on UTC hour (0, 2, 4, 6, 8, 10, 12, 14, 16, 18)
             HOUR=$(date +%H)
-            SLOT=$(( (HOUR - 2) / 2 ))
+            SLOT=$(( HOUR / 2 ))
             echo "id=$SLOT" >> $GITHUB_OUTPUT
           fi
+
+      - name: Fetch Latest News
+        run: node scripts/fetch-news.js
 
       - name: Generate Blog Post
         env:
@@ -57,5 +64,5 @@ jobs:
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add src/data/blogPosts.json
-          git commit -m "🤖 Auto-generated blog post (Slot ${{ steps.slot.outputs.id }})" || echo "No changes to commit"
+          git commit -m "🤖 AI Newsroom Update (Slot ${{ steps.slot.outputs.id }}): Automated News Analysis" || echo "No changes to commit"
           git push origin main

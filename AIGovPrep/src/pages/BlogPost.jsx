@@ -122,6 +122,19 @@ export default function BlogPost() {
               dangerouslySetInnerHTML={{ __html: post.content }} 
             />
 
+            {/* Source Information for SEO & Trust */}
+            {post.sourceUrl && (
+              <div style={{ marginTop: '40px', padding: '24px', background: 'var(--bg-glass)', border: '1px solid var(--border-color)', borderRadius: '16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '1rem', color: 'var(--text-primary)' }}>Fact Check & Original Source</h4>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-muted)' }}>This article is based on verified news from <strong>{post.sourceName || 'Official Agencies'}</strong>.</p>
+                </div>
+                <a href={post.sourceUrl} target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline">
+                  View Source Article
+                </a>
+              </div>
+            )}
+
             {/* AI Schema FAQs Rendering */}
             {post.faqSchema && (
               <section style={{ marginTop: '60px', padding: '40px', background: 'var(--bg-tertiary)', borderRadius: '24px' }}>

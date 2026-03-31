@@ -39,20 +39,29 @@ const TOPIC_IMAGE_MAP = {
   'default': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200'
 };
 
-async function generateBlogPost(keyword) {
-  console.log(`🤖 Generating SEO blog post for keyword: "${keyword}"...`);
+const NEWS_CACHE_PATH = path.join(__dirname, 'news-cache.json');
+
+async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
+  const isNews = !!newsItem;
+  const target = isNews ? newsItem.title : fallbackKeyword;
+  
+  console.log(`🤖 Generating ${isNews ? 'NEWS' : 'KEYWORD'} post for: "${target}"...`);
 
   const prompt = `
   You are a senior SEO content writer for Sarkari Exam AI — India's leading AI-powered educational hub.
   
-  Write a comprehensive blog post targeting the search keyword: "${keyword}".
-  
+  ${isNews ? 
+    `Write a helpful news analysis blog post based on this trending headline: "${newsItem.title}".
+     Context: This news is under the category "${newsItem.source}".` 
+    : 
+    `Write a comprehensive blog post targeting the search keyword: "${fallbackKeyword}".`}
+
   Strictly follow Google's E-E-A-T guidelines:
-  - Provide expert-level insights and practical value.
+  - Provide expert-level insights and practical value for Indian students and aspirants.
+  - If it's a news item, explain "Why this matters for your exam preparation" or "Future implications for AI".
   - Structure with 4-5 detailed H2/H3 sections.
-  - Include a "How Sarkari Exam AI Helps" section linking the topic to our platform.
+  - Include a "How Sarkari Exam AI Helps" section.
   - Include an FAQ section with 3-4 schema-ready questions.
-  - Use formal yet engaging tone.
   
   Format the response as a JSON object:
   {
@@ -95,16 +104,18 @@ async function generateBlogPost(keyword) {
         id: Date.now().toString() + Math.random().toString(36).slice(2, 7),
         date: new Date().toISOString(),
         slug: result.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, ''),
-        readTime: Math.ceil(result.content.split(' ').length / 200) + ' min read',
-        keyword: keyword
+        readTime: Math.ceil((result.content || '').split(' ').length / 200) + ' min read',
+        sourceUrl: newsItem?.link || null,
+        sourceName: newsItem?.source || null,
+        isNews: isNews
       };
 
-      // Enhanced Image Logic
-      const lowerK = keyword.toLowerCase();
-      if (lowerK.includes('midjourney')) newPost.featuredImage = TOPIC_IMAGE_MAP.midjourney;
-      else if (lowerK.includes('chatbot') || lowerK.includes('chat gpt')) newPost.featuredImage = TOPIC_IMAGE_MAP.chatbot;
-      else if (lowerK.includes('ai') || lowerK.includes('artificial')) newPost.featuredImage = TOPIC_IMAGE_MAP.ai;
-      else if (lowerK.includes('exam') || lowerK.includes('upsc') || lowerK.includes('ssc')) newPost.featuredImage = TOPIC_IMAGE_MAP.exam;
+      // Image Logic
+      const contextText = (target + (result.tags || []).join(' ')).toLowerCase();
+      if (contextText.includes('midjourney')) newPost.featuredImage = TOPIC_IMAGE_MAP.midjourney;
+      else if (contextText.includes('chatbot') || contextText.includes('chatgpt')) newPost.featuredImage = TOPIC_IMAGE_MAP.chatbot;
+      else if (contextText.includes('ai') || contextText.includes('artificial')) newPost.featuredImage = TOPIC_IMAGE_MAP.ai;
+      else if (contextText.includes('exam') || contextText.includes('upsc') || contextText.includes('ssc')) newPost.featuredImage = TOPIC_IMAGE_MAP.exam;
       else newPost.featuredImage = TOPIC_IMAGE_MAP.default;
 
       let posts = [];
@@ -116,8 +127,7 @@ async function generateBlogPost(keyword) {
         posts.unshift(newPost);
       }
       
-      if (posts.length > 100) posts.length = 100; // Increased limit for more daily posts
-
+      if (posts.length > 150) posts.length = 150; 
       fs.writeFileSync(BLOG_DATA_PATH, JSON.stringify(posts, null, 2));
       console.log(`✅ Saved: "${newPost.title}"`);
       return true;
@@ -129,12 +139,29 @@ async function generateBlogPost(keyword) {
 }
 
 async function main() {
-  const currentKeywords = KEYWORDS[SLOT_ID % KEYWORDS.length];
+  let news = [];
+  if (fs.existsSync(NEWS_CACHE_PATH)) {
+    try {
+      news = JSON.parse(fs.readFileSync(NEWS_CACHE_PATH, 'utf8'));
+    } catch (e) {
+      console.warn('⚠️ Could not read news cache.');
+    }
+  }
+
   console.log(`\n🚀 Slot ${SLOT_ID}: Generating ${POSTS_TO_GENERATE} post(s)...\n`);
   
   for (let i = 0; i < POSTS_TO_GENERATE; i++) {
-    const keyword = currentKeywords[Math.floor(Math.random() * currentKeywords.length)];
-    await generateBlogPost(keyword);
+    const newsIdx = (SLOT_ID + i) % news.length;
+    const currentNews = news.length > 0 ? news[newsIdx] : null;
+    
+    if (currentNews) {
+      await generateBlogPost(currentNews);
+    } else {
+      const currentKeywords = KEYWORDS[SLOT_ID % KEYWORDS.length];
+      const keyword = currentKeywords[Math.floor(Math.random() * currentKeywords.length)];
+      await generateBlogPost(null, keyword);
+    }
+    
     if (i < POSTS_TO_GENERATE - 1) await new Promise(r => setTimeout(r, 2000));
   }
 }
