@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { generateMockQuestions } from '../services/ai';
 import { EXAMS, SUBJECTS } from '../utils/constants';
-import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download } from 'lucide-react';
+import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download, Activity } from 'lucide-react';
+import { saveTestResult } from '../services/firebase';
 import ReactMarkdown from 'react-markdown';
 import './Auth.css';
 import { generateQuestionPdf } from '../utils/pdfGenerator';
@@ -76,10 +77,27 @@ export default function MockTest() {
     if (!showResult) setAnswers({ ...answers, [qId]: option });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     clearInterval(intervalRef.current);
     setShowResult(true);
     setStarted(false);
+
+    if (user) {
+      const score = getScore();
+      const accuracy = Math.round((score / questions.length) * 100);
+      try {
+        await saveTestResult(user.uid, {
+          score,
+          total: questions.length,
+          accuracy,
+          subject: subject || 'General',
+          exam: exam || 'UPSC',
+          type: 'Mock Test'
+        });
+      } catch (err) {
+        console.error("Failed to save test result:", err);
+      }
+    }
   };
 
   const getScore = () => {

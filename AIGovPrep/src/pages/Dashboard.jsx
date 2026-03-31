@@ -4,16 +4,16 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { 
   Zap, Brain, Target, Sparkles, TrendingUp, 
-  Clock, ArrowRight, Play, BookOpen, Newspaper, RefreshCcw 
+  Clock, ArrowRight, Play, BookOpen, Newspaper, RefreshCcw, Activity
 } from 'lucide-react';
 import { getLatestCurrentAffairs } from '../services/currentAffairs';
+import { getTestHistory } from '../services/firebase';
 
 export default function Dashboard({ onToggleSidebar }) {
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
-  const [greeting, setGreeting] = useState('');
-  const [currentAffairs, setCurrentAffairs] = useState([]);
-  const [caLoading, setCaLoading] = useState(true);
+  const [testHistory, setTestHistory] = useState([]);
+  const [historyLoading, setHistoryLoading] = useState(true);
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -31,8 +31,84 @@ export default function Dashboard({ onToggleSidebar }) {
         setCaLoading(false);
       }
     };
+
+    const fetchHistory = async () => {
+      if (user?.uid) {
+        try {
+          const history = await getTestHistory(user.uid);
+          setTestHistory(history);
+        } catch (err) {
+          console.error("Error fetching history:", err);
+        } finally {
+          setHistoryLoading(false);
+        }
+      } else {
+        setHistoryLoading(false);
+      }
+    };
+
     fetchCA();
-  }, [i18n.language]);
+    fetchHistory();
+  }, [i18n.language, user]);
+
+  const calculateAnalytics = () => {
+    const defaultStats = [
+      { name: 'History', progress: 0, color: 'blue' },
+      { name: 'Geography', progress: 0, color: 'saffron' },
+      { name: 'Polity', progress: 0, color: 'green' },
+      { name: 'Current Affairs', progress: 0, color: 'red' },
+    ];
+
+    if (!testHistory.length) return defaultStats;
+
+    const subjectStats = {};
+    testHistory.forEach(test => {
+      const sub = test.subject || 'Other';
+      if (!subjectStats[sub]) {
+        subjectStats[sub] = { total: 0, count: 0 };
+      }
+      subjectStats[sub].total += (test.score / test.total) * 100;
+      subjectStats[sub].count += 1;
+    });
+
+    return Object.keys(subjectStats).map(name => ({
+      name,
+      progress: Math.round(subjectStats[name].total / subjectStats[name].count),
+      color: name.includes('History') ? 'blue' : name.includes('Polity') ? 'green' : name.includes('Geography') ? 'saffron' : 'red'
+    })).sort((a, b) => b.progress - a.progress);
+  };
+
+  const getSuggestions = (stats) => {
+    const suggestions = [];
+    
+    // Add logic based on lowest scores
+    const weakSubjects = stats.filter(s => s.progress < 60 && s.progress > 0);
+    if (weakSubjects.length > 0) {
+      suggestions.push({ text: `Focus on ${weakSubjects[0].name}`, level: 'important', path: '/mock-test' });
+    }
+    
+    // Add logic based on latest activity
+    if (testHistory.length > 0) {
+      suggestions.push({ text: `Review ${testHistory[0].subject} errors`, level: 'normal', path: '/analytics' });
+    }
+
+    // Default suggestions if none
+    if (suggestions.length < 3) {
+      suggestions.push({ text: "Take a full Mock Test", level: 'normal', path: '/mock-test' });
+      suggestions.push({ text: "New update in Current Affairs", level: 'normal', path: '/current-affairs' });
+    }
+
+    return suggestions.slice(0, 4);
+  };
+
+  const dynamicSubjects = user ? calculateAnalytics() : [
+    { name: 'History', progress: 75, color: 'blue' },
+    { name: 'Geography', progress: 45, color: 'saffron' },
+    { name: 'Polity', progress: 90, color: 'green' },
+    { name: 'Current Affairs', progress: 30, color: 'red' },
+  ];
+
+  const suggestions = getSuggestions(dynamicSubjects);
 
   const quickActions = [
     { id: 'mock', title: 'Start Mock Test', desc: 'Full length test', icon: Brain, color: 'blue', path: '/mock-test' },
@@ -125,7 +201,7 @@ export default function Dashboard({ onToggleSidebar }) {
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                   <TrendingUp size={20} className="text-blue" /> Performance Analytics
                 </h3>
-                {user && <button className="btn btn-sm btn-ghost">View Details</button>}
+                {user && <Link to="/analytics" className="btn btn-sm btn-ghost">View Details</Link>}
               </div>
 
               {!user && (
@@ -136,31 +212,76 @@ export default function Dashboard({ onToggleSidebar }) {
                 </div>
               )}
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, filter: user ? 'none' : 'blur(2px)', opacity: user ? 1 : 0.5 }}>
-                {subjects.map(sub => (
-                  <div key={sub.name}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: '0.85rem' }}>
-                      <span style={{ fontWeight: 500 }}>{sub.name}</span>
-                      <span className="text-muted">{user ? sub.progress : '??'}%</span>
-                    </div>
-                    <div className="progress-bar-wrap">
-                      <div className={`progress-bar-fill ${sub.color}`} style={{ width: user ? `${sub.progress}%` : '30%' }} />
-                    </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 16, filter: (user && !historyLoading) ? 'none' : 'blur(2px)', opacity: (user && !historyLoading) ? 1 : 0.5 }}>
+                {historyLoading ? (
+                  <div style={{ textAlign: 'center', padding: '20px' }}>
+                    <RefreshCcw className="animate-spin text-blue" size={24} />
                   </div>
-                ))}
+                ) : (
+                  dynamicSubjects.length > 0 ? (
+                    dynamicSubjects.map(sub => (
+                      <div key={sub.name}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: '0.85rem' }}>
+                          <span style={{ fontWeight: 500 }}>{sub.name}</span>
+                          <span className="text-muted">{user ? sub.progress : '??'}%</span>
+                        </div>
+                        <div className="progress-bar-wrap" style={{ height: 10, background: 'var(--bg-secondary)', borderRadius: 20, overflow: 'hidden' }}>
+                          <div 
+                            className={`progress-bar-fill ${sub.color}`} 
+                            style={{ 
+                              width: user ? `${sub.progress}%` : '30%',
+                              height: '100%',
+                              transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
+                              borderRadius: 20
+                            }} 
+                          />
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
+                      No test data yet. Start your first mock test!
+                    </div>
+                  )
+                )}
               </div>
             </section>
 
             {/* AI Insights Chips */}
             <section className="card" style={{ background: 'var(--primary-bg)', border: '1px solid var(--border-blue)' }}>
-              <h4 style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)' }}>
+              <h4 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)' }}>
                 <Zap size={18} fill="var(--primary)" /> Smart Suggestions
               </h4>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                <div className="chip active">Focus on Modern India (Topic)</div>
-                <div className="chip">Improve Geography speed</div>
-                <div className="chip">Review Mock Test #4 errors</div>
-                <div className="chip">New update in Current Affairs</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+                {suggestions.map((s, i) => (
+                  <Link 
+                    key={i} 
+                    to={s.path} 
+                    className={`chip ${s.level === 'important' ? 'active' : ''}`}
+                    style={{ 
+                      textDecoration: 'none', 
+                      display: 'inline-flex', 
+                      alignItems: 'center', 
+                      padding: '8px 16px', 
+                      borderRadius: '20px', 
+                      fontSize: '0.85rem', 
+                      fontWeight: 500,
+                      transition: 'all 0.3s ease',
+                      border: s.level === 'important' ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                      boxShadow: s.level === 'important' ? '0 4px 12px rgba(37,99,235,0.1)' : 'none'
+                    }}
+                    onMouseEnter={e => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 15px rgba(0,0,0,0.05)';
+                    }}
+                    onMouseLeave={e => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = s.level === 'important' ? '0 4px 12px rgba(37,99,235,0.1)' : 'none';
+                    }}
+                  >
+                    {s.text}
+                  </Link>
+                ))}
               </div>
             </section>
           </div>
