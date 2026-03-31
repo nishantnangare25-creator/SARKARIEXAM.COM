@@ -12,6 +12,9 @@ import { getTestHistory } from '../services/firebase';
 export default function Dashboard({ onToggleSidebar }) {
   const { t, i18n } = useTranslation();
   const { user, profile } = useAuth();
+  const [greeting, setGreeting] = useState('');
+  const [currentAffairs, setCurrentAffairs] = useState([]);
+  const [caLoading, setCaLoading] = useState(true);
   const [testHistory, setTestHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
 
