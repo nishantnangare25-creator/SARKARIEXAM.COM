@@ -39,7 +39,7 @@ export default function PeerMatching() {
                 </div>
                 <div>
                   <h4 style={{ marginBottom: 2 }}>{peer.name}</h4>
-                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{peer.exam} · {peer.level}</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{peer.exam} · {t(`onboarding.${peer.level.toLowerCase()}`) || peer.level}</span>
                 </div>
               </div>
 
@@ -49,10 +49,10 @@ export default function PeerMatching() {
 
               <div style={{ display: 'flex', gap: 16, marginBottom: 16, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  <BookOpen size={14} /> {peer.studyHours}h/day
+                  <BookOpen size={14} /> {peer.studyHours}{t('studyPlanner.hours').split('/')[0]}
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                  🔥 {peer.streak} day streak
+                  🔥 {peer.streak} {t('dashboard.stats.days')}
                 </div>
               </div>
 

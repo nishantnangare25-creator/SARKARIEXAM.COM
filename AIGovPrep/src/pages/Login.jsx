@@ -33,10 +33,10 @@ export default function Login() {
     try {
       if (isRegister) {
         await registerWithEmail(email, password);
-        setSuccess('Account created successfully! Redirecting...');
+        setSuccess(t('auth.successRegister') || 'Account created successfully! Redirecting...');
       } else {
         await loginWithEmail(email, password);
-        setSuccess('Login successful! Welcome back.');
+        setSuccess(t('auth.successLogin') || 'Login successful! Welcome back.');
       }
       // Small delay to let user see the success message
       setTimeout(() => navigate('/dashboard'), 1000);
@@ -50,7 +50,7 @@ export default function Login() {
     setError('');
     try {
       await loginWithGoogle();
-      setSuccess('Signed in with Google! Redirecting...');
+      setSuccess(t('auth.successGoogle') || 'Signed in with Google! Redirecting...');
       setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err) {
       setError(err.message);
@@ -64,8 +64,8 @@ export default function Login() {
           <Link to="/" className="auth-logo">
             🎯 Sarkari <span>Exam</span> AI
           </Link>
-          <h1>{isRegister ? 'Create Account' : t('auth.loginTitle')}</h1>
-          <p>{isRegister ? 'Join thousands of students today' : t('auth.loginSubtitle')}</p>
+          <h1>{isRegister ? t('auth.signup') : t('auth.loginTitle')}</h1>
+          <p>{isRegister ? t('auth.signupSubtitle') : t('auth.loginSubtitle')}</p>
         </div>
 
         {error && <div className="auth-error">{error}</div>}
@@ -94,7 +94,7 @@ export default function Login() {
           </div>
 
           <button type="submit" className="btn btn-primary btn-lg auth-submit" disabled={loading}>
-            {loading ? t('common.loading') : (isRegister ? 'Sign Up' : t('auth.login'))}
+            {loading ? t('common.loading') : (isRegister ? t('auth.signup') : t('auth.login'))}
           </button>
         </form>
 
@@ -106,13 +106,13 @@ export default function Login() {
         </button>
 
         <div style={{ marginTop: '24px', textAlign: 'center', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-          {isRegister ? 'Already have an account?' : "Don't have an account?"}
+          {isRegister ? t('auth.alreadyHaveAccount') : t('auth.dontHaveAccount')}
           <button 
             type="button" 
             onClick={() => setIsRegister(!isRegister)}
             style={{ marginLeft: '8px', background: 'none', border: 'none', color: 'var(--primary)', fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
           >
-            {isRegister ? 'Login' : 'Sign Up Free'}
+            {isRegister ? t('auth.login') : t('auth.signupFree')}
           </button>
         </div>
 

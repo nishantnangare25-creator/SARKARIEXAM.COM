@@ -54,7 +54,7 @@ export default function Forum() {
       <div className="page-wrapper">
         <div className="page-with-sidebar">
           <button className="btn btn-secondary btn-sm" onClick={() => setSelectedThread(null)} style={{ marginBottom: 16 }}>
-            <ArrowLeft size={14} /> Back
+            <ArrowLeft size={14} /> {t('common.back')}
           </button>
           <div className="card animate-fadeInUp">
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
@@ -62,7 +62,7 @@ export default function Forum() {
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{selectedThread.createdAt}</span>
             </div>
             <h2 style={{ marginBottom: 8 }}>{selectedThread.title}</h2>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 12 }}>by {selectedThread.author}</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 12 }}>{t('common.by')} {selectedThread.author}</p>
             <p style={{ lineHeight: 1.7 }}>{selectedThread.content}</p>
           </div>
 
@@ -93,7 +93,7 @@ export default function Forum() {
 
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
           <div className="tabs">
-            <button className={`tab ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => setActiveCategory('all')}>All</button>
+            <button className={`tab ${activeCategory === 'all' ? 'active' : ''}`} onClick={() => setActiveCategory('all')}>{t('common.all') || 'All'}</button>
             {FORUM_CATEGORIES.map(c => (
               <button key={c.id} className={`tab ${activeCategory === c.id ? 'active' : ''}`} onClick={() => setActiveCategory(c.id)}>
                 {c.icon} {categoryNames[c.id]}
@@ -135,7 +135,7 @@ export default function Forum() {
               <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{thread.createdAt}</span>
             </div>
             <h4 style={{ marginBottom: 4 }}>{thread.title}</h4>
-            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>by {thread.author} · {thread.replies.length} {t('forum.replies')}</p>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('common.by')} {thread.author} · {thread.replies.length} {t('forum.replies')}</p>
           </div>
         ))}
       </div>

@@ -11,14 +11,15 @@ export default function Landing() {
   const features = [
     { icon: <BookOpen size={24} />, title: t('home.feature1Title'), desc: t('home.feature1Desc'), color: 'purple', link: '/study-planner' },
     { icon: <Brain size={24} />, title: t('home.feature2Title'), desc: t('home.feature2Desc'), color: 'green', link: '/mock-test' },
-    { icon: <FileText size={24} />, title: t('home.feature3Title'), desc: t('home.feature3Desc'), color: 'orange', link: '/past-papers' },
+    { icon: <FileText size={24} />, title: t('home.feature3Title'), desc: t('home.feature3Desc'), color: 'orange', link: '/past-paper' },
     { icon: <GraduationCap size={24} />, title: t('home.feature4Title'), desc: t('home.feature4Desc'), color: 'blue', link: '/notes' },
     { icon: <BarChart3 size={24} />, title: t('home.feature5Title'), desc: t('home.feature5Desc'), color: 'pink', link: '/analytics' },
     { icon: <Users size={24} />, title: t('home.feature6Title'), desc: t('home.feature6Desc'), color: 'purple', link: '/peer-matching' },
-    { icon: <Zap size={24} />, title: 'AI Riya Tutor', desc: 'Get instant personalized lessons on any topic in your own language using our AI tutor Riya.', color: 'orange', link: '/tutor' },
-    { icon: <Target size={24} />, title: 'PYQs Practice', desc: 'Practice previous year questions from real government exam papers with AI-powered quiz mode.', color: 'green', link: '/pyq-pdfs' },
-    { icon: <Shield size={24} />, title: 'PYQs Mock Test', desc: 'Take full-length mock tests based on real PYQ patterns to simulate actual exam conditions.', color: 'blue', link: '/pyqs-mock-test' },
+    { icon: <Zap size={24} />, title: t('home.feature7Title'), desc: t('home.feature7Desc'), color: 'orange', link: '/tutor' },
+    { icon: <Target size={24} />, title: t('home.feature8Title'), desc: t('home.feature8Desc'), color: 'green', link: '/pyq-pdfs' },
+    { icon: <Shield size={24} />, title: t('home.feature9Title'), desc: t('home.feature9Desc'), color: 'blue', link: '/pyqs-mock-test' },
   ];
+
 
   const stats = [
     { value: '50K+', label: t('home.stats1'), icon: <Users size={20} /> },
@@ -38,36 +39,37 @@ export default function Landing() {
         </div>
         <div className="hero-content">
           <div className="hero-badge animate-fadeInUp">
-            <Sparkles size={14} aria-hidden="true" /> AI-Powered Exam Success
+            <Sparkles size={14} aria-hidden="true" /> {t('home.heroBadge')}
           </div>
+
           
           <div className="hero-main-wrapper">
             {/* Floating Glassmorphism Cards */}
             <div className="floating-card fc-1">
               <Brain size={18} className="fc-icon purple" />
-              <span>AI Analyzing weak topics...</span>
+              <span>{t('home.floating.analyzing')}</span>
             </div>
             <div className="floating-card fc-2">
               <Target size={18} className="fc-icon orange" />
-              <span>Focus Area: Indian Polity</span>
+              <span>{t('home.floating.focus')}</span>
             </div>
             <div className="floating-card fc-3">
               <TrendingUp size={18} className="fc-icon green" />
-              <span>+15% Improvement</span>
+              <span>{t('home.floating.improvement')}</span>
             </div>
 
             <h1 id="hero-title" className="hero-title animate-fadeInUp">
-              Your <span>AI-Powered</span> Exam<br />Preparation Partner
+              {t('home.hero_line1')} <span>{t('home.hero_accent')}</span> {t('home.hero_line2')}
             </h1>
             <p className="hero-subtitle animate-fadeInUp">
-              <span className="subtitle-highlight">Stop Guessing. Start Mastering.</span> Get data-driven insights and personalized AI coaching to crack India's toughest exams.
+              {t('home.subtitle')}
             </p>
             <div className="hero-actions animate-fadeInUp">
-              <Link to="/mock-test" className="btn-hero-primary" aria-label="Start your first mock test">
-                Start Learning Free
+              <Link to="/mock-test" className="btn-hero-primary" aria-label={t('home.cta')}>
+                {t('home.cta')}
               </Link>
-              <a href="#features" className="btn-hero-secondary" aria-label="Learn more about our AI features">
-                Explore Features
+              <a href="#features" className="btn-hero-secondary" aria-label={t('home.ctaSecondary')}>
+                {t('home.ctaSecondary')}
               </a>
             </div>
           </div>
@@ -86,10 +88,10 @@ export default function Landing() {
       </section>
 
       {/* Features Section */}
-      <section className="features-section" id="features" aria-labelledby="features-title">
+      <section id="features" className="features-section">
         <div className="section-header animate-fadeInUp">
-          <h2 id="features-title">Master Every Subject with <span className="text-gradient">Precision AI</span></h2>
-          <p>Don't just study—study smart with tools designed by AI experts for Indian aspirants.</p>
+          <h2 id="features-title">{t('home.precisionTitle')}</h2>
+          <p>{t('home.precisionDesc')}</p>
         </div>
         <div className="features-grid">
           {features.map((f, i) => (
@@ -104,10 +106,10 @@ export default function Landing() {
       </section>
 
       {/* Exams Section */}
-      <section className="exams-section" id="exams" aria-labelledby="exams-title">
+      <section className="exams-section">
         <div className="section-header animate-fadeInUp">
           <h2 id="exams-title">{t('home.examTitle')}</h2>
-          <p>Tailored AI optimization for 15+ major Indian competitive exams.</p>
+          <p>{t('home.examSubtitle')}</p>
         </div>
         <div className="exams-grid">
           {EXAMS.map((exam, i) => (
@@ -119,11 +121,10 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="cta-section" aria-labelledby="cta-title">
         <div className="cta-content animate-fadeInUp">
-          <h2 id="cta-title">Ready to Outperform the Competition?</h2>
-          <p>Join 50,000+ successful aspirants who use AI to stay ahead of the curve.</p>
+          <h2 id="cta-title">{t('home.ctaTitle')}</h2>
+          <p>{t('home.ctaDesc')}</p>
         </div>
       </section>
 
@@ -131,13 +132,13 @@ export default function Landing() {
       <section className="seo-section" aria-label="About Sarkari ExamAI" style={{ padding: '80px 20px', background: 'var(--bg-secondary)', textAlign: 'center', borderTop: '1px solid var(--border-light)' }}>
         <div className="animate-fadeInUp" style={{ maxWidth: 900, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px', color: 'var(--text-secondary)', lineHeight: '1.8', fontSize: '1.05rem' }}>
           <p style={{ color: 'var(--text-primary)', fontSize: '1.15rem' }}>
-            <strong>Welcome to India’s most advanced AI-powered government exam preparation platform.</strong> Prepare for UPSC, NDA, SSC, Banking, Railway, and all Sarkari exams with smart AI tools.
+            <strong>{t('seo.title')}</strong>
           </p>
           <p>
-            Practice UPSC prelims question papers, take daily 10-minute mock tests, and improve your performance with AI-based analytics. Get personalized study plans, topic-wise PYQs, and real-time current affairs updates.
+            {t('seo.desc1')}
           </p>
           <p>
-            Our platform supports Hindi, English, and multiple Indian languages so every student can learn in their preferred language. Start your preparation today and boost your chances of success in government exams.
+            {t('seo.desc2')}
           </p>
         </div>
       </section>
@@ -147,32 +148,32 @@ export default function Landing() {
         <div className="footer-content">
           <div className="footer-brand">
             <span className="logo-text">Sarkari<span className="logo-ai">AI</span></span>
-            <p>India's Leading AI-Powered Exam Preparation Platform</p>
+            <p>{t('footer.tagline')}</p>
           </div>
-          <nav className="footer-links" aria-label="Platform Links">
-            <h4>Platform</h4>
-            <Link to="/study-planner">Study Planner</Link>
-            <Link to="/mock-test">Mock Tests</Link>
-            <Link to="/notes">Notes Generator</Link>
-            <Link to="/analytics">Analytics</Link>
+          <nav className="footer-links" aria-label={t('footer.platform')}>
+            <h4>{t('footer.platform')}</h4>
+            <Link to="/study-planner">{t('nav.studyPlanner')}</Link>
+            <Link to="/mock-test">{t('nav.mockTest')}</Link>
+            <Link to="/notes">{t('nav.notes')}</Link>
+            <Link to="/analytics">{t('nav.analytics')}</Link>
           </nav>
-          <nav className="footer-links" aria-label="Exam Categories">
-            <h4>Exams</h4>
+          <nav className="footer-links" aria-label={t('footer.exams')}>
+            <h4>{t('footer.exams')}</h4>
             <span>UPSC Civil Services</span>
             <span>MPSC</span>
             <span>SSC CGL/CHSL</span>
             <span>Banking IBPS/SBI</span>
           </nav>
-          <nav className="footer-links" aria-label="Company Links">
-            <h4>Company</h4>
-            <Link to="/about">About Us</Link>
-            <a href="#">Contact</a>
-            <Link to="/privacy">Privacy Policy</Link>
-            <a href="#">Terms of Service</a>
+          <nav className="footer-links" aria-label={t('footer.company')}>
+            <h4>{t('footer.company')}</h4>
+            <Link to="/about">{t('footer.about')}</Link>
+            <a href="#">{t('footer.contact')}</a>
+            <Link to="/privacy">{t('footer.privacy')}</Link>
+            <a href="#">{t('footer.terms')}</a>
           </nav>
         </div>
         <div className="footer-bottom">
-          <p>© 2026 Sarkari AI. All rights reserved. Built with ❤️ for Bharat's Future Leaders.</p>
+          <p>{t('footer.rights')}</p>
         </div>
       </footer>
     </main>

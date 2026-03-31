@@ -89,14 +89,14 @@ export default function StudyPlanner() {
             <div className="input-group">
               <label htmlFor="exam-select">{t('studyPlanner.exam')}</label>
               <select id="exam-select" value={exam} onChange={e => setExam(e.target.value)}>
-                <option value="">Select Exam</option>
+                <option value="">{t('onboarding.step1')}</option>
                 {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
               </select>
             </div>
             <div className="input-group">
               <label htmlFor="hours-select">{t('studyPlanner.hours')}</label>
               <select id="hours-select" value={hours} onChange={e => setHours(Number(e.target.value))}>
-                {[1,2,3,4,5,6,7,8,9,10,11,12].map(h => <option key={h} value={h}>{h} hrs</option>)}
+                {[1,2,3,4,5,6,7,8,9,10,11,12].map(h => <option key={h} value={h}>{h} {t('dashboard.stats.days').includes('दिन') ? 'घंटे' : 'hrs'}</option>)}
               </select>
             </div>
             <div className="input-group">
@@ -117,7 +117,7 @@ export default function StudyPlanner() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
               <h3>{t('studyPlanner.yourPlan')}</h3>
               <div className="download-actions">
-                <div className="badge badge-primary">Target: {exam.toUpperCase()}</div>
+                <div className="badge badge-primary">{t('studyPlanner.exam')}: {exam.toUpperCase()}</div>
                 <button className="btn btn-secondary btn-sm" onClick={downloadPlanPdf}>
                   <Download size={14} style={{ marginRight: 4 }} /> PDF
                 </button>

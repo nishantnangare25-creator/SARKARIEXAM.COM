@@ -48,20 +48,24 @@ export default function Navbar({ onToggleSidebar }) {
         {!isLanding && (
           <div className="navbar-search">
             <Search size={16} />
-            <input type="text" placeholder="Search topics, exams, notes…" aria-label="Search" />
+            <input type="text" placeholder={t('common.searchPlaceholder') || 'Search topics, exams, notes…'} aria-label="Search" />
           </div>
+
+
         )}
 
         {/* Landing nav links */}
         {isLanding && (
           <div className={`navbar-links ${menuOpen ? 'open' : ''}`}>
-            <a href="#features">{t('home.ctaSecondary')}</a>
-            <a href="#exams">{t('home.examTitle')}</a>
-            {!user && <Link to="/login" style={{ fontWeight: 600, color: 'var(--primary)' }}>Login / Sign Up</Link>}
+            <a href="#features" onClick={() => setMenuOpen(false)}>{t('home.ctaSecondary')}</a>
+            <a href="#exams" onClick={() => setMenuOpen(false)}>{t('home.examTitle')}</a>
+            {!user && <Link to="/login" style={{ fontWeight: 600, color: 'var(--primary)' }} onClick={() => setMenuOpen(false)}>{t('nav.login')}</Link>}
 
             <div className="mobile-menu-cta">
-              <Link to="/dashboard" className="btn btn-sm btn-nav-dashboard">Go to Dashboard</Link>
+              <Link to="/dashboard" className="btn btn-sm btn-nav-dashboard" onClick={() => setMenuOpen(false)}>{t('dashboard.header.overview')}</Link>
             </div>
+
+
           </div>
         )}
 
@@ -92,19 +96,23 @@ export default function Navbar({ onToggleSidebar }) {
 
           {user ? (
             <div className="user-menu">
-              <Link to="/settings" className="profile-pill" title="Profile & Settings">
+              <Link to="/settings" className="profile-pill" title={t('nav.settings')}>
                 <div className="profile-avatar">{initials}</div>
-                <span>{user.displayName?.split(' ')[0] || 'Profile'}</span>
+                <span>{user.displayName?.split(' ')[0] || t('nav.profile')}</span>
               </Link>
+
+
             </div>
           ) : (
             <div className="auth-btns" style={{ display: 'flex', gap: '8px' }}>
-              <Link to="/login" className="btn btn-sm btn-outline">Login</Link>
+              <Link to="/login" className="btn btn-sm btn-outline">{t('nav.login')}</Link>
               <Link to="/login" className="btn btn-sm btn-nav-dashboard">
-                <span className="btn-text-full">Sign Up Free</span>
-                <span className="btn-text-short">Sign Up</span>
+                <span className="btn-text-full">{t('nav.signup')}</span>
+                <span className="btn-text-short">{t('nav.signup')}</span>
               </Link>
             </div>
+
+
           )}
 
           {isLanding && (

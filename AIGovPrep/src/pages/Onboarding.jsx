@@ -86,7 +86,7 @@ export default function Onboarding() {
               <label>{t('onboarding.hoursLabel')}</label>
               <input type="range" min="1" max="12" value={data.hours}
                 onChange={e => setData({ ...data, hours: parseInt(e.target.value) })} />
-              <span className="range-value">{data.hours} hrs/day</span>
+              <span className="range-value">{data.hours} {t('onboarding.hoursSuffix') || 'hrs/day'}</span>
             </div>
             <div className="input-group" style={{ marginTop: 16 }}>
               <label>{t('onboarding.levelLabel')}</label>
@@ -109,7 +109,7 @@ export default function Onboarding() {
             {subjects.length > 0 ? (
               <>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: 12 }}>
-                  Tap to mark weak (🔴) or strong (🟢) subjects
+                  {t('onboarding.step4Desc')}
                 </p>
                 <div className="subject-assessment">
                   {subjects.map(sub => (
@@ -117,15 +117,15 @@ export default function Onboarding() {
                       <span>{sub}</span>
                       <div className="subject-btns">
                         <button className={`sub-btn weak ${data.weakSubjects.includes(sub) ? 'active' : ''}`}
-                          onClick={() => toggleSubject('weakSubjects', sub)}>Weak</button>
+                          onClick={() => toggleSubject('weakSubjects', sub)}>{t('onboarding.weakLabel') || 'Weak'}</button>
                         <button className={`sub-btn strong ${data.strongSubjects.includes(sub) ? 'active' : ''}`}
-                          onClick={() => toggleSubject('strongSubjects', sub)}>Strong</button>
+                          onClick={() => toggleSubject('strongSubjects', sub)}>{t('onboarding.strongLabel') || 'Strong'}</button>
                       </div>
                     </div>
                   ))}
                 </div>
               </>
-            ) : <p>Please select an exam first.</p>}
+            ) : <p>{t('onboarding.noExamSelected') || 'Please select an exam first.'}</p>}
           </div>
         )}
 

@@ -20,9 +20,9 @@ export default function Dashboard({ onToggleSidebar }) {
 
   useEffect(() => {
     const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good Morning');
-    else if (hour < 17) setGreeting('Good Afternoon');
-    else setGreeting('Good Evening');
+    if (hour < 12) setGreeting(t('dashboard.greeting.morning'));
+    else if (hour < 17) setGreeting(t('dashboard.greeting.afternoon'));
+    else setGreeting(t('dashboard.greeting.evening'));
 
     const fetchCA = async () => {
       try {
@@ -56,10 +56,10 @@ export default function Dashboard({ onToggleSidebar }) {
 
   const calculateAnalytics = () => {
     const defaultStats = [
-      { name: 'History', progress: 0, color: 'blue' },
-      { name: 'Geography', progress: 0, color: 'saffron' },
-      { name: 'Polity', progress: 0, color: 'green' },
-      { name: 'Current Affairs', progress: 0, color: 'red' },
+      { name: t('common.history') || 'History', progress: 0, color: 'blue' },
+      { name: t('common.geography') || 'Geography', progress: 0, color: 'saffron' },
+      { name: t('common.polity') || 'Polity', progress: 0, color: 'green' },
+      { name: t('dashboard.ca.title') || 'Current Affairs', progress: 0, color: 'red' },
     ];
 
     if (!testHistory.length) return defaultStats;
@@ -87,37 +87,35 @@ export default function Dashboard({ onToggleSidebar }) {
     // Add logic based on lowest scores
     const weakSubjects = stats.filter(s => s.progress < 60 && s.progress > 0);
     if (weakSubjects.length > 0) {
-      suggestions.push({ text: `Focus on ${weakSubjects[0].name}`, level: 'important', path: '/mock-test' });
+      suggestions.push({ text: t('dashboard.suggestions.focus', { subject: weakSubjects[0].name }), level: 'important', path: '/mock-test' });
     }
     
-    // Add logic based on latest activity
     if (testHistory.length > 0) {
-      suggestions.push({ text: `Review ${testHistory[0].subject} errors`, level: 'normal', path: '/analytics' });
+      suggestions.push({ text: t('dashboard.suggestions.review', { subject: testHistory[0].subject }), level: 'normal', path: '/analytics' });
     }
 
-    // Default suggestions if none
     if (suggestions.length < 3) {
-      suggestions.push({ text: "Take a full Mock Test", level: 'normal', path: '/mock-test' });
-      suggestions.push({ text: "New update in Current Affairs", level: 'normal', path: '/current-affairs' });
+      suggestions.push({ text: t('dashboard.suggestions.takeMock'), level: 'normal', path: '/mock-test' });
+      suggestions.push({ text: t('dashboard.suggestions.newUpdate'), level: 'normal', path: '/current-affairs' });
     }
 
     return suggestions.slice(0, 4);
   };
 
   const dynamicSubjects = user ? calculateAnalytics() : [
-    { name: 'History', progress: 75, color: 'blue' },
-    { name: 'Geography', progress: 45, color: 'saffron' },
-    { name: 'Polity', progress: 90, color: 'green' },
-    { name: 'Current Affairs', progress: 30, color: 'red' },
+    { name: t('common.history'), progress: 75, color: 'blue' },
+    { name: t('common.geography'), progress: 45, color: 'saffron' },
+    { name: t('common.polity'), progress: 90, color: 'green' },
+    { name: t('dashboard.ca.title'), progress: 30, color: 'red' },
   ];
 
   const suggestions = getSuggestions(dynamicSubjects);
 
   const quickActions = [
-    { id: 'mock', title: 'Start Mock Test', desc: 'Full length test', icon: Brain, color: 'blue', path: '/mock-test' },
-    { id: 'pyq-lib', title: 'PYQ Library', desc: 'Past papers & Upload', icon: BookOpen, color: 'saffron', path: '/pyq-pdfs' },
-    { id: 'pyq-test', title: 'PYQs Practice', desc: '10-min 10-questions', icon: Target, color: 'red', path: '/pyqs-mock-test' },
-    { id: 'tutor', title: 'AI Study Tutor', desc: 'Ask Riya anything', icon: Sparkles, color: 'green', path: '/tutor' },
+    { id: 'mock', title: t('dashboard.quickActions.mock.title'), desc: t('dashboard.quickActions.mock.desc'), icon: Brain, color: 'blue', path: '/mock-test' },
+    { id: 'pyq-lib', title: t('dashboard.quickActions.pyqLib.title'), desc: t('dashboard.quickActions.pyqLib.desc'), icon: BookOpen, color: 'saffron', path: '/pyq-pdfs' },
+    { id: 'pyq-test', title: t('dashboard.quickActions.pyqTest.title'), desc: t('dashboard.quickActions.pyqTest.desc'), icon: Target, color: 'red', path: '/pyqs-mock-test' },
+    { id: 'tutor', title: t('dashboard.quickActions.tutor.title'), desc: t('dashboard.quickActions.tutor.desc'), icon: Sparkles, color: 'green', path: '/tutor' },
   ];
 
   const subjects = [
@@ -136,29 +134,29 @@ export default function Dashboard({ onToggleSidebar }) {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: 16 }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: 8 }}>
-                <p className="badge badge-primary" style={{ margin: 0 }}>{user ? 'Dashboard Overview' : 'Guest Mode'}</p>
+                <p className="badge badge-primary" style={{ margin: 0 }}>{user ? t('dashboard.header.overview') : t('dashboard.header.guest')}</p>
                 <button 
                   className="btn btn-sm btn-outline" 
                   onClick={onToggleSidebar}
                   style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', padding: '4px 10px', borderRadius: 'var(--radius-full)' }}
                 >
-                  <Newspaper size={14} /> Open Menu
+                  <Newspaper size={14} /> {t('dashboard.header.openMenu')}
                 </button>
               </div>
               <h1 style={{ marginBottom: 4 }}>
-                {user ? `${greeting}, ${user?.displayName?.split(' ')[0] || 'Scholar' }! 👋` : `${greeting}, Aspirant! 👋`}
+                {user ? `${greeting}, ${user?.displayName?.split(' ')[0] || t('dashboard.greeting.scholar') }! 👋` : `${greeting}, ${t('dashboard.greeting.aspirant')}! 👋`}
               </h1>
-              <p>{user ? 'Ready to continue your preparation?' : 'Start your prep today as a guest or login to track progress.'}</p>
+              <p>{user ? t('dashboard.greeting.ready') : t('dashboard.greeting.startGuest')}</p>
             </div>
             
             {user ? (
               <div className="card" style={{ padding: '8px 16px', display: 'flex', gap: 24, borderRadius: 'var(--radius-md)' }}>
                 <div style={{ textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Daily Streak</span>
-                  <span style={{ fontWeight: 800, color: 'var(--accent-orange)' }}>🔥 12 Days</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>{t('dashboard.stats.streak')}</span>
+                  <span style={{ fontWeight: 800, color: 'var(--accent-orange)' }}>🔥 12 {t('dashboard.stats.days')}</span>
                 </div>
                 <div style={{ textAlign: 'center' }}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Readiness</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>{t('dashboard.stats.readiness')}</span>
                   <span style={{ fontWeight: 800, color: 'var(--accent-green)' }}>📈 84%</span>
                 </div>
               </div>
@@ -166,8 +164,8 @@ export default function Dashboard({ onToggleSidebar }) {
               <Link to="/login" className="card" style={{ padding: '12px 20px', display: 'flex', alignItems: 'center', gap: 12, borderRadius: 'var(--radius-md)', textDecoration: 'none', background: 'var(--primary-bg)', border: '1px solid var(--border-blue)' }}>
                 <Sparkles className="text-blue" size={20} />
                 <div>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>Personalize Prep</span>
-                  <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>Login to Sync Progress</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', display: 'block' }}>{t('dashboard.auth.personalize')}</span>
+                  <span style={{ fontWeight: 700, color: 'var(--primary)', fontSize: '0.9rem' }}>{t('dashboard.auth.sync')}</span>
                 </div>
               </Link>
             )}
@@ -186,7 +184,7 @@ export default function Dashboard({ onToggleSidebar }) {
                 <p style={{ fontSize: '0.8rem' }}>{action.desc}</p>
               </div>
               <div style={{ marginTop: 'auto', display: 'flex', alignItems: 'center', gap: 6, fontSize: '0.8rem', fontWeight: 600, color: 'var(--primary)' }}>
-                Go now <ArrowRight size={14} />
+                {t('dashboard.quickActions.goNow')} <ArrowRight size={14} />
               </div>
             </Link>
           ))}
@@ -202,16 +200,16 @@ export default function Dashboard({ onToggleSidebar }) {
             <section className="card" style={{ position: 'relative', overflow: 'hidden' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <TrendingUp size={20} className="text-blue" /> Performance Analytics
+                  <TrendingUp size={20} className="text-blue" /> {t('dashboard.analytics.title')}
                 </h3>
-                {user && <Link to="/analytics" className="btn btn-sm btn-ghost">View Details</Link>}
+                {user && <Link to="/analytics" className="btn btn-sm btn-ghost">{t('dashboard.analytics.viewDetails')}</Link>}
               </div>
 
               {!user && (
                 <div style={{ position: 'absolute', inset: 0, zIndex: 10, background: 'rgba(255,255,255,0.6)', backdropFilter: 'blur(4px)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 20, textAlign: 'center' }}>
                   <Sparkles size={32} className="text-blue" style={{ marginBottom: 12 }} />
-                  <p style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 12 }}>Analytics Locked</p>
-                  <Link to="/login" className="btn btn-sm btn-primary">Login to Unlock</Link>
+                  <p style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 12 }}>{t('dashboard.analytics.locked')}</p>
+                  <Link to="/login" className="btn btn-sm btn-primary">{t('dashboard.analytics.loginToUnlock')}</Link>
                 </div>
               )}
 
@@ -243,17 +241,16 @@ export default function Dashboard({ onToggleSidebar }) {
                     ))
                   ) : (
                     <div style={{ textAlign: 'center', padding: '20px', color: 'var(--text-muted)', fontSize: '0.9rem' }}>
-                      No test data yet. Start your first mock test!
+                      {t('dashboard.analytics.noData')}
                     </div>
                   )
                 )}
               </div>
             </section>
 
-            {/* AI Insights Chips */}
             <section className="card" style={{ background: 'var(--primary-bg)', border: '1px solid var(--border-blue)' }}>
               <h4 style={{ marginBottom: 16, display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)' }}>
-                <Zap size={18} fill="var(--primary)" /> Smart Suggestions
+                <Zap size={18} fill="var(--primary)" /> {t('dashboard.suggestions.title')}
               </h4>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                 {suggestions.map((s, i) => (
@@ -295,10 +292,10 @@ export default function Dashboard({ onToggleSidebar }) {
             {/* Daily Quiz Highlight */}
             <section className="card" style={{ background: 'var(--gradient-primary)', color: 'white', border: 'none', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'relative', zIndex: 2 }}>
-                <p style={{ opacity: 0.9, fontSize: '0.8rem', fontWeight: 600, letterSpacing: 0.5 }}>DAILY CHALLENGE</p>
-                <h3 style={{ color: 'white', margin: '8px 0 16px' }}>Constitution of India Special Quiz</h3>
+                <p style={{ opacity: 0.9, fontSize: '0.8rem', fontWeight: 600, letterSpacing: 0.5 }}>{t('dashboard.challenge.badge')}</p>
+                <h3 style={{ color: 'white', margin: '8px 0 16px' }}>{t('dashboard.challenge.title')}</h3>
                 <Link to="/mock-test" className="btn btn-cta" style={{ borderRadius: 'var(--radius-full)' }}>
-                  <Play size={16} fill="white" /> Challenge Now
+                  <Play size={16} fill="white" /> {t('dashboard.challenge.button')}
                 </Link>
               </div>
               <Sparkles size={80} style={{ position: 'absolute', right: -10, bottom: -10, opacity: 0.1, color: 'white' }} />
@@ -308,9 +305,9 @@ export default function Dashboard({ onToggleSidebar }) {
             <section className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Newspaper size={20} className="text-saffron" /> Current Affairs
+                  <Newspaper size={20} className="text-saffron" /> {t('dashboard.ca.title')}
                 </h3>
-                <span className="badge badge-orange">Latest</span>
+                <span className="badge badge-orange">{t('dashboard.ca.latest')}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {caLoading ? (
@@ -332,7 +329,7 @@ export default function Dashboard({ onToggleSidebar }) {
                   ))
                 )}
                 <Link to="/current-affairs" className="btn btn-ghost btn-sm" style={{ width: '100%', justifyContent: 'center', marginTop: 8, textDecoration: 'none' }}>
-                  View All Updates <ArrowRight size={14} />
+                  {t('dashboard.ca.viewAll')} <ArrowRight size={14} />
                 </Link>
               </div>
             </section>

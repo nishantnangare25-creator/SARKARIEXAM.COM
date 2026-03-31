@@ -50,7 +50,7 @@ const Gauge = ({ value, label, icon: Icon, color = 'var(--primary)' }) => {
       </div>
       <div style={{ marginTop: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, color: color, fontWeight: 700, fontSize: '0.85rem' }}>
         <Icon size={16} /> 
-        {value > 70 ? 'Excellent' : value > 40 ? 'Steady' : 'Needs Focus'}
+        {value > 70 ? t('analytics.stats.excellent') : value > 40 ? t('analytics.stats.steady') : t('analytics.stats.needsFocus')}
       </div>
     </div>
   );
@@ -116,7 +116,7 @@ export default function Analytics() {
             <h1 style={{ margin: 0, fontSize: '1.75rem' }}>{t('analytics.title')}</h1>
           </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.05rem' }}>
-            Track your progress, identify weak areas, and master your preparation.
+            {t('analytics.subtitle')}
           </p>
         </header>
 
@@ -125,17 +125,16 @@ export default function Analytics() {
             <div className="feature-icon purple" style={{ width: 80, height: 80, margin: '0 auto 24px', borderRadius: '24px' }}>
               <Sparkles size={40} />
             </div>
-            <h2 style={{ marginBottom: 12, fontSize: '2rem' }}>Unlock AI-Powered Insights</h2>
+            <h2 style={{ marginBottom: 12, fontSize: '2rem' }}>{t('analytics.locked.title')}</h2>
             <p style={{ maxWidth: 550, margin: '0 auto 32px', color: 'var(--text-secondary)', fontSize: '1.15rem', lineHeight: 1.6 }}>
-              Get detailed performance reports and personalized prep strategies by tracking your test history. 
-              Sign up for free to start your journey.
+              {t('analytics.locked.desc')}
             </p>
             <div style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link to="/login" className="btn btn-primary btn-lg" style={{ padding: '16px 40px', borderRadius: '16px' }}>
-                Join for Free
+                {t('analytics.locked.join')}
               </Link>
               <Link to="/mock-test" className="btn btn-outline btn-lg" style={{ padding: '16px 40px', borderRadius: '16px' }}>
-                Try a Mock Test
+                {t('analytics.locked.tryMock')}
               </Link>
             </div>
           </div>
@@ -144,9 +143,9 @@ export default function Analytics() {
             
             {/* Stats Overview Grid */}
             <div className="analytics-grid animate-fadeInUp">
-              <Gauge value={displayStats.accuracy} label="Accuracy" icon={Target} color="#2563eb" />
-              <Gauge value={displayStats.consistency} label="Consistency" icon={Zap} color="#f97316" />
-              <Gauge value={displayStats.completion} label="Completion" icon={Activity} color="#10b981" />
+              <Gauge value={displayStats.accuracy} label={t('analytics.stats.accuracy')} icon={Target} color="#2563eb" t={t} />
+              <Gauge value={displayStats.consistency} label={t('analytics.stats.consistency')} icon={Zap} color="#f97316" t={t} />
+              <Gauge value={displayStats.completion} label={t('analytics.stats.completion')} icon={Activity} color="#10b981" t={t} />
             </div>
 
             {/* Main Dashboard Layout */}
@@ -156,7 +155,7 @@ export default function Analytics() {
               <div className="analytics-card">
                 <div className="analytics-card-header">
                   <Brain size={20} className="text-purple" />
-                  Subject Breakdown
+                  {t('analytics.breakdown.title')}
                 </div>
                 <div className="subject-performance-list">
                   {displayStats.subjects.map((s, i) => (
@@ -180,7 +179,7 @@ export default function Analytics() {
               <div className="analytics-card" style={{ background: '#0F172A', color: '#FFFFFF', borderColor: '#1E293B' }}>
                 <div className="analytics-card-header" style={{ color: '#FFFFFF' }}>
                   <Award size={20} className="text-saffron" />
-                  Prep Milestones
+                  {t('analytics.milestones.title')}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
                   <div style={{ display: 'flex', gap: 12 }}>
@@ -188,8 +187,8 @@ export default function Analytics() {
                       <TrendingUp size={20} className="text-green" />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Steady Builder</div>
-                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>You have attempted tests 3 days in a row. Keep going!</p>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t('analytics.milestones.builder.title')}</div>
+                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{t('analytics.milestones.builder.desc')}</p>
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 12 }}>
@@ -197,13 +196,13 @@ export default function Analytics() {
                       <Clock size={20} className="text-blue" />
                     </div>
                     <div>
-                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>Time Mastery</div>
-                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>Average speed: 45s per question (Improved by 12%).</p>
+                      <div style={{ fontWeight: 700, fontSize: '0.9rem' }}>{t('analytics.milestones.time.title')}</div>
+                      <p style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginTop: 2 }}>{t('analytics.milestones.time.desc')}</p>
                     </div>
                   </div>
                   <div style={{ marginTop: 12, padding: 16, background: 'rgba(255,255,255,0.05)', borderRadius: 16, border: '1px solid rgba(255,255,255,0.1)' }}>
-                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-saffron)', marginBottom: 4 }}>💡 PRO TIP</div>
-                    <p style={{ fontSize: '0.85rem', lineHeight: 1.5 }}>Your performance in <strong>Polity</strong> is outstanding. Try focusing more on <strong>Economy</strong> this week to balance your score.</p>
+                    <div style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--accent-saffron)', marginBottom: 4 }}>{t('analytics.proTip.title')}</div>
+                    <p style={{ fontSize: '0.85rem', lineHeight: 1.5 }}>{t('analytics.proTip.desc')}</p>
                   </div>
                 </div>
               </div>
@@ -215,11 +214,10 @@ export default function Analytics() {
               <div className="ai-banner-content">
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
                   <Sparkles size={24} className="text-blue" />
-                  <h3 style={{ margin: 0 }}>AI Performance Deep-Dive</h3>
+                  <h3 style={{ margin: 0 }}>{t('analytics.deepDive.title')}</h3>
                 </div>
                 <p>
-                  Let our AI analyze your detailed patterns, identify specific syllabus gaps, 
-                  and generate a personalized 7-day recovery plan based on your recent activity.
+                  {t('analytics.deepDive.desc')}
                 </p>
               </div>
               <button 
@@ -228,7 +226,7 @@ export default function Analytics() {
                 disabled={loading}
                 style={{ borderRadius: '16px', boxShadow: '0 10px 25px rgba(37,99,235,0.2)' }}
               >
-                {loading ? <Loader2 size={20} className="animate-spin" /> : 'Generate AI Report'}
+                {loading ? <Loader2 size={20} className="animate-spin" /> : t('analytics.deepDive.button')}
               </button>
             </div>
 
@@ -244,7 +242,7 @@ export default function Analytics() {
             
             {showMock && (
               <div className="alert alert-info" style={{ borderRadius: '12px' }}>
-                <Zap size={16} /> <strong>Note:</strong> We're showing demonstration data because you haven't taken enough mock tests yet. Take more tests to see your real performance!
+                <Zap size={16} /> <strong>Note:</strong> {t('analytics.demoMode')}
               </div>
             )}
 

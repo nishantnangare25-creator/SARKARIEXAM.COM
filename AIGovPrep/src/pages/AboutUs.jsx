@@ -9,28 +9,28 @@ export default function AboutUs() {
   const values = [
     {
       icon: <Target className="purple" size={24} />,
-      title: "Our Mission",
-      desc: "To democratize high-quality government exam preparation for every aspirant in India — from mastering the complete UPSC syllabus to cracking MPSC, SSC, and Railway exams — through the power of Artificial Intelligence."
+      title: t('about.mission.title'),
+      desc: t('about.mission.desc')
     },
     {
       icon: <Sparkles className="orange" size={24} />,
-      title: "AI Innovation",
-      desc: "We leverage state-of-the-art AI models and real UPSC exam samples to deliver personalized coaching that adapts to each student's unique learning pace and knowledge gaps."
+      title: t('about.innovation.title'),
+      desc: t('about.innovation.desc')
     },
     {
       icon: <Rocket className="green" size={24} />,
-      title: "Future Vision",
-      desc: "Building a future where world-class exam coaching — including MPSC online classes and live doubt sessions — is accessible to every aspirant, regardless of location or financial background."
+      title: t('about.vision.title'),
+      desc: t('about.vision.desc')
     }
   ];
 
   const features = [
-    { icon: <Brain />, title: "Personalized AI Tutor", desc: "An interactive AI tutor that identifies your weak areas and guides you through complex UPSC syllabus topics with clarity and depth." },
-    { icon: <FileText />, title: "Smart PYQ Analysis", desc: "AI-powered analysis of UPSC exam samples and previous year questions to identify high-yield patterns and predict likely exam topics." },
-    { icon: <BarChart3 />, title: "Data-Driven Insights", desc: "Detailed performance tracking and predictive analytics to measure your exam readiness and optimize your preparation strategy." }
+    { icon: <Brain />, title: t('about.features.tutor.title'), desc: t('about.features.tutor.desc') },
+    { icon: <FileText />, title: t('about.features.pyq.title'), desc: t('about.features.pyq.desc') },
+    { icon: <BarChart3 />, title: t('about.features.data.title'), desc: t('about.features.data.desc') }
   ];
 
-  const examsCovered = [
+  const examsCovered = t('about.examsList', { returnObjects: true }) || [
     "UPSC Civil Services (IAS/IPS/IFS)",
     "MPSC State Services",
     "SSC CGL, CHSL & MTS",
@@ -45,12 +45,12 @@ export default function AboutUs() {
       <div className="page-container">
         {/* Hero Section */}
         <section className="page-header text-center" style={{ textAlign: 'center', marginBottom: '60px' }}>
-          <div className="badge badge-primary animate-fadeInUp" style={{ marginBottom: '16px' }}>About Sarkari AI</div>
+          <div className="badge badge-primary animate-fadeInUp" style={{ marginBottom: '16px' }}>{t('footer.about')}</div>
           <h1 className="animate-fadeInUp" style={{ animationDelay: '0.1s', marginBottom: '20px' }}>
-            Empowering Bharat's <span className="text-gradient">Future Leaders</span>
+            {t('about.hero.title_line1')} <span className="text-gradient">{t('about.hero.title_accent')}</span>
           </h1>
           <p className="animate-fadeInUp" style={{ animationDelay: '0.2s', maxWidth: '800px', margin: '0 auto', fontSize: '1.2rem' }}>
-            We are on a mission to revolutionize how India prepares for competitive exams. By combining deep pedagogical expertise with cutting-edge AI, we make exam success achievable for everyone — from a small town to a big city.
+            {t('about.hero.subtitle')}
           </p>
         </section>
 
@@ -71,28 +71,28 @@ export default function AboutUs() {
         <section className="card-glass animate-fadeInUp" style={{ animationDelay: '0.6s', padding: '60px', marginBottom: '80px' }}>
           <div className="dashboard-layout" style={{ alignItems: 'center' }}>
             <div className="story-content">
-              <h2 style={{ marginBottom: '20px' }}>The Problem We're Solving</h2>
+              <h2 style={{ marginBottom: '20px' }}>{t('about.story.title')}</h2>
               <p style={{ marginBottom: '16px', fontSize: '1.05rem' }}>
-                Every year, millions of aspirants across India invest years of effort and significant resources preparing for government exams. From navigating the vast <strong>UPSC syllabus</strong> — covering History, Geography, Polity, Economy, and Current Affairs — to finding authentic <strong>UPSC exam samples</strong> for practice, the journey is both demanding and expensive.
+                {t('about.story.p1')}
               </p>
               <p style={{ marginBottom: '16px', fontSize: '1.05rem' }}>
-                For state-level aspirants, the challenge is no different. Finding reliable and structured <strong>MPSC online classes</strong> that are also affordable is a struggle for most students outside major cities. High-quality coaching has historically been locked behind expensive institute fees and geography.
+                {t('about.story.p2')}
               </p>
               <p style={{ marginBottom: '24px', fontSize: '1.05rem' }}>
-                <strong>Sarkari AI was built to change this.</strong> We combine the rigor of expert-curated content with the personalization of AI — giving every student access to a smart study planner, real UPSC exam samples for practice, and MPSC online classes-style interactive learning, all in one platform and completely accessible from any device.
+                {t('about.story.p3')}
               </p>
               <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Shield size={20} className="text-blue" />
-                  <span style={{ fontWeight: 600 }}>Trusted by 50K+ Students</span>
+                  <span style={{ fontWeight: 600 }}>{t('about.stats.trusted')}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Landmark size={20} className="text-saffron" />
-                  <span style={{ fontWeight: 600 }}>15+ Exams Covered</span>
+                  <span style={{ fontWeight: 600 }}>{t('about.stats.exams')}</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                   <Users size={20} className="text-green" />
-                  <span style={{ fontWeight: 600 }}>12 Indian Languages</span>
+                  <span style={{ fontWeight: 600 }}>{t('about.stats.languages')}</span>
                 </div>
               </div>
             </div>
@@ -110,8 +110,8 @@ export default function AboutUs() {
         {/* Exams Covered */}
         <section style={{ marginBottom: '80px' }}>
           <div className="section-header text-center" style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <h2 className="animate-fadeInUp">Exams We <span className="text-gradient">Cover</span></h2>
-            <p className="animate-fadeInUp">Comprehensive preparation for India's most sought-after government examinations.</p>
+            <h2 className="animate-fadeInUp">{t('about.exams.title_line1')} <span className="text-gradient">{t('about.exams.title_accent')}</span></h2>
+            <p className="animate-fadeInUp">{t('about.exams.subtitle')}</p>
           </div>
           <div className="card" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '16px' }}>
             {examsCovered.map((exam, i) => (
@@ -126,8 +126,8 @@ export default function AboutUs() {
         {/* AI Solutions */}
         <section style={{ marginBottom: '80px' }}>
           <div className="section-header text-center" style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <h2 className="animate-fadeInUp">Our <span className="text-gradient">AI-Driven</span> Solutions</h2>
-            <p className="animate-fadeInUp">Tools designed to accelerate your learning and maximize performance.</p>
+            <h2 className="animate-fadeInUp">{t('about.solutions.title_line1')} <span className="text-gradient">{t('about.solutions.title_accent')}</span></h2>
+            <p className="animate-fadeInUp">{t('about.solutions.subtitle')}</p>
           </div>
           <div className="grid-3">
             {features.map((f, i) => (
@@ -148,13 +148,13 @@ export default function AboutUs() {
 
         {/* CTA */}
         <section className="cta-section animate-fadeInUp" style={{ borderRadius: 'var(--radius-xl)', padding: '60px', textAlign: 'center', background: 'var(--gradient-primary)', color: 'white' }}>
-          <h2 style={{ color: 'white', marginBottom: '16px' }}>Start Your Journey Today</h2>
+          <h2 style={{ color: 'white', marginBottom: '16px' }}>{t('about.cta.title')}</h2>
           <p style={{ color: 'white', opacity: 0.9, marginBottom: '32px', maxWidth: '600px', margin: '0 auto 32px' }}>
-            Join 50,000+ aspirants who are already using AI-powered UPSC syllabus guides, real UPSC exam samples, and MPSC online classes to achieve their government job dreams.
+            {t('about.cta.subtitle')}
           </p>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
-             <Link to="/mock-test" className="btn btn-lg" style={{ background: 'white', color: 'var(--primary)' }}>Try Free Mock Test</Link>
-             <Link to="/dashboard" className="btn btn-lg btn-outline" style={{ color: 'white', borderColor: 'white' }}>Go to Dashboard</Link>
+             <Link to="/mock-test" className="btn btn-lg" style={{ background: 'white', color: 'var(--primary)' }}>{t('home.cta')}</Link>
+             <Link to="/dashboard" className="btn btn-lg btn-outline" style={{ color: 'white', borderColor: 'white' }}>{t('nav.dashboard')}</Link>
           </div>
         </section>
       </div>

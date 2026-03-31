@@ -33,7 +33,7 @@ export default function PastPaperAnalyzer() {
     } else {
       // For PDF, we'll ask user to paste text or try basic extraction
       setText('');
-      setError('For best results, paste the exam paper text below. PDF text extraction requires pdfjs-dist setup.');
+      setError(t('pastPaper.pdfExtractionError'));
     }
   };
 
@@ -116,7 +116,7 @@ export default function PastPaperAnalyzer() {
           <div className="input-group" style={{ marginBottom: 16 }}>
             <label htmlFor="exam-select">{t('studyPlanner.exam')}</label>
             <select id="exam-select" value={exam} onChange={e => setExam(e.target.value)}>
-              <option value="">Select Exam</option>
+              <option value="">{t('common.select') || 'Select Exam'}</option>
               {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
             </select>
           </div>
@@ -134,12 +134,12 @@ export default function PastPaperAnalyzer() {
           </div>
 
           <div className="input-group" style={{ marginBottom: 16 }}>
-            <label htmlFor="exam-text">Or paste exam paper text here:</label>
-            <textarea id="exam-text" value={text} onChange={e => setText(e.target.value)} rows={6} placeholder="Paste the exam paper content here for AI analysis..." />
+            <label htmlFor="exam-text">{t('pastPaper.pasteLabel')}</label>
+            <textarea id="exam-text" value={text} onChange={e => setText(e.target.value)} rows={6} placeholder={t('pastPaper.pastePlaceholder')} />
           </div>
 
           <button className="btn btn-primary" onClick={analyze} disabled={loading || !text} aria-busy={loading}>
-            {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} aria-hidden="true" /> {t('pastPaper.analyzing')}</> : <><Sparkles size={18} aria-hidden="true" /> Analyze Paper</>}
+            {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} aria-hidden="true" /> {t('pastPaper.analyzing')}</> : <><Sparkles size={18} aria-hidden="true" /> {t('pastPaper.analyzeBtn')}</>}
           </button>
           {error && <p role="alert" style={{ color: '#ff6b6b', marginTop: 12, fontSize: '0.85rem' }}>{error}</p>}
         </section>
@@ -148,10 +148,10 @@ export default function PastPaperAnalyzer() {
           <div className="animate-fadeInUp">
             <div className="download-actions" style={{ justifyContent: 'flex-end', marginBottom: 16 }}>
               <button className="btn btn-secondary btn-sm" onClick={downloadAnalysisPdf}>
-                <Download size={16} /> Download PDF
+                <Download size={16} /> {t('pastPaper.downloadPdf')}
               </button>
               <button className="btn btn-outline btn-sm" onClick={downloadAnalysis}>
-                <Download size={16} /> Download MD
+                <Download size={16} /> {t('pastPaper.downloadMd')}
               </button>
             </div>
             <section className="card" style={{ marginBottom: 24 }}>

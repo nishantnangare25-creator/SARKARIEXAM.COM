@@ -65,21 +65,21 @@ export default function NotesGenerator() {
             <div className="input-group">
               <label>{t('notes.selectExam')}</label>
               <select value={exam} onChange={e => { setExam(e.target.value); setSubject(''); }}>
-                <option value="">Select Exam</option>
+                <option value="">{t('common.select') || 'Select Exam'}</option>
                 {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
               </select>
             </div>
             <div className="input-group">
               <label>{t('notes.selectSubject')}</label>
               <select value={subject} onChange={e => setSubject(e.target.value)}>
-                <option value="">Select Subject</option>
+                <option value="">{t('common.select') || 'Select Subject'}</option>
                 {subjects.map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
           </div>
           <div className="input-group" style={{ marginBottom: 16 }}>
             <label>{t('notes.topics')}</label>
-            <input type="text" value={topics} onChange={e => setTopics(e.target.value)} placeholder="e.g. Indian Independence, Fundamental Rights" />
+            <input type="text" value={topics} onChange={e => setTopics(e.target.value)} placeholder={t('notes.topics') + ' (e.g. Indian Independence, Fundamental Rights)'} />
           </div>
           <button className="btn btn-primary" onClick={handleGenerate} disabled={loading || !exam || !subject}>
             {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} /> {t('notes.generating')}</> : <><Sparkles size={18} /> {t('notes.generate')}</>}
@@ -93,10 +93,10 @@ export default function NotesGenerator() {
               <h3>{t('notes.yourNotes')}</h3>
               <div className="download-actions">
                 <button className="btn btn-secondary btn-sm" onClick={downloadNotes}>
-                  <Download size={16} /> PDF
+                  <Download size={16} /> {t('notes.downloadPdf') || 'PDF'}
                 </button>
                 <button className="btn btn-outline btn-sm" onClick={downloadNotesText}>
-                  <Download size={16} /> MD/Text
+                  <Download size={16} /> {t('notes.downloadText') || 'MD/Text'}
                 </button>
               </div>
             </div>

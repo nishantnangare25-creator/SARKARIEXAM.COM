@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useDropzone } from 'react-dropzone';
-import { FileText, DownloadCloud, Search, Calendar, BookOpen, Loader2, UploadCloud } from 'lucide-react';
+import { FileText, Search, Calendar, BookOpen, Loader2, UploadCloud } from 'lucide-react';
 import { EXAMS } from '../utils/constants';
 import { generatePYQSMockQuestions } from '../services/ai';
 import { extractTextFromPdfFile } from '../utils/pdfParser';
@@ -39,14 +39,12 @@ examsData.forEach(exam => {
 });
 
 export default function PYQPdfs() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [filterExam, setFilterExam] = useState('');
   const [filterYear, setFilterYear] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isDownloading, setIsDownloading] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
-  const [downloadId, setDownloadId] = useState(null);
 
   const onDrop = async (acceptedFiles) => {
     const file = acceptedFiles[0];
@@ -57,7 +55,7 @@ export default function PYQPdfs() {
       const text = await extractTextFromPdfFile(file);
       navigate('/pyq-practice', { state: { pdfInfo: { title: file.name, type: 'Custom Upload' }, extractedText: text } });
     } catch (e) {
-      alert("Failed to read the PDF. Please ensure it's a valid text-based PDF document.");
+      alert(t('common.error') || "Failed to read the PDF. Please ensure it's a valid text-based PDF document.");
     } finally {
       setIsParsing(false);
     }
@@ -78,106 +76,14 @@ export default function PYQPdfs() {
     });
   }, [filterExam, filterYear, searchQuery]);
 
-  const handleDownload = async (pdf) => {
-    setIsDownloading(true);
-    setDownloadId(pdf.id);
-    try {
-      const examName = EXAMS.find(e => e.id === pdf.examId)?.name || 'Exam';
-      
-      const aiResponse = await generatePYQSMockQuestions({ 
-        topic: pdf.title,
-        year: pdf.year,
-        count: 15, 
-        language: i18n?.language || 'en' 
-      });
-
-      const defaultQuestions = [
-        { question: "No specific questions could be generated for this topic due to network timeout or filter restriction.", options: ["Try again", "Use Interactive Practice Mode"] }
-      ];
-
-      const questionsToRender = aiResponse?.data?.questions?.length > 0 ? aiResponse.data.questions : defaultQuestions;
-
-      const pdfFilename = `${String(pdf.title).replace(/\s+/g, '_')}_${pdf.year}.pdf`;
-      generateQuestionPdf(
-        pdf.title, 
-        `${examName} | ${pdf.year} | ${pdf.type}`, 
-        questionsToRender, 
-        pdfFilename
-      );
-    } catch (e) {
-      console.error("Failed to generate targeted text questions:", e);
-      alert("There was an issue generating the mock paper. Please try again or use the Interactive Practice feature.");
-    } finally {
-      setIsDownloading(false);
-      setDownloadId(null);
-    }
-  };
-
-  const handleDownloadText = async (pdf) => {
-    setIsDownloading(true);
-    setDownloadId(pdf.id);
-    try {
-      const examName = EXAMS.find(e => e.id === pdf.examId)?.name || 'Exam';
-      
-      const aiResponse = await generatePYQSMockQuestions({ 
-        topic: pdf.title,
-        year: pdf.year,
-        count: 15, 
-        language: i18n?.language || 'en' 
-      });
-
-      let textContent = `Exam: ${examName}\nTopic: ${pdf.title}\nYear: ${pdf.year}\nType: ${pdf.type}\n\n`;
-      textContent += "Section A: Core Subjects & Questions\n\n";
-
-      const defaultQuestions = [
-        { question: "No specific questions could be generated for this topic due to network timeout or filter restriction.", options: ["Try again", "Use Interactive Practice Mode"] }
-      ];
-
-      const questionsToRender = aiResponse?.data?.questions?.length > 0 ? aiResponse.data.questions : defaultQuestions;
-
-      questionsToRender.forEach((q, index) => {
-          textContent += `Q${index + 1}. ${q.question}\n`;
-          if (Array.isArray(q.options)) {
-            q.options.forEach((opt, oIdx) => {
-              const optLetter = String.fromCharCode(97 + oIdx);
-              textContent += `   ${optLetter}) ${opt}\n`;
-            });
-          }
-          
-          if (q.correctAnswer) {
-             textContent += `\n   Answer: ${q.correctAnswer}\n`;
-          }
-          if (q.explanation) {
-             textContent += `   Explanation: ${q.explanation}\n`;
-          }
-          textContent += `\n-----------------------------------\n\n`;
-      });
-
-      textContent += "*** End of AI Generated Mock Paper ***\n";
-      const filename = `${String(pdf.title).replace(/\s+/g, '_')}_${pdf.year}.txt`;
-      const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.click();
-      URL.revokeObjectURL(url);
-    } catch (e) {
-      console.error("Failed to generate text questions:", e);
-    } finally {
-      setIsDownloading(false);
-      setDownloadId(null);
-    }
-  };
-
   return (
     <main className="page-wrapper">
       <div className="page-with-sidebar">
         
         <header className="page-header animate-fadeInUp">
-          <p className="badge badge-saffron" style={{ marginBottom: 8 }}>STUDY MATERIAL & UPLOADS</p>
-          <h1><FileText size={28} className="text-saffron" style={{ verticalAlign: 'middle', marginRight: 12 }} /> Comprehensive PYQs Library</h1>
-          <p>Access curated Past Year Question papers, or upload your own to practice interactively!</p>
+          <p className="badge badge-saffron" style={{ marginBottom: 8 }}>{t('pyq.badge')}</p>
+          <h1><FileText size={28} className="text-saffron" style={{ verticalAlign: 'middle', marginRight: 12 }} /> {t('pyq.title')}</h1>
+          <p>{t('pyq.subtitle')}</p>
         </header>
 
         <section className="animate-fadeInUp" style={{ marginBottom: 32 }}>
@@ -201,14 +107,14 @@ export default function PYQPdfs() {
             {isParsing ? (
               <>
                 <Loader2 size={48} className="text-primary animate-spin" />
-                <h3 style={{ margin: 0 }}>Reading Document & Extracting Questions...</h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>This might take a few moments for larger papers.</p>
+                <h3 style={{ margin: 0 }}>{t('pyq.upload.reading')}</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>{t('pyq.upload.readingDesc')}</p>
               </>
             ) : (
               <>
                 <UploadCloud size={48} className={isDragActive ? "text-primary" : "text-muted"} />
-                <h3 style={{ margin: 0 }}>Drag & drop your PYQ document here</h3>
-                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>or click to browse. Let our AI extract questions for an interactive test!</p>
+                <h3 style={{ margin: 0 }}>{t('pyq.upload.drag')}</h3>
+                <p style={{ margin: 0, color: 'var(--text-secondary)' }}>{t('pyq.upload.click')}</p>
               </>
             )}
           </div>
@@ -220,7 +126,7 @@ export default function PYQPdfs() {
               <Search size={18} color="var(--text-secondary)" />
               <input 
                 type="text" 
-                placeholder="Search PYQs by name or year..." 
+                placeholder={t('pyq.searchPlaceholder')} 
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
                 style={{ border: 'none', background: 'transparent', flex: 1, color: 'var(--text-primary)', outline: 'none' }}
@@ -228,13 +134,13 @@ export default function PYQPdfs() {
             </div>
             <div className="input-group" style={{ minWidth: '150px' }}>
               <select value={filterYear} onChange={e => setFilterYear(e.target.value)} style={{ height: '100%', border: '1px solid var(--border-light)' }}>
-                <option value="">All Years</option>
+                <option value="">{t('pyq.allYears') || 'All Years'}</option>
                 {Array.from({length: 21}, (_, i) => 2024 - i).map(y => <option key={y} value={y}>{y}</option>)}
               </select>
             </div>
             <div className="input-group" style={{ minWidth: '200px' }}>
               <select value={filterExam} onChange={e => setFilterExam(e.target.value)} style={{ height: '100%', border: '1px solid var(--border-light)' }}>
-                <option value="">All Exams</option>
+                <option value="">{t('pyq.allExams') || 'All Exams'}</option>
                 {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
               </select>
             </div>
@@ -261,7 +167,7 @@ export default function PYQPdfs() {
                       style={{ flex: 1 }}
                       onClick={() => navigate('/pyq-practice', { state: { pdfInfo: pdf } })}
                     >
-                      <BookOpen size={16} /> Start Practice Test
+                      <BookOpen size={16} /> {t('pyq.startPractice')}
                     </button>
                   </div>
                 </div>
@@ -270,8 +176,8 @@ export default function PYQPdfs() {
           ) : (
             <div className="card" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: 40, color: 'var(--text-muted)' }}>
               <FileText size={48} style={{ opacity: 0.2, marginBottom: 16 }} />
-              <h3>No study materials found.</h3>
-              <p>Try clearing your search or exam filters.</p>
+              <h3>{t('pyq.noMaterials')}</h3>
+              <p>{t('pyq.noMaterialsDesc')}</p>
             </div>
           )}
         </section>

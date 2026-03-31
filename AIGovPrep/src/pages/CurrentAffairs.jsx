@@ -53,8 +53,8 @@ export default function CurrentAffairs() {
       <div className="page-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh' }}>
         <div className="text-center">
           <RefreshCcw size={48} className="animate-spin text-saffron" style={{ marginBottom: 16 }} />
-          <h3>Fetching Latest Updates...</h3>
-          <p className="text-muted">Analyzing PIB and National news for you.</p>
+          <h3>{t('ca.loading')}</h3>
+          <p className="text-muted">{t('ca.subtitle')}</p>
         </div>
       </div>
     );
@@ -67,14 +67,14 @@ export default function CurrentAffairs() {
         {/* Header Section */}
         <header className="page-header animate-fadeInUp">
           <Link to="/dashboard" className="btn btn-ghost btn-sm" style={{ marginBottom: 16, paddingLeft: 0 }}>
-            <ArrowLeft size={16} /> Back to Dashboard
+            <ArrowLeft size={16} /> {t('ca.backToDashboard')}
           </Link>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
             <div>
               <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Newspaper size={32} className="text-saffron" /> Latest Current Affairs
+                <Newspaper size={32} className="text-saffron" /> {t('ca.title')}
               </h1>
-              <p>Top exam-focused updates for UPSC, MPSC, and State Government exams.</p>
+              <p>{t('ca.subtitle')}</p>
             </div>
             <button 
               className={`btn btn-outline btn-sm ${refreshing ? 'disabled' : ''}`} 
@@ -82,7 +82,7 @@ export default function CurrentAffairs() {
               style={{ display: 'flex', alignItems: 'center', gap: 8 }}
             >
               <RefreshCcw size={14} className={refreshing ? 'animate-spin' : ''} /> 
-              {refreshing ? 'Refreshing...' : 'Refresh Updates'}
+              {refreshing ? t('ca.refreshing') : t('ca.refreshUpdates')}
             </button>
           </div>
         </header>
@@ -92,8 +92,8 @@ export default function CurrentAffairs() {
           <div style={{ display: 'flex', gap: 16, alignItems: 'center' }}>
             <Sparkles size={24} className="text-saffron" />
             <div>
-              <p style={{ fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>Daily Fact for Today</p>
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Did you know? Agnikul Cosmos is the first private space startup in India to test a 3D-printed rocket engine successfully.</p>
+              <p style={{ fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>{t('ca.dailyFactTitle')}</p>
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('ca.dailyFactContent')}</p>
             </div>
           </div>
         </section>
@@ -115,37 +115,45 @@ export default function CurrentAffairs() {
                 
                 <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', paddingTop: 16, borderTop: '1px solid var(--border-color)' }}>
                   <button className="btn btn-ghost btn-sm" style={{ padding: '4px 12px', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: 8, color: 'var(--primary)', fontWeight: 600 }} onClick={() => handleShare(item)}>
-                    <Share2 size={16} /> Share News
+                    <Share2 size={16} /> {t('ca.shareNews')}
                   </button>
                 </div>
               </article>
             ))
           ) : (
             <div className="card text-center" style={{ padding: '40px' }}>
-              <p className="text-muted">No news found in this category for today.</p>
-              <button className="btn btn-link" onClick={() => setSelectedCategory('All')}>Show all news</button>
+              <p className="text-muted">{t('ca.noNews')}</p>
+              <button className="btn btn-link" onClick={() => setSelectedCategory('All')}>{t('ca.showAll')}</button>
             </div>
           )}
         </div>
 
         {/* Categories Sidebar/Section */}
         <section className="card animate-fadeInUp" style={{ marginTop: 24, animationDelay: '0.3s' }}>
-          <h4>Browse by Category</h4>
+          <h4>{t('ca.browseCategory')}</h4>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, marginTop: 16 }}>
-            {['All', 'National', 'Economy', 'Science & Tech', 'International', 'Sports', 'Policy'].map(cat => (
+            {[
+              { id: 'All', label: t('ca.categories.all') },
+              { id: 'National', label: t('ca.categories.national') },
+              { id: 'Economy', label: t('ca.categories.economy') },
+              { id: 'Science & Tech', label: t('ca.categories.scienceTech') },
+              { id: 'International', label: t('ca.categories.international') },
+              { id: 'Sports', label: t('ca.categories.sports') },
+              { id: 'Policy', label: t('ca.categories.policy') }
+            ].map(cat => (
               <button 
-                key={cat} 
-                className={`chip ${selectedCategory === cat ? 'active' : ''}`}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.id} 
+                className={`chip ${selectedCategory === cat.id ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(cat.id)}
                 style={{ 
                   cursor: 'pointer',
-                  border: selectedCategory === cat ? '1px solid var(--primary)' : '1px solid var(--border-color)',
-                  background: selectedCategory === cat ? 'var(--bg-accent-blue)' : 'var(--bg-secondary)',
-                  color: selectedCategory === cat ? 'var(--primary)' : 'var(--text-primary)',
-                  fontWeight: selectedCategory === cat ? '600' : '400'
+                  border: selectedCategory === cat.id ? '1px solid var(--primary)' : '1px solid var(--border-color)',
+                  background: selectedCategory === cat.id ? 'var(--bg-accent-blue)' : 'var(--bg-secondary)',
+                  color: selectedCategory === cat.id ? 'var(--primary)' : 'var(--text-primary)',
+                  fontWeight: selectedCategory === cat.id ? '600' : '400'
                 }}
               >
-                {cat}
+                {cat.label}
               </button>
             ))}
           </div>

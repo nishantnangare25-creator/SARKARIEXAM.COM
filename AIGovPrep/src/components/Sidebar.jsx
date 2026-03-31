@@ -75,7 +75,7 @@ export default function Sidebar({ isOpen, onClose }) {
       >
         {/* Brand strip */}
         <div className="sidebar-brand">
-          <span className="sidebar-brand-name">🎯 Sarkari Exam AI</span>
+          <span className="sidebar-brand-name">🎯 {t('app.name')}</span>
           <button
             className="sidebar-close"
             onClick={onClose}
@@ -89,7 +89,7 @@ export default function Sidebar({ isOpen, onClose }) {
         <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
           {navSections.map(section => (
             <div key={section.label} className="sidebar-section">
-              <div className="sidebar-section-label">{section.label}</div>
+              <div className="sidebar-section-label">{t(`nav.sections.${section.label.toLowerCase().replace(' ', '')}`) || section.label}</div>
               {section.items.map(item => (
                 <NavLink
                   key={item.path}
@@ -100,7 +100,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   <span className={`link-icon ${item.iconColor}`}>
                     <item.icon size={16} />
                   </span>
-                  <span>{item.label.includes('.') ? t(item.label) : item.label}</span>
+                  <span>{item.label.includes('.') ? t(item.label) : t(`nav.${item.label.toLowerCase().replace(' ', '')}`) || item.label}</span>
                 </NavLink>
               ))}
             </div>
