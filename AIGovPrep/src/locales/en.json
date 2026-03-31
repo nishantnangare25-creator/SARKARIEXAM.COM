@@ -84,7 +84,7 @@
   "dashboard": {
     "welcome": "Welcome back",
     "header": {
-      "overview": "Dashboard Overview",
+      "overview": "Home Overview",
       "guest": "Guest Mode",
       "openMenu": "Open Menu"
     },
@@ -104,14 +104,14 @@
     },
     "auth": {
       "personalize": "Personalize Prep",
-      "sync": "Login to Sync Progress"
+      "sync": "Login to sync progress"
     },
     "quickActions": {
       "title": "Quick Actions",
-      "goNow": "Go now",
+      "goNow": "Go Now",
       "mock": { "title": "Start Mock Test", "desc": "Full length test" },
-      "pyqLib": { "title": "PYQ Library", "desc": "Past papers & Upload" },
-      "pyqTest": { "title": "PYQs Practice", "desc": "10-min 10-questions" },
+      "pyqLib": { "title": "PYQ Library", "desc": "Past papers & uploads" },
+      "pyqTest": { "title": "PYQs Practice", "desc": "10-min 10-qns" },
       "tutor": { "title": "AI Study Tutor", "desc": "Ask Riya anything" }
     },
     "analytics": {
@@ -124,19 +124,14 @@
     "suggestions": {
       "title": "Smart Suggestions",
       "focus": "Focus on {{subject}}",
-      "review": "Review {{subject}} errors",
-      "takeMock": "Take a full Mock Test",
+      "review": "Review mistakes in {{subject}}",
+      "takeMock": "Take a full mock test",
       "newUpdate": "New update in Current Affairs"
     },
     "challenge": {
       "badge": "DAILY CHALLENGE",
       "title": "Constitution of India Special Quiz",
       "button": "Challenge Now"
-    },
-    "ca": {
-      "title": "Current Affairs",
-      "latest": "Latest",
-      "viewAll": "View All Updates"
     },
     "pyq": {
       "badge": "STUDY MATERIAL & UPLOADS",
@@ -434,6 +429,16 @@
       "pyq": { "title": "Smart PYQ Analysis", "desc": "AI-powered analysis of UPSC exam samples and previous year questions to identify high-yield patterns and predict likely exam topics." },
       "data": { "title": "Data-Driven Insights", "desc": "Detailed performance tracking and predictive analytics to measure your exam readiness and optimize your preparation strategy." }
     }
+  },
+  "ca": {
+    "title": "Current Affairs",
+    "subtitle": "Daily exam-focused news updates summarized by AI",
+    "loading": "Fetching latest updates...",
+    "refreshUpdates": "Refresh Updates",
+    "refreshing": "Refreshing...",
+    "backToDashboard": "Back to Home",
+    "dailyFactTitle": "Daily Exam Fact",
+    "dailyFactContent": "Strategic preparation and consistency are keys to cracking competitive exams. Review today's news for relevant UPSC/MPSC pointers."
   },
   "privacy": {
     "title": "Privacy Policy",
