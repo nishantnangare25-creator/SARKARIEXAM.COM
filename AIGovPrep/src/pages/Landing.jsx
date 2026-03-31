@@ -128,20 +128,6 @@ export default function Landing() {
         </div>
       </section>
 
-      {/* SEO Content Section */}
-      <section className="seo-section" aria-label="About Sarkari ExamAI" style={{ padding: '80px 20px', background: 'var(--bg-secondary)', textAlign: 'center', borderTop: '1px solid var(--border-light)' }}>
-        <div className="animate-fadeInUp" style={{ maxWidth: 900, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px', color: 'var(--text-secondary)', lineHeight: '1.8', fontSize: '1.05rem' }}>
-          <p style={{ color: 'var(--text-primary)', fontSize: '1.15rem' }}>
-            <strong>{t('seo.title')}</strong>
-          </p>
-          <p>
-            {t('seo.desc1')}
-          </p>
-          <p>
-            {t('seo.desc2')}
-          </p>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="landing-footer">

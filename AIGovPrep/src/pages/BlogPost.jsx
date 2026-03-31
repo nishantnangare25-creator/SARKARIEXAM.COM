@@ -1,95 +1,170 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Share2, Facebook, Twitter, Linkedin, Bookmark } from 'lucide-react';
 import blogPosts from '../data/blogPosts.json';
 
 export default function BlogPost() {
-  const { id } = useParams(); /* id matches slug */
+  const { id } = useParams();
   const [post, setPost] = useState(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
 
   useEffect(() => {
     const foundPost = blogPosts.find(p => p.slug === id);
     if (foundPost) {
       setPost(foundPost);
-      // Update basic Meta Tags for SEO temporarily
-      document.title = `${foundPost.title} | Sarkari AI`;
+      document.title = `${foundPost.title} | Sarkari Exam AI`;
       
-      const metaDesc = document.querySelector('meta[name="description"]');
-      if (metaDesc) metaDesc.setAttribute('content', foundPost.excerpt);
+      // SEO: Meta Tags Injection
+      const metaElements = {
+        'description': foundPost.excerpt,
+        'og:title': foundPost.title,
+        'og:description': foundPost.excerpt,
+        'og:image': foundPost.featuredImage,
+        'og:type': 'article',
+        'twitter:card': 'summary_large_image'
+      };
+
+      Object.entries(metaElements).forEach(([name, content]) => {
+        let el = document.querySelector(`meta[name="${name}"], meta[property="${name}"]`);
+        if (!el) {
+          el = document.createElement('meta');
+          if (name.startsWith('og:')) el.setAttribute('property', name);
+          else el.setAttribute('name', name);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', content);
+      });
+
+      // JSON-LD Schema injection
+      const schema = {
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": foundPost.title,
+        "description": foundPost.excerpt,
+        "image": foundPost.featuredImage,
+        "datePublished": foundPost.date,
+        "author": { "@type": "Organization", "name": "Sarkari Exam AI" }
+      };
+
+      const script = document.createElement('script');
+      script.type = 'application/ld+json';
+      script.id = 'json-ld-schema';
+      script.text = JSON.stringify(schema);
+      document.head.appendChild(script);
+
+      return () => {
+        document.getElementById('json-ld-schema')?.remove();
+      };
     }
   }, [id]);
 
-  if (!post) {
-    return (
-      <div className="page-wrapper" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '60vh' }}>
-        <p>Post not found.</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    const handleScroll = () => {
+      const totalScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const currentScroll = window.pageYOffset;
+      setScrollProgress((currentScroll / totalScroll) * 100);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const relatedPosts = useMemo(() => {
+    if (!post) return [];
+    return blogPosts
+      .filter(p => p.id !== post.id && p.tags?.some(tag => post.tags?.includes(tag)))
+      .slice(0, 3);
+  }, [post]);
+
+  if (!post) return <div className="page-wrapper center">Post not found.</div>;
 
   return (
     <div className="page-wrapper animate-fadeIn">
+      {/* Reading Progress Bar */}
+      <div style={{ position: 'fixed', top: 0, left: 0, width: `${scrollProgress}%`, height: '4px', background: 'var(--primary)', zIndex: 1000, transition: 'width 0.2s ease' }} />
+
       <div className="page-with-sidebar">
-        <div style={{ maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '850px', margin: '0 auto', position: 'relative' }}>
           
-          <Link to="/blog" className="btn btn-outline" style={{ display: 'inline-flex', marginBottom: '32px' }}>
-            <ArrowLeft size={16} style={{ marginRight: '8px' }} /> Back to Articles
-          </Link>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <Link to="/blog" className="btn btn-outline btn-sm">
+              <ArrowLeft size={16} /> Back to Hub
+            </Link>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button className="btn btn-icon btn-sm"><Facebook size={16} /></button>
+              <button className="btn btn-icon btn-sm"><Twitter size={16} /></button>
+              <button className="btn btn-icon btn-sm"><Linkedin size={16} /></button>
+            </div>
+          </div>
 
           <article>
-            {post.featuredImage && (
-              <div 
-                className="animate-fadeIn" 
-                style={{ 
-                  width: '100%', 
-                  height: '400px', 
-                  borderRadius: '24px', 
-                  overflow: 'hidden', 
-                  marginBottom: '32px',
-                  boxShadow: '0 20px 40px rgba(0,0,0,0.1)',
-                  border: '1px solid var(--border-color)'
-                }}
-              >
-                <img 
-                  src={post.featuredImage} 
-                  alt={post.title} 
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
-                />
-              </div>
-            )}
-            <div style={{ marginBottom: '40px' }}>
-              <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            <header style={{ marginBottom: '40px' }}>
+              <div style={{ display: 'flex', gap: '8px', marginBottom: '16px' }}>
                 {post.tags?.map(tag => (
-                  <span key={tag} className="badge badge-primary" style={{ fontSize: '0.8rem' }}>{tag}</span>
+                  <span key={tag} className="badge badge-primary">{tag}</span>
                 ))}
               </div>
-              
-              <h1 style={{ fontSize: '2.5rem', lineHeight: 1.2, marginBottom: '20px', color: 'var(--text-primary)' }}>
-                {post.title}
-              </h1>
-              
-              <div style={{ display: 'flex', gap: '24px', color: 'var(--text-muted)', fontSize: '0.95rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '24px' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={16} /> {new Date(post.date).toLocaleDateString()}</span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Clock size={16} /> {post.readTime}</span>
+              <h1 style={{ fontSize: '3rem', lineHeight: 1.1, marginBottom: '24px', fontWeight: 800 }}>{post.title}</h1>
+              <div style={{ display: 'flex', gap: '24px', color: 'var(--text-muted)', paddingBottom: '24px', borderBottom: '1px solid var(--border-color)' }}>
+                <span className="flex-center gap-2"><Calendar size={18} /> {new Date(post.date).toLocaleDateString()}</span>
+                <span className="flex-center gap-2"><Clock size={18} /> {post.readTime}</span>
               </div>
-            </div>
+            </header>
+
+            {post.featuredImage && (
+              <div style={{ borderRadius: '24px', overflow: 'hidden', marginBottom: '48px', boxShadow: '0 20px 50px rgba(0,0,0,0.15)' }}>
+                <img src={post.featuredImage} alt={post.title} style={{ width: '100%', height: '500px', objectFit: 'cover' }} />
+              </div>
+            )}
 
             <div 
               className="article-content" 
-              style={{ fontSize: '1.1rem', lineHeight: 1.8, color: 'var(--text-secondary)' }}
+              style={{ fontSize: '1.2rem', lineHeight: 1.9, color: 'var(--text-primary)' }}
               dangerouslySetInnerHTML={{ __html: post.content }} 
             />
+
+            {/* AI Schema FAQs Rendering */}
+            {post.faqSchema && (
+              <section style={{ marginTop: '60px', padding: '40px', background: 'var(--bg-tertiary)', borderRadius: '24px' }}>
+                <h2 style={{ marginBottom: '32px' }}>Frequently Asked Questions</h2>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                  {post.faqSchema.map((faq, i) => (
+                    <div key={i} className="card" style={{ background: 'var(--bg-glass)' }}>
+                      <h4 style={{ color: 'var(--primary)', marginBottom: '12px' }}>{faq.question}</h4>
+                      <p style={{ margin: 0, fontSize: '1rem' }}>{faq.answer}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
           </article>
+
+          {/* Related Posts */}
+          {relatedPosts.length > 0 && (
+            <section style={{ marginTop: '80px', paddingTop: '40px', borderTop: '2px solid var(--border-light)' }}>
+              <h3 style={{ marginBottom: '32px' }}>Recommended for you</h3>
+              <div className="grid-3">
+                {relatedPosts.map(p => (
+                  <Link to={`/blog/${p.slug}`} key={p.id} className="card no-padding" style={{ textDecoration: 'none' }}>
+                    <img src={p.featuredImage} alt={p.title} style={{ width: '100%', height: '140px', objectFit: 'cover' }} />
+                    <div style={{ padding: '16px' }}>
+                      <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>{p.title}</h4>
+                      <small className="text-muted">{p.readTime}</small>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       </div>
       <style>{`
-        /* Minimalist article styling to handle AI generated HTML elegantly */
-        .article-content h2 { margin-top: 2.5em; margin-bottom: 1em; color: var(--text-primary); }
-        .article-content h3 { margin-top: 2em; margin-bottom: 0.8em; color: var(--text-primary); }
+        .article-content h2 { margin-top: 2em; font-size: 2rem; color: var(--text-primary); }
+        .article-content h3 { margin-top: 1.5em; font-size: 1.5rem; }
         .article-content p { margin-bottom: 1.5em; }
-        .article-content ul, .article-content ol { margin-bottom: 1.5em; margin-left: 1.5em; }
-        .article-content li { margin-bottom: 0.5em; }
-        .article-content strong { color: var(--text-primary); }
+        .article-content ul { margin-bottom: 2em; padding-left: 1.5em; }
+        .article-content li { margin-bottom: 0.8em; list-style: disc; }
+        .flex-center { display: flex; align-items: center; }
+        .gap-2 { gap: 8px; }
       `}</style>
     </div>
   );
