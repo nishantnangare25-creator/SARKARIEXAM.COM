@@ -6,6 +6,7 @@ import {
   GraduationCap, Bot, BarChart3, MessageSquare, Users,
   Settings, X, Newspaper, FileDown
 } from 'lucide-react';
+import logo from '../assets/logo.png';
 import './Sidebar.css';
 
 const navSections = [
@@ -61,7 +62,6 @@ export default function Sidebar({ isOpen, onClose }) {
 
   return (
     <>
-      {/* Overlay only appears on mobile when drawer is open */}
       <div
         className={`sidebar-overlay ${isOpen ? 'visible' : ''}`}
         onClick={onClose}
@@ -73,9 +73,8 @@ export default function Sidebar({ isOpen, onClose }) {
         id="main-sidebar"
         aria-label="Main navigation"
       >
-        {/* Brand strip */}
         <div className="sidebar-brand">
-          <span className="sidebar-brand-name">🎯 {t('app.name')}</span>
+          <img src={logo} alt="Logo" className="sidebar-logo-img" />
           <button
             className="sidebar-close"
             onClick={onClose}
@@ -85,7 +84,6 @@ export default function Sidebar({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Nav sections */}
         <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
           {navSections.map(section => (
             <div key={section.label} className="sidebar-section">
@@ -107,14 +105,11 @@ export default function Sidebar({ isOpen, onClose }) {
           ))}
         </nav>
 
-        {/* Footer */}
         <div className="sidebar-footer">
           <div className="sidebar-footer-info">
             <div className="dot" />
             <span className="sidebar-footer-text">
-              {user
-                ? `${user.displayName?.split(' ')[0] || 'Student'} · Active`
-                : 'AI-Powered Prep'}
+              {user? `${user.displayName?.split(' ')[0] || 'Student'} · Active` : 'AI-Powered Prep'}
             </span>
           </div>
         </div>

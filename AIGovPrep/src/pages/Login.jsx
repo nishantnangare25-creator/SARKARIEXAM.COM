@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { loginWithEmail, loginWithGoogle, registerWithEmail } from '../services/firebase';
-import { Mail, Lock, Eye, EyeOff, UserPlus, LogIn } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import logo from '../assets/logo.png';
 import './Auth.css';
 
 export default function Login() {
@@ -18,7 +19,6 @@ export default function Login() {
   const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // If already logged in, redirect to dashboard immediately
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
@@ -38,7 +38,6 @@ export default function Login() {
         await loginWithEmail(email, password);
         setSuccess(t('auth.successLogin') || 'Login successful! Welcome back.');
       }
-      // Small delay to let user see the success message
       setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err) {
       setError(err.message);
@@ -62,7 +61,7 @@ export default function Login() {
       <div className="auth-card animate-fadeInUp">
         <div className="auth-header">
           <Link to="/" className="auth-logo">
-            🎯 Sarkari <span>Exam</span> AI
+            <img src={logo} alt="Sarkari Exam AI" className="auth-logo-img" />
           </Link>
           <h1>{isRegister ? t('auth.signup') : t('auth.loginTitle')}</h1>
           <p>{isRegister ? t('auth.signupSubtitle') : t('auth.loginSubtitle')}</p>

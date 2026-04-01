@@ -7,6 +7,8 @@ import { languages } from '../i18n';
 import { Menu, X, Globe, LogOut, User, Search, ChevronDown } from 'lucide-react';
 import './Navbar.css';
 
+import logo from '../assets/logo.png';
+
 export default function Navbar({ onToggleSidebar }) {
   const { t, i18n } = useTranslation();
   const { user } = useAuth();
@@ -37,9 +39,9 @@ export default function Navbar({ onToggleSidebar }) {
             </button>
           )}
           <Link to="/" className="navbar-logo">
-            <span className="logo-text">
-              <span className="logo-name">Sarkari</span>
-              <span className="logo-ai" style={{ fontSize: '0.65em', marginLeft: '6px', fontWeight: '600' }}>ExamAI</span>
+            <img src={logo} alt="Sarkari Exam AI" className="navbar-logo-img" />
+            <span className="navbar-brand-name">
+              Sarkari<span>Exam</span>AI
             </span>
           </Link>
         </div>
@@ -104,9 +106,9 @@ export default function Navbar({ onToggleSidebar }) {
 
             </div>
           ) : (
-            <div className="auth-btns" style={{ display: 'flex', gap: '8px' }}>
-              <Link to="/login" className="btn btn-sm btn-outline">{t('nav.login')}</Link>
-              <Link to="/login" className="btn btn-sm btn-nav-dashboard">
+            <div className="auth-btns">
+              <Link to="/login" className="btn btn-sm btn-outline btn-login">{t('nav.login')}</Link>
+              <Link to="/login" className="btn btn-sm btn-nav-dashboard btn-signup">
                 <span className="btn-text-full">{t('nav.signup')}</span>
                 <span className="btn-text-short">{t('nav.signup')}</span>
               </Link>

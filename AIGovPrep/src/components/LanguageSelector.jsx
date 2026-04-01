@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { languages } from '../i18n';
 import { ArrowRight, Sparkles } from 'lucide-react';
+import logo from '../assets/logo.png';
 import './LanguageSelector.css';
 
 // Sleek gradients for selection states
@@ -49,7 +50,7 @@ export default function LanguageSelector({ onSelect }) {
 
       <div className="lang-splash-card animate-fadeInUp">
         <div className="lang-logo-center">
-          <span className="logo-text">Sarkari<span className="accent">Exam</span>AI</span>
+          <img src={logo} alt="Logo" className="lang-logo-img" />
         </div>
 
         <div className="lang-splash-header">

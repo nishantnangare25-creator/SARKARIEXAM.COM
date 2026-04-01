@@ -31,75 +31,65 @@
 .navbar-logo {
   display: flex;
   align-items: center;
-  gap: 4px;
   text-decoration: none;
-  font-family: var(--font-display);
-  font-size: 1.35rem; /* Sleek, smaller size */
-  font-weight: 900;
-  color: var(--text-primary);
-  letter-spacing: -0.5px;
   transition: transform 0.3s ease;
 }
 .navbar-logo:hover {
-  transform: scale(1.02);
+  transform: scale(1.05);
 }
-.logo-icon { 
-  font-size: 1.6rem;
-  filter: drop-shadow(0 2px 6px rgba(26, 86, 219, 0.4));
-  display: inline-block;
-  animation: float-logo 4s ease-in-out infinite;
+.navbar-logo-img {
+  height: 48px; /* Original brand presence */
+  width: auto;
+  display: block;
+  filter: drop-shadow(0 2px 8px rgba(0,0,0,0.1));
+  object-fit: contain;
 }
-@keyframes float-logo {
-  0%, 100% { transform: translateY(0) rotate(0); }
-  50% { transform: translateY(-3px) rotate(8deg); }
-}
-.logo-name {
-  background: linear-gradient(135deg, #1E3A8A 0%, #3B82F6 40%, #1E3A8A 80%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: #1A56DB; /* Fallback */
-  animation: shine-text 5s linear infinite;
-}
-@keyframes shine-text {
-  to { background-position: 200% center; }
-}
-.logo-text {
+.navbar-brand-name {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 }
-.logo-accent { 
-  background: linear-gradient(135deg, #EA6C10 0%, #FCD34D 40%, #EA6C10 80%);
-  background-size: 200% auto;
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.navbar-brand-name span {
   color: var(--accent-saffron);
-  font-weight: 900;
-  animation: shine-text 4s reverse linear infinite;
 }
-.logo-ai {
-  color: var(--primary);
-  position: relative;
-  margin-left: 2px;
-  font-style: italic;
-  font-weight: 900;
-  text-shadow: 0 0 12px rgba(59, 130, 246, 0.5);
+
+@media (max-width: 768px) {
+  .navbar-logo-img {
+    height: 32px;
+  }
+  .navbar-brand-name {
+    font-size: 1.05rem;
+    gap: 2px;
+  }
 }
-.logo-ai::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, #3B82F6, #8B5CF6);
-  border-radius: var(--radius-full);
-  opacity: 0.9;
-  box-shadow: 0 0 10px rgba(139, 92, 246, 0.6);
+
+@media (max-width: 480px) {
+  .navbar-logo-img {
+    height: 26px;
+  }
+  .navbar-brand-name {
+    font-size: 0.85rem;
+  }
+  .navbar-logo {
+    gap: 6px;
+  }
 }
+
+@media (max-width: 360px) {
+  .navbar-brand-name {
+    font-size: 0.78rem;
+    letter-spacing: -0.3px;
+  }
+  .navbar-inner {
+    padding: 0 6px;
+  }
+}
+
 
 /* Center: Search */
 .navbar-search {
@@ -307,7 +297,16 @@
   .navbar-links.open { display: flex; }
   .mobile-menu-cta { display: block; margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 16px; }
   .mobile-menu-cta .btn { width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem; }
-  .auth-btns { display: none !important; }
+  .auth-btns { 
+    display: flex !important; 
+    gap: 6px; 
+  }
+  .auth-btns .btn-signup { display: none !important; }
+  .auth-btns .btn-login {
+    padding: 6px 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
   .logo-text { font-size: 1.1rem; }
   .logo-icon { font-size: 1.3rem; }
   .navbar-inner { padding: 0 var(--space-sm); gap: var(--space-xs); }

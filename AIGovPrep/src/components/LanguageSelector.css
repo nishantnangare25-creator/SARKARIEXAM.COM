@@ -57,21 +57,10 @@
   margin-bottom: 32px;
 }
 
-.lang-logo-center .logo-text {
-  font-size: 1.6rem;
-  font-weight: 800;
-  letter-spacing: -0.5px;
-  color: var(--text-primary);
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.lang-logo-center .accent {
-  background: linear-gradient(135deg, var(--primary), var(--accent-saffron));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+.lang-logo-img {
+  height: 80px; /* Large, clear icon on splash screen */
+  width: auto;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
 }
 
 /* ===== HEADER ===== */
