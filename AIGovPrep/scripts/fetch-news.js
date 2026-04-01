@@ -13,7 +13,9 @@ const FEEDS = [
 
 async function fetchRSS(feed) {
   try {
-    const response = await fetch(feed.url);
+    const response = await fetch(feed.url, {
+      headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/91.0.4472.124 Safari/537.36' }
+    });
     const xml = await response.text();
     
     // Simple RSS parsing via regex (Lightweight, no deps)

@@ -6,8 +6,12 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BLOG_DATA_PATH = path.join(__dirname, '../src/data/blogPosts.json');
 
-const API_KEY = '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';
+const API_KEY = process.env.OPENROUTER_API_KEY || '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';
 const MODEL = 'google/gemini-2.0-flash-lite-001';
+
+if (!process.env.OPENROUTER_API_KEY && API_KEY.includes('sk-or-v1')) {
+  console.log('⚠️ Using hardcoded API key. Consider using OPENROUTER_API_KEY environment variable.');
+}
 
 // Parse arguments
 const countArg = process.argv.find(a => a.startsWith('--count='));
@@ -131,6 +135,9 @@ async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
       fs.writeFileSync(BLOG_DATA_PATH, JSON.stringify(posts, null, 2));
       console.log(`✅ Saved: "${newPost.title}"`);
       return true;
+    } else {
+      console.error('❌ AI returned no content or invalid response.');
+      return false;
     }
   } catch (err) {
     console.error('❌ Generator Error:', err.message);
@@ -149,21 +156,28 @@ async function main() {
   }
 
   console.log(`\n🚀 Slot ${SLOT_ID}: Generating ${POSTS_TO_GENERATE} post(s)...\n`);
+  let successCount = 0;
   
   for (let i = 0; i < POSTS_TO_GENERATE; i++) {
-    const newsIdx = (SLOT_ID + i) % news.length;
+    const newsIdx = (SLOT_ID + i) % (news.length || 1);
     const currentNews = news.length > 0 ? news[newsIdx] : null;
     
-    if (currentNews) {
-      await generateBlogPost(currentNews);
-    } else {
-      const currentKeywords = KEYWORDS[SLOT_ID % KEYWORDS.length];
-      const keyword = currentKeywords[Math.floor(Math.random() * currentKeywords.length)];
-      await generateBlogPost(null, keyword);
-    }
+    const success = currentNews 
+      ? await generateBlogPost(currentNews) 
+      : await generateBlogPost(null, KEYWORDS[SLOT_ID % KEYWORDS.length][Math.floor(Math.random() * 5)]);
     
+    if (success) successCount++;
     if (i < POSTS_TO_GENERATE - 1) await new Promise(r => setTimeout(r, 2000));
   }
+
+  if (successCount === 0) {
+    console.error('❌ All blog generations failed.');
+    process.exit(1);
+  }
+  console.log(`\n✨ Finished: ${successCount}/${POSTS_TO_GENERATE} posts generated successfully.\n`);
 }
 
-main();
+main().catch(err => {
+  console.error('🔥 Global failure:', err);
+  process.exit(1);
+});
