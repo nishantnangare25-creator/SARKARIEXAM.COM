@@ -433,7 +433,20 @@
     "refreshing": "Refreshing...",
     "backToDashboard": "Back to Home",
     "dailyFactTitle": "Daily Exam Fact",
-    "dailyFactContent": "Strategic preparation and consistency are keys to cracking competitive exams. Review today's news for relevant UPSC/MPSC pointers."
+    "dailyFactContent": "Strategic preparation and consistency are keys to cracking competitive exams. Review today's news for relevant UPSC/MPSC pointers.",
+    "shareNews": "Sarkari News",
+    "noNews": "No news updates found.",
+    "showAll": "Show All",
+    "browseCategory": "Browse by Category",
+    "categories": {
+      "all": "All",
+      "national": "National",
+      "economy": "Economy",
+      "scienceTech": "Science & Tech",
+      "international": "International",
+      "sports": "Sports",
+      "policy": "Policy"
+    }
   },
   "privacy": {
     "title": "Privacy Policy",

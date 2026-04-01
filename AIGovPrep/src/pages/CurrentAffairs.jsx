@@ -17,13 +17,30 @@ export default function CurrentAffairs() {
     
     try {
       const data = await getLatestCurrentAffairs(force, i18n.language);
-      setNews(data);
+      
+      // Clean data to remove unwanted source names like "Vajiram & Ravi"
+      const cleanedData = data.map(item => ({
+        ...item,
+        title: cleanText(item.title),
+        desc: cleanText(item.desc)
+      }));
+      
+      setNews(cleanedData);
     } catch (err) {
       console.error("Failed to fetch news:", err);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
+  };
+
+  const cleanText = (text) => {
+    if (!text) return text;
+    // Remove "Vajiram and Ravi" in Hindi and English with variations of dashes
+    return text
+      .replace(/\s*[-–—]\s*(वजीराम और रवि|Vajiram and Ravi|Vajiram & Ravi|Vajiram & Rao)\s*$/gi, '')
+      .replace(/(वजीराम और रवि|Vajiram and Ravi|Vajiram & Ravi|Vajiram & Rao)/gi, '')
+      .trim();
   };
 
   useEffect(() => {
@@ -39,7 +56,7 @@ export default function CurrentAffairs() {
       try {
         await navigator.share({
           title: item.title,
-          text: `${item.title}\n\nRead more on Sarkari Exam AI Current Affairs.`,
+          text: `${item.title}\n\nRead more on Sarkari Exam AI.`,
           url: window.location.href
         });
       } catch (err) {
