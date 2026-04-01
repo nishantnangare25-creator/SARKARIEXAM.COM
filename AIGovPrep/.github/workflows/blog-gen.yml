@@ -12,6 +12,8 @@ on:
     - cron: '0 14 * * *'  # 07:30 PM IST (Slot 7)
     - cron: '0 16 * * *'  # 09:30 PM IST (Slot 8)
     - cron: '0 18 * * *'  # 11:30 PM IST (Slot 9)
+    - cron: '0 20 * * *'  # 01:30 AM IST next day (Slot 10)
+    - cron: '0 22 * * *'  # 03:30 AM IST next day (Slot 11)
   workflow_dispatch:
     inputs:
       slot:

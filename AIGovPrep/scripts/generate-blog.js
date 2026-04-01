@@ -20,29 +20,30 @@ const POSTS_TO_GENERATE = countArg ? parseInt(countArg.split('=')[1], 10) : 1;
 const SLOT_ID = slotArg ? parseInt(slotArg.split('=')[1], 10) : 0;
 
 const KEYWORDS = [
-  // Slot 0: General AI
-  ['AI', 'Artificial Intelligence', 'Generative AI', 'AI Website', 'AI Robot'],
-  // Slot 1: Chatbots
-  ['AI Chatbot', 'ChatGPT 4', 'AI Chat', 'AI Chatbot Online', 'ChatGPT 4 AI Chatbot'],
-  // Slot 2: Midjourney & Art
-  ['Midjourney', 'Midjourney AI', 'AI Generated', 'AI Art Generation', 'DALL-E 3'],
-  // Slot 3: OpenAI & Models
-  ['OpenAI', 'Open AI', 'AI GPT', 'Conversational AI', 'AI Assistant'],
-  // Slot 4: Education & UPSC (Original)
-  ['UPSC syllabus 2025 complete guide', 'best AI tool for UPSC preparation', 'UPSC prelims strategy 2025', 'AI civil services exam coach India'],
-  // Slot 5: Exams & Jobs
-  ['SSC CGL syllabus and best books', 'IBPS PO preparation strategy AI', 'Railway NTPC exam preparation tips', 'government exam study plan for beginners']
+  ['AI chatbot', 'AI', 'Midjourney', 'Artificial Intelligence', 'Midjourney AI'],
+  ['Chat GPT 4', 'AI chat', 'OpenAI', 'Open AI', 'Generative AI'],
+  ['AI website', 'AI chatbot online', 'Conversational AI', 'AI assistant', 'AI generated'],
+  ['AI GPT', 'AI robot', 'Chat GPT4', 'Open AI Assistant', 'Future of AI'],
+  ['AI for students', 'Best AI for exams', 'Indian AI tools', 'Sarkari AI tips'],
+  ['AI content writing', 'AI prompts for beginners', 'Smart AI tools 2025']
 ];
 
-const TOPIC_IMAGE_MAP = {
-  'ai': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200',
-  'chatbot': 'https://images.unsplash.com/photo-1531746790731-6c087fecd05a?auto=format&fit=crop&q=80&w=1200',
-  'midjourney': 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200',
-  'chatgpt': 'https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&q=80&w=1200',
-  'exam': 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&q=80&w=1200',
-  'default': 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&q=80&w=1200'
+const REAL_IMAGE_KEYWORDS = {
+  'chatbot': 'robotics customer service',
+  'ai': 'data science technology future',
+  'midjourney': 'abstract 3d art professional',
+  'chatgpt': 'programming keyboard artificial intelligence',
+  'openai': 'silicon valley innovation',
+  'exam': 'student studying library india',
+  'robot': 'humanoid robot factory future',
+  'default': 'minimal technology office'
 };
 
+const getRealImageUrl = (topic) => {
+  const keyword = REAL_IMAGE_KEYWORDS[topic.toLowerCase()] || REAL_IMAGE_KEYWORDS.default;
+  const randomSig = Math.floor(Math.random() * 1000);
+  return `https://images.unsplash.com/photo-1?auto=format&fit=crop&q=80&w=1200&sig=${randomSig}&q=${encodeURIComponent(keyword)}`;
+};
 const NEWS_CACHE_PATH = path.join(__dirname, 'news-cache.json');
 
 async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
@@ -114,13 +115,14 @@ async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
         isNews: isNews
       };
 
-      // Image Logic
+      // Image Logic - Enhanced with real photography
       const contextText = (target + (result.tags || []).join(' ')).toLowerCase();
-      if (contextText.includes('midjourney')) newPost.featuredImage = TOPIC_IMAGE_MAP.midjourney;
-      else if (contextText.includes('chatbot') || contextText.includes('chatgpt')) newPost.featuredImage = TOPIC_IMAGE_MAP.chatbot;
-      else if (contextText.includes('ai') || contextText.includes('artificial')) newPost.featuredImage = TOPIC_IMAGE_MAP.ai;
-      else if (contextText.includes('exam') || contextText.includes('upsc') || contextText.includes('ssc')) newPost.featuredImage = TOPIC_IMAGE_MAP.exam;
-      else newPost.featuredImage = TOPIC_IMAGE_MAP.default;
+      if (contextText.includes('midjourney')) newPost.featuredImage = getRealImageUrl('midjourney');
+      else if (contextText.includes('chatbot') || contextText.includes('chatgpt')) newPost.featuredImage = getRealImageUrl('chatbot');
+      else if (contextText.includes('robot')) newPost.featuredImage = getRealImageUrl('robot');
+      else if (contextText.includes('ai') || contextText.includes('artificial')) newPost.featuredImage = getRealImageUrl('ai');
+      else if (contextText.includes('exam') || contextText.includes('upsc') || contextText.includes('ssc')) newPost.featuredImage = getRealImageUrl('exam');
+      else newPost.featuredImage = getRealImageUrl('default');
 
       let posts = [];
       if (fs.existsSync(BLOG_DATA_PATH)) {
