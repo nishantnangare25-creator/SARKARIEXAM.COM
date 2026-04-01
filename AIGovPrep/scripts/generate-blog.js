@@ -101,6 +101,11 @@ async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
 
     const data = await response.json();
     
+    if (data.error) {
+      console.error('❌ OpenRouter API Error:', data.error);
+      return false;
+    }
+    
     if (data.choices && data.choices[0]) {
       let result = JSON.parse(data.choices[0].message.content.replace(/```json/g, '').replace(/```/g, '').trim());
       
