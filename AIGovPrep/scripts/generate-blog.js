@@ -45,16 +45,38 @@ const NEWS_CACHE_PATH = path.join(__dirname, 'news-cache.json');
 
 function cleanJSON(text) {
   try {
+    // Remove markdown blocks
     let cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    
+    // Find the JSON object
     const start = cleanText.indexOf('{');
     const end = cleanText.lastIndexOf('}');
     if (start !== -1 && end !== -1) {
-      return JSON.parse(cleanText.substring(start, end + 1));
+      cleanText = cleanText.substring(start, end + 1);
     }
-    return JSON.parse(cleanText);
+
+    // Fix: Remove literal control characters (like unescaped newlines inside strings)
+    // which cause "Bad control character in string literal" errors.
+    // This replaces actual newlines/tabs inside strings with their escaped versions.
+    const sanitized = cleanText.replace(/[\u0000-\u001F\u007F-\u009F]/g, (c) => {
+      switch (c) {
+        case '\n': return '\\n';
+        case '\r': return '\\r';
+        case '\t': return '\\t';
+        default: return '';
+      }
+    });
+
+    return JSON.parse(sanitized);
   } catch (e) {
     console.error('Failed to parse AI JSON:', e.message);
-    return null;
+    // Ultimate fallback: try to parse the original cleanText if sanitization failed
+    try {
+       const cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+       return JSON.parse(cleanText);
+    } catch (inner) {
+       return null;
+    }
   }
 }
 
