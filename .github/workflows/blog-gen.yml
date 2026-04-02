@@ -1,6 +1,8 @@
 name: Blog Auto-Generate & Deploy
 
 on:
+permissions:
+  contents: write
   schedule:
     # Run daily at 10:00 AM IST (04:30 AM UTC)
     - cron: '30 4 * * *'
