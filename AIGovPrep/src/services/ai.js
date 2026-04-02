@@ -13,6 +13,7 @@ const getGroqKeys = () => {
   return keys.sort(() => Math.random() - 0.5);
 };
 const getOpenRouterKey = () => import.meta.env.VITE_OPENROUTER_API_KEY || '';
+const getGeminiKey = () => import.meta.env.VITE_GEMINI_API_KEY || '';
 
 const getLanguageName = (code) => {
   const currentCode = code || i18n.language || 'en';
@@ -258,7 +259,44 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     }
   }
 
-  // === PRIORITY 6: OPENROUTER GEMINI FLASH LITE ===
+  // === PRIORITY 6: GOOGLE GEMINI (DIRECT) ===
+  const geminiKey = getGeminiKey();
+  if (geminiKey) {
+    if (!isOnCooldown(geminiKey)) {
+      try {
+        console.log('[Cascade] Trying Google Gemini Direct...');
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }],
+            generationConfig: {
+              maxOutputTokens: options.max_tokens || 4000,
+              temperature: options.temperature || 0.7,
+            }
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.status === 429) {
+          console.warn('[Cascade] Gemini RATE LIMITED (429). Cascading...');
+          markCooldown(geminiKey);
+        } else if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          console.log('[Cascade] ✅ Gemini Direct SUCCESS');
+          return saveCache(data.candidates[0].content.parts[0].text);
+        } else {
+          console.warn('[Cascade] Gemini Direct failed:', data.error?.message);
+        }
+      } catch (e) {
+        console.warn('[Cascade] Gemini Direct network error:', e.message);
+      }
+    } else {
+      console.warn('[Cascade] Gemini Direct is on cooldown, skipping.');
+    }
+  }
+
+  // === PRIORITY 7: OPENROUTER GEMINI FLASH LITE ===
   if (orKey) {
     const openrouterModels = [
       { model: 'google/gemini-2.0-flash-lite-001', label: 'OpenRouter Gemini Flash Lite' },
@@ -540,11 +578,36 @@ export const generateTutorLesson = async ({ history, language }) => {
 export const testAIConnections = async () => {
   const results = {
     openrouter: { status: 'testing', message: '' },
-    groq: { status: 'testing', message: '' }
+    groq: { status: 'testing', message: '' },
+    gemini: { status: 'testing', message: '' }
   };
-
-  const orKey = getOpenRouterKey();
-  const groqKey = getGroqKey();
+ 
+   const orKey = getOpenRouterKey();
+  const groqKeys = getGroqKeys();
+  const geminiKey = getGeminiKey();
+ 
+   if (geminiKey) {
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: 'respond with "ok"' }] }],
+          generationConfig: { maxOutputTokens: 10 }
+        })
+      });
+      if (response.ok) {
+        results.gemini = { status: 'success', message: 'Connected to Gemini Direct' };
+      } else {
+        const err = await response.json().catch(() => ({}));
+        results.gemini = { status: 'error', message: err.error?.message || `Error ${response.status}` };
+      }
+    } catch (e) {
+      results.gemini = { status: 'error', message: e.message };
+    }
+  } else {
+    results.gemini = { status: 'none', message: 'Not configured' };
+  }
 
   if (orKey) {
     try {
@@ -573,7 +636,8 @@ export const testAIConnections = async () => {
     results.openrouter = { status: 'none', message: 'Not configured' };
   }
 
-  if (groqKey) {
+  if (groqKeys.length > 0) {
+    const groqKey = groqKeys[0];
     try {
       const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',

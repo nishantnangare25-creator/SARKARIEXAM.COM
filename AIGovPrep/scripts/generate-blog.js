@@ -6,12 +6,9 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BLOG_DATA_PATH = path.join(__dirname, '../src/data/blogPosts.json');
 
-const API_KEY = process.env.GROQ_API_KEY || process.env.OPENROUTER_API_KEY || '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';
-const MODEL = 'llama-3.3-70b-versatile';
-
-if (!process.env.GROQ_API_KEY && !process.env.OPENROUTER_API_KEY && API_KEY.includes('sk-or-v1')) {
-  console.log('⚠️ Using hardcoded API key. Consider using GROQ_API_KEY environment variable.');
-}
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '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';
 
 // Parse arguments
 const countArg = process.argv.find(a => a.startsWith('--count='));
@@ -45,6 +42,107 @@ const getRealImageUrl = (topic) => {
   return `https://images.unsplash.com/photo-1?auto=format&fit=crop&q=80&w=1200&sig=${randomSig}&q=${encodeURIComponent(keyword)}`;
 };
 const NEWS_CACHE_PATH = path.join(__dirname, 'news-cache.json');
+
+function cleanJSON(text) {
+  try {
+    let cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const start = cleanText.indexOf('{');
+    const end = cleanText.lastIndexOf('}');
+    if (start !== -1 && end !== -1) {
+      return JSON.parse(cleanText.substring(start, end + 1));
+    }
+    return JSON.parse(cleanText);
+  } catch (e) {
+    console.error('Failed to parse AI JSON:', e.message);
+    return null;
+  }
+}
+
+async function generateWithGemini(prompt) {
+  if (!GEMINI_API_KEY) return null;
+  const versions = ['v1beta', 'v1'];
+  const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
+  
+  for (const model of models) {
+    for (const version of versions) {
+      try {
+        console.log(`Trying Gemini ${version} model: ${model}...`);
+        const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { maxOutputTokens: 4000, temperature: 0.7 }
+          })
+        });
+        const data = await response.json();
+        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
+          console.log(`✅ Gemini ${version} ${model} Success!`);
+          return cleanJSON(data.candidates[0].content.parts[0].text);
+        }
+        if (data.error) {
+          console.warn(`Gemini ${version} (${model}) error:`, data.error.message.substring(0, 100) + '...');
+        }
+      } catch (e) {
+        // Silently continue to next fallback
+      }
+    }
+  }
+  return null;
+}
+
+async function generateWithGroq(prompt) {
+  if (!GROQ_API_KEY) return null;
+  try {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 4000
+      })
+    });
+    const data = await response.json();
+    if (data.choices && data.choices[0]?.message?.content) {
+      return cleanJSON(data.choices[0].message.content);
+    }
+    return null;
+  } catch (e) {
+    console.error('Groq API error:', e.message);
+    return null;
+  }
+}
+
+async function generateWithOpenRouter(prompt) {
+  if (!OPENROUTER_API_KEY) return null;
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: { 
+        'Content-Type': 'application/json', 
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'X-Title': 'Sarkari Exam AI Blog Bot'
+      },
+      body: JSON.stringify({
+        model: 'google/gemini-2.0-flash-lite-001',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.7,
+        max_tokens: 4000
+      })
+    });
+    const data = await response.json();
+    if (data.choices && data.choices[0]?.message?.content) {
+      return cleanJSON(data.choices[0].message.content);
+    }
+    return null;
+  } catch (e) {
+    console.error('OpenRouter API error:', e.message);
+    return null;
+  }
+}
 
 async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
   const isNews = !!newsItem;
@@ -83,31 +181,24 @@ async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
   Only output valid JSON.
   `;
 
-  try {
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 4000
-      }),
-    });
+  let result = null;
 
-    const data = await response.json();
-    
-    if (data.error) {
-      console.error('❌ OpenRouter API Error:', data.error);
-      return false;
-    }
-    
-    if (data.choices && data.choices[0]) {
-      let result = JSON.parse(data.choices[0].message.content.replace(/```json/g, '').replace(/```/g, '').trim());
-      
+  // Cascade: Gemini (Direct) -> Groq -> OpenRouter
+  console.log('--- Provider 1: Gemini Direct ---');
+  result = await generateWithGemini(prompt);
+  
+  if (!result) {
+    console.log('--- Provider 2: Groq ---');
+    result = await generateWithGroq(prompt);
+  }
+  
+  if (!result) {
+    console.log('--- Provider 3: OpenRouter ---');
+    result = await generateWithOpenRouter(prompt);
+  }
+
+  if (result) {
+    try {
       const newPost = {
         ...result,
         id: Date.now().toString() + Math.random().toString(36).slice(2, 7),
@@ -141,12 +232,12 @@ async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
       fs.writeFileSync(BLOG_DATA_PATH, JSON.stringify(posts, null, 2));
       console.log(`✅ Saved: "${newPost.title}"`);
       return true;
-    } else {
-      console.error('❌ AI returned no content or invalid response.');
+    } catch (err) {
+      console.error('❌ Formatting Error:', err.message);
       return false;
     }
-  } catch (err) {
-    console.error('❌ Generator Error:', err.message);
+  } else {
+    console.error('❌ All providers failed.');
     return false;
   }
 }
