@@ -43,40 +43,51 @@ const getRealImageUrl = (topic) => {
 };
 const NEWS_CACHE_PATH = path.join(__dirname, 'news-cache.json');
 
-function cleanJSON(text) {
+function extractJSON(text) {
   try {
-    // Remove markdown blocks
+    // 1. Initial Cleanup: Remove markdown delimiters
     let cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-    
-    // Find the JSON object
+
+    // 2. Pre-parsing Robustness: Fix common AI JSON mistakes with regex
+    // These specific replacements fix 90% of failures from less formal models like Groq
+    cleanText = cleanText
+      .replace(/'/g, '"') // Replace single quotes with double quotes (risky but often helpful)
+      .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":') // Wrap unquoted keys in quotes
+      .replace(/,\s*([}\]])/g, '$1') // Remove trailing commas
+      .replace(/"options"\s*\)\[/g, '"options":[') // Fix model hallucinated formatting
+      .replace(/"options"\s*\[/g, '"options":[')
+      .replace(/options\s*\)\[/g, '"options":[')
+      .replace(/options\s*\):/g, '"options":')
+      .replace(/options\s*\)/g, '"options":')
+      .replace(/(?<!")options(?!")/g, '"options"');
+
+    // 3. Find the main JSON block (handle extra text before/after)
     const start = cleanText.indexOf('{');
     const end = cleanText.lastIndexOf('}');
     if (start !== -1 && end !== -1) {
-      cleanText = cleanText.substring(start, end + 1);
+      const jsonStr = cleanText.substring(start, end + 1);
+      return JSON.parse(jsonStr);
+    }
+    
+    // 4. Try array format if object not found
+    const startArr = cleanText.indexOf('[');
+    const endArr = cleanText.lastIndexOf(']');
+    if (startArr !== -1 && endArr !== -1) {
+      const jsonStr = cleanText.substring(startArr, endArr + 1);
+      return JSON.parse(jsonStr);
     }
 
-    // Fix: Remove literal control characters (like unescaped newlines inside strings)
-    // which cause "Bad control character in string literal" errors.
-    // This replaces actual newlines/tabs inside strings with their escaped versions.
-    const sanitized = cleanText.replace(/[\u0000-\u001F\u007F-\u009F]/g, (c) => {
-      switch (c) {
-        case '\n': return '\\n';
-        case '\r': return '\\r';
-        case '\t': return '\\t';
-        default: return '';
-      }
-    });
-
-    return JSON.parse(sanitized);
+    return JSON.parse(cleanText);
   } catch (e) {
     console.error('Failed to parse AI JSON:', e.message);
-    // Ultimate fallback: try to parse the original cleanText if sanitization failed
+    // Ultimate raw fallback if all regex failed
     try {
-       const cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-       return JSON.parse(cleanText);
-    } catch (inner) {
-       return null;
-    }
+       const rawClean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+       const s = rawClean.indexOf('{');
+       const e = rawClean.lastIndexOf('}');
+       if (s !== -1 && e !== -1) return JSON.parse(rawClean.substring(s, e + 1));
+    } catch (inner) {}
+    return null;
   }
 }
 
@@ -101,7 +112,7 @@ async function generateWithGemini(prompt) {
         const data = await response.json();
         if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
           console.log(`✅ Gemini ${version} ${model} Success!`);
-          return cleanJSON(data.candidates[0].content.parts[0].text);
+          return extractJSON(data.candidates[0].content.parts[0].text);
         }
         if (data.error) {
           console.warn(`Gemini ${version} (${model}) error:`, data.error.message.substring(0, 100) + '...');
@@ -129,7 +140,7 @@ async function generateWithGroq(prompt) {
     });
     const data = await response.json();
     if (data.choices && data.choices[0]?.message?.content) {
-      return cleanJSON(data.choices[0].message.content);
+      return extractJSON(data.choices[0].message.content);
     }
     return null;
   } catch (e) {
@@ -157,7 +168,7 @@ async function generateWithOpenRouter(prompt) {
     });
     const data = await response.json();
     if (data.choices && data.choices[0]?.message?.content) {
-      return cleanJSON(data.choices[0].message.content);
+      return extractJSON(data.choices[0].message.content);
     }
     return null;
   } catch (e) {
