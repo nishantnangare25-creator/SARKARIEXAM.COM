@@ -58,6 +58,7 @@ jobs:
 
       - name: Generate 2 New AI Blog Posts
         env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           npm run generate-blog -- --count=2 --slot=${{ steps.slot.outputs.id }}

@@ -6,11 +6,11 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BLOG_DATA_PATH = path.join(__dirname, '../src/data/blogPosts.json');
 
-const API_KEY = process.env.OPENROUTER_API_KEY || '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';
-const MODEL = 'google/gemini-2.0-flash-lite-001';
+const API_KEY = process.env.GROQ_API_KEY || process.env.OPENROUTER_API_KEY || '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';
+const MODEL = 'llama-3.3-70b-versatile';
 
-if (!process.env.OPENROUTER_API_KEY && API_KEY.includes('sk-or-v1')) {
-  console.log('⚠️ Using hardcoded API key. Consider using OPENROUTER_API_KEY environment variable.');
+if (!process.env.GROQ_API_KEY && !process.env.OPENROUTER_API_KEY && API_KEY.includes('sk-or-v1')) {
+  console.log('⚠️ Using hardcoded API key. Consider using GROQ_API_KEY environment variable.');
 }
 
 // Parse arguments
@@ -84,18 +84,17 @@ async function generateBlogPost(newsItem = null, fallbackKeyword = null) {
   `;
 
   try {
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${API_KEY}`,
-        'X-Title': 'Sarkari Exam AI Blog Generator',
       },
       body: JSON.stringify({
         model: MODEL,
         messages: [{ role: 'user', content: prompt }],
-        response_format: { type: "json_object" },
-        max_tokens: 3000
+        temperature: 0.7,
+        max_tokens: 4000
       }),
     });
 
