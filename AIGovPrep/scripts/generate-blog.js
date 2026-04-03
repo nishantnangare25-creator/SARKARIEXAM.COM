@@ -54,45 +54,35 @@ function extractJSON(text) {
     // 1. Initial Cleanup: Remove markdown delimiters
     let cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
 
-    // 2. Pre-parsing Robustness: Fix common AI JSON mistakes with regex
-    // These specific replacements fix 90% of failures from less formal models like Groq
+    // 2. Pre-parsing Robustness: Fix common AI JSON mistakes
     cleanText = cleanText
-      .replace(/'/g, '"') // Replace single quotes with double quotes (risky but often helpful)
-      .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":') // Wrap unquoted keys in quotes
+      .replace(/'/g, '"') // Replace single quotes with double quotes
+      .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":') // Wrap unquoted keys
       .replace(/,\s*([}\]])/g, '$1') // Remove trailing commas
-      .replace(/"options"\s*\)\[/g, '"options":[') // Fix model hallucinated formatting
-      .replace(/"options"\s*\[/g, '"options":[')
-      .replace(/options\s*\)\[/g, '"options":[')
-      .replace(/options\s*\):/g, '"options":')
-      .replace(/options\s*\)/g, '"options":')
-      .replace(/(?<!")options(?!")/g, '"options"');
+      // Fix literal newlines inside quotes
+      .replace(/"([^"]*)"/g, (match, p1) => {
+        return '"' + p1.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t') + '"';
+      });
 
-    // 3. Find the main JSON block (handle extra text before/after)
+    // 3. Find the main JSON block
     const start = cleanText.indexOf('{');
     const end = cleanText.lastIndexOf('}');
     if (start !== -1 && end !== -1) {
       const jsonStr = cleanText.substring(start, end + 1);
-      return JSON.parse(jsonStr);
+      try {
+        return JSON.parse(jsonStr);
+      } catch (e) {
+        // secondary cleanup for persistent errors
+        const bruteClean = jsonStr
+          .replace(/\n/g, ' ')
+          .replace(/\\/g, '\\\\')
+          .replace(/\\\\n/g, '\\n');
+        return JSON.parse(bruteClean);
+      }
     }
-    
-    // 4. Try array format if object not found
-    const startArr = cleanText.indexOf('[');
-    const endArr = cleanText.lastIndexOf(']');
-    if (startArr !== -1 && endArr !== -1) {
-      const jsonStr = cleanText.substring(startArr, endArr + 1);
-      return JSON.parse(jsonStr);
-    }
-
     return JSON.parse(cleanText);
   } catch (e) {
     console.error('Failed to parse AI JSON:', e.message);
-    // Ultimate raw fallback if all regex failed
-    try {
-       const rawClean = text.replace(/```json/gi, '').replace(/```/g, '').trim();
-       const s = rawClean.indexOf('{');
-       const e = rawClean.lastIndexOf('}');
-       if (s !== -1 && e !== -1) return JSON.parse(rawClean.substring(s, e + 1));
-    } catch (inner) {}
     return null;
   }
 }
