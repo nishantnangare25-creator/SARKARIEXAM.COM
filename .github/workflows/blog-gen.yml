@@ -86,10 +86,13 @@ jobs:
         FTP_USER: ${{ secrets.FTP_USERNAME }}
         FTP_PASS: ${{ secrets.FTP_PASSWORD }}
       run: |
-        lftp -c "
+        # Write credentials to .netrc to avoid shell escaping issues
+        echo "machine $FTP_SERVER login $FTP_USER password $FTP_PASS" > ~/.netrc
+        chmod 600 ~/.netrc
+        lftp -e "
           set ftp:ssl-allow no;
           set net:timeout 30;
           set net:max-retries 3;
-          open -u '$FTP_USER','$FTP_PASS' ftp://$FTP_SERVER;
           mirror --reverse --delete --verbose ./dist/ /public_html/;
-        "
+          quit;
+        " ftp://$FTP_SERVER
