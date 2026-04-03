@@ -12,8 +12,12 @@ export default function Blog() {
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
-    setPosts(blogPosts || []);
+    const sortedPosts = [...(blogPosts || [])].sort((a, b) => 
+      new Date(b.date).getTime() - new Date(a.date).getTime()
+    );
+    setPosts(sortedPosts);
   }, []);
+
 
   const allTags = useMemo(() => {
     const tags = new Set(['All']);
