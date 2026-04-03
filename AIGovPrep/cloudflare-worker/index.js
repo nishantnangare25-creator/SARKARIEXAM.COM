@@ -87,9 +87,9 @@ async function callAIWithRotation(messages, options, env) {
 
   // --- PROVIDER CONFIG ---
   const providers = [
-    { name: 'Groq', prefix: 'GROQ_KEY', endpoint: 'https://api.groq.com/openai/v1/chat/completions' },
-    { name: 'Gemini', prefix: 'GEMINI_KEY', endpoint: 'gemini' }, // Custom handling
-    { name: 'OpenRouter', prefix: 'OPENROUTER_KEY', endpoint: 'https://openrouter.ai/api/v1/chat/completions' }
+    { name: 'Groq', prefix: 'GROQ_API_KEY', endpoint: 'https://api.groq.com/openai/v1/chat/completions' },
+    { name: 'Gemini', prefix: 'GEMINI_API_KEY', endpoint: 'gemini' }, // Custom handling
+    { name: 'OpenRouter', prefix: 'OPENROUTER_API_KEY', endpoint: 'https://openrouter.ai/api/v1/chat/completions' }
   ];
 
   for (const provider of providers) {

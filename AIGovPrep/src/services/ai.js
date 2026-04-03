@@ -237,7 +237,8 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
   };
 
   const groqKeys = getGroqKeys(); // Already shuffled
-  const orKey = getOpenRouterKey();
+  const geminiKeys = getGeminiKeys(); // Already shuffled
+  const orKeys = getOpenRouterKeys(); // Already shuffled
 
   // === PRIORITY 1-5: GROQ KEYS ===
   for (let i = 0; i < groqKeys.length; i++) {
@@ -589,9 +590,11 @@ export const testAIConnections = async () => {
     gemini: { status: 'testing', message: '' }
   };
  
-   const orKey = getOpenRouterKey();
+  const orKeys = getOpenRouterKeys();
+  const orKey = orKeys[0];
   const groqKeys = getGroqKeys();
-  const geminiKey = getGeminiKey();
+  const geminiKeys = getGeminiKeys();
+  const geminiKey = geminiKeys[0];
  
    if (geminiKey) {
     try {
@@ -674,6 +677,6 @@ export const testAIConnections = async () => {
   return results;
 };
 
-export const hasApiKey = () => !!(getOpenRouterKey() || getGroqKey());
+export const hasApiKey = () => !!(getOpenRouterKeys().length > 0 || getGroqKeys().length > 0);
 
 export default callAI;
