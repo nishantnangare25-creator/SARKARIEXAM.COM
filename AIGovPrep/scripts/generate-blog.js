@@ -172,7 +172,7 @@ async function generateWithGroq(prompt) {
         model: 'llama-3.3-70b-versatile',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
-        max_tokens: 4000
+        max_tokens: 3000
       })
     });
     
@@ -213,7 +213,7 @@ async function generateWithOpenRouter(prompt) {
         model: 'google/gemini-2.0-flash-lite-001',
         messages: [{ role: 'user', content: prompt }],
         temperature: 0.7,
-        max_tokens: 4000
+        max_tokens: 2000
       })
     });
 
