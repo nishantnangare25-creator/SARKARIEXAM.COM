@@ -32,17 +32,6 @@ jobs:
     - name: Install Dependencies
       run: npm install
 
-    - name: Debug Environment Variables (Masked)
-      run: |
-        echo "Checking for API keys..."
-        if [ -n "$GEMINI_API_KEY" ]; then echo "GEMINI_API_KEY is SET"; else echo "GEMINI_API_KEY is MISSING"; fi
-        if [ -n "$GROQ_API_KEY" ]; then echo "GROQ_API_KEY is SET"; else echo "GROQ_API_KEY is MISSING"; fi
-        if [ -n "$OPENROUTER_API_KEY" ]; then echo "OPENROUTER_API_KEY is SET"; else echo "OPENROUTER_API_KEY is MISSING"; fi
-      env:
-        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-        OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
-
     - name: Generate 1 New AI Blog Post
       run: |
         HOUR=$(date +%H)
@@ -50,8 +39,15 @@ jobs:
         node scripts/generate-blog.js --count=1 --slot=$HOUR
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        GEMINI_API_KEY_1: ${{ secrets.GEMINI_API_KEY_1 }}
+        GEMINI_API_KEY_2: ${{ secrets.GEMINI_API_KEY_2 }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        GROQ_API_KEY_1: ${{ secrets.GROQ_API_KEY_1 }}
+        GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
         OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        OPENROUTER_API_KEY_1: ${{ secrets.OPENROUTER_API_KEY_1 }}
+        OPENROUTER_API_KEY_2: ${{ secrets.OPENROUTER_API_KEY_2 }}
+        OPENROUTER_API_KEY_3: ${{ secrets.OPENROUTER_API_KEY_3 }}
 
     - name: Check for new blog posts
       id: check_changes

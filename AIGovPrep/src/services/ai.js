@@ -5,15 +5,36 @@ import i18n, { languages } from '../i18n';
 
 const getGroqKeys = () => {
   const keys = [];
-  if (import.meta.env.VITE_GROQ_API_KEY) keys.push(import.meta.env.VITE_GROQ_API_KEY);
-  if (import.meta.env.VITE_GROQ_KEY_2) keys.push(import.meta.env.VITE_GROQ_KEY_2);
-  if (import.meta.env.VITE_GROQ_KEY_3) keys.push(import.meta.env.VITE_GROQ_KEY_3);
-  if (import.meta.env.VITE_GROQ_KEY_4) keys.push(import.meta.env.VITE_GROQ_KEY_4);
-  if (import.meta.env.VITE_GROQ_KEY_5) keys.push(import.meta.env.VITE_GROQ_KEY_5);
+  const primary = import.meta.env.VITE_GROQ_API_KEY;
+  if (primary) keys.push(primary);
+  for (let i = 1; i <= 10; i++) {
+    const k = import.meta.env[`VITE_GROQ_API_KEY_${i}`];
+    if (k && !keys.includes(k)) keys.push(k);
+  }
   return keys.sort(() => Math.random() - 0.5);
 };
-const getOpenRouterKey = () => import.meta.env.VITE_OPENROUTER_API_KEY || '';
-const getGeminiKey = () => import.meta.env.VITE_GEMINI_API_KEY || '';
+
+const getGeminiKeys = () => {
+  const keys = [];
+  const primary = import.meta.env.VITE_GEMINI_API_KEY;
+  if (primary) keys.push(primary);
+  for (let i = 1; i <= 10; i++) {
+    const k = import.meta.env[`VITE_GEMINI_API_KEY_${i}`];
+    if (k && !keys.includes(k)) keys.push(k);
+  }
+  return keys.sort(() => Math.random() - 0.5);
+};
+
+const getOpenRouterKeys = () => {
+  const keys = [];
+  const primary = import.meta.env.VITE_OPENROUTER_API_KEY;
+  if (primary) keys.push(primary);
+  for (let i = 1; i <= 10; i++) {
+    const k = import.meta.env[`VITE_OPENROUTER_API_KEY_${i}`];
+    if (k && !keys.includes(k)) keys.push(k);
+  }
+  return keys.sort(() => Math.random() - 0.5);
+};
 
 const getLanguageName = (code) => {
   const currentCode = code || i18n.language || 'en';
@@ -259,64 +280,55 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     }
   }
 
-  // === PRIORITY 6: GOOGLE GEMINI (DIRECT) ===
-  const geminiKey = getGeminiKey();
-  if (geminiKey) {
-    if (!isOnCooldown(geminiKey)) {
-      try {
-        console.log('[Cascade] Trying Google Gemini Direct...');
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }],
-            generationConfig: {
-              maxOutputTokens: options.max_tokens || 4000,
-              temperature: options.temperature || 0.7,
-            }
-          })
-        });
+  // === PRIORITY 6: GOOGLE GEMINI (DIRECT ROTATION) ===
+  for (const key of geminiKeys) {
+    if (isOnCooldown(key)) continue;
+    try {
+      console.log(`[Cascade] Trying Google Gemini Direct (Key ${key.substring(0, 8)})...`);
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }],
+          generationConfig: {
+            maxOutputTokens: options.max_tokens || 4000,
+            temperature: options.temperature || 0.7,
+          }
+        })
+      });
 
-        const data = await response.json();
-
-        if (response.status === 429) {
-          console.warn('[Cascade] Gemini RATE LIMITED (429). Cascading...');
-          markCooldown(geminiKey);
-        } else if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
-          console.log('[Cascade] ✅ Gemini Direct SUCCESS');
-          return saveCache(data.candidates[0].content.parts[0].text);
-        } else {
-          console.warn('[Cascade] Gemini Direct failed:', data.error?.message);
-        }
-      } catch (e) {
-        console.warn('[Cascade] Gemini Direct network error:', e.message);
+      const data = await response.json();
+      if (response.status === 429) {
+        console.warn('[Cascade] Gemini RATE LIMITED (429). Switching key...');
+        markCooldown(key);
+        continue;
       }
-    } else {
-      console.warn('[Cascade] Gemini Direct is on cooldown, skipping.');
+      if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        return saveCache(data.candidates[0].content.parts[0].text);
+      }
+    } catch (e) {
+      console.warn(`[Cascade] Gemini key ${key.substring(0, 8)} error:`, e.message);
     }
   }
 
-  // === PRIORITY 7: OPENROUTER GEMINI FLASH LITE ===
-  if (orKey) {
+  // === PRIORITY 7: OPENROUTER ROTATION ===
+  for (const key of orKeys) {
     const openrouterModels = [
       { model: 'google/gemini-2.0-flash-lite-001', label: 'OpenRouter Gemini Flash Lite' },
       { model: 'meta-llama/llama-3.1-8b-instruct:free', label: 'OpenRouter Llama 3.1 Free (Emergency)' },
     ];
 
     for (const { model, label } of openrouterModels) {
-      const cooldownKey = `or_${model}`;
-      if (isOnCooldown(cooldownKey)) {
-        console.warn(`[Cascade] ${label} on cooldown, skipping.`);
-        continue;
-      }
+      const cooldownKey = `or_${model}_${key.substring(0, 8)}`;
+      if (isOnCooldown(cooldownKey)) continue;
 
       try {
-        console.log(`[Cascade] Trying ${label}...`);
+        console.log(`[Cascade] Trying ${label} with Key ${key.substring(0, 8)}...`);
         const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${orKey}`,
+            'Authorization': `Bearer ${key}`,
             'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : '',
             'X-Title': 'Sarkari Exam AI',
           },
@@ -329,21 +341,16 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
         });
 
         const data = await response.json();
-
         if (response.status === 429) {
-          console.warn(`[Cascade] ${label} RATE LIMITED (429). Cascading...`);
+          console.warn(`[Cascade] ${label} RATE LIMITED. Trying next...`);
           markCooldown(cooldownKey);
           continue;
         }
-
         if (response.ok && data.choices?.[0]) {
-          console.log(`[Cascade] ✅ ${label} SUCCESS`);
           return saveCache(data.choices[0].message.content);
         }
-
-        console.warn(`[Cascade] ${label} failed:`, data.error?.message);
       } catch (e) {
-        console.warn(`[Cascade] ${label} error:`, e.message);
+        console.error(`[Cascade] OpenRouter key error:`, e.message);
       }
     }
   }

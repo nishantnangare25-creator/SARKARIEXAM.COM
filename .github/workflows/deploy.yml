@@ -43,6 +43,6 @@ jobs:
           set ftp:ssl-allow no;
           set net:timeout 30;
           set net:max-retries 3;
-          mirror --reverse --delete --verbose ./AIGovPrep/dist/ /public_html/;
+          mirror --reverse --delete --verbose ./dist/ /public_html/;
           quit;
         " ftp://$FTP_SERVER
