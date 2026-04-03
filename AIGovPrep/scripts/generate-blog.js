@@ -6,9 +6,28 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const BLOG_DATA_PATH = path.join(__dirname, '../src/data/blogPosts.json');
 
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY || process.env.VITE_GEMINI_API_KEY;
-const GROQ_API_KEY = process.env.GROQ_API_KEY || process.env.VITE_GROQ_API_KEY;
-const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || process.env.VITE_OPENROUTER_API_KEY || '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';
+// --- DYNAMIC KEY DISCOVERY ---
+const discoverKeys = (prefix) => {
+  const keys = [];
+  const primary = process.env[prefix] || process.env[`VITE_${prefix}`];
+  if (primary) keys.push(primary);
+  
+  // Look for indexed keys: PREFIX_1, PREFIX_2...
+  for (let i = 1; i <= 10; i++) {
+    const k = process.env[`${prefix}_${i}`] || process.env[`VITE_${prefix}_${i}`];
+    if (k && !keys.includes(k)) keys.push(k);
+  }
+  return keys;
+};
+
+const GEMINI_KEYS = discoverKeys('GEMINI_API_KEY');
+const GROQ_KEYS = discoverKeys('GROQ_API_KEY');
+const OPENROUTER_KEYS = discoverKeys('OPENROUTER_API_KEY');
+
+// Fallback to hardcoded OpenRouter if none found
+if (OPENROUTER_KEYS.length === 0) {
+  OPENROUTER_KEYS.push('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');
+}
 
 
 // Parse arguments
@@ -18,9 +37,9 @@ const POSTS_TO_GENERATE = countArg ? parseInt(countArg.split('=')[1], 10) : 1;
 const SLOT_ID = slotArg ? parseInt(slotArg.split('=')[1], 10) : 0;
 
 console.log('--- Environment Check ---');
-console.log(`GEMINI_API_KEY: ${GEMINI_API_KEY ? '✅ Present' : '❌ Missing'}`);
-console.log(`GROQ_API_KEY: ${GROQ_API_KEY ? '✅ Present' : '❌ Missing'}`);
-console.log(`OPENROUTER_API_KEY: ${OPENROUTER_API_KEY ? '✅ Present' : '❌ Missing'}`);
+console.log(`GEMINI_KEYS: ${GEMINI_KEYS.length} keys found`);
+console.log(`GROQ_KEYS: ${GROQ_KEYS.length} keys found`);
+console.log(`OPENROUTER_KEYS: ${OPENROUTER_KEYS.length} keys found`);
 
 
 const KEYWORDS = [
@@ -114,21 +133,19 @@ function extractJSON(text) {
 }
 
 async function generateWithGemini(prompt) {
-  if (!GEMINI_API_KEY) {
-    console.log('Skipping Gemini: GEMINI_API_KEY not found.');
-    return null;
-  }
-  // Only use currently available models (1.5-flash and 1.5-flash-8b are deprecated/404)
+  if (GEMINI_KEYS.length === 0) return null;
+
   const models = [
+    { name: 'gemini-1.5-flash', version: 'v1beta' },
     { name: 'gemini-2.0-flash', version: 'v1beta' },
-    { name: 'gemini-2.0-flash-lite', version: 'v1beta' },
   ];
   
-  for (const { name: model, version } of models) {
-    for (let attempt = 0; attempt < 2; attempt++) {
+  // Rotate through all keys
+  for (const key of GEMINI_KEYS) {
+    for (const { name: model, version } of models) {
       try {
-        console.log(`Trying Gemini ${version}/${model} (attempt ${attempt + 1})...`);
-        const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
+        console.log(`Trying Gemini ${model} with Key ${key.substring(0, 8)}...`);
+        const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${key}`;
         const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -138,30 +155,23 @@ async function generateWithGemini(prompt) {
           })
         });
         
-        if (response.status === 429 && attempt === 0) {
-          console.warn('⏳ Rate limited — waiting 60 seconds before retry...');
-          await new Promise(r => setTimeout(r, 60000));
-          continue;
+        if (response.status === 429) {
+          console.warn('⏳ Rate limited — switching to next key/model...');
+          continue; 
         }
 
         if (!response.ok) {
           const errBody = await response.text();
-          console.warn(`Gemini API HTTP ${response.status}: ${errBody.substring(0, 100)}...`);
-          break; // try next model
+          console.warn(`Gemini HTTP ${response.status}: ${errBody.substring(0, 100)}`);
+          continue;
         }
 
         const data = await response.json();
-        if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-          console.log(`✅ Gemini ${version}/${model} Success!`);
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
           return extractJSON(data.candidates[0].content.parts[0].text);
         }
-        if (data.error) {
-          console.warn(`Gemini error:`, data.error.message.substring(0, 100));
-        }
-        break;
       } catch (e) {
-        console.warn(`Gemini connection error: ${e.message}`);
-        break;
+        console.warn(`Gemini Error: ${e.message}`);
       }
     }
   }
@@ -170,40 +180,39 @@ async function generateWithGemini(prompt) {
 
 
 async function generateWithGroq(prompt) {
-  if (!GROQ_API_KEY) {
-    console.log('Skipping Groq: GROQ_API_KEY not found.');
-    return null;
-  }
-  // Try multiple Groq models — llama-3.1-8b-instant has much higher free rate limits
+  if (GROQ_KEYS.length === 0) return null;
+
   const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
   
-  for (const model of groqModels) {
-    try {
-      console.log(`Requesting from Groq (${model})...`);
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
-        body: JSON.stringify({
-          model,
-          messages: [{ role: 'user', content: prompt }],
-          temperature: 0.7,
-          max_tokens: 3000
-        })
-      });
-      
-      if (!response.ok) {
-        const errBody = await response.text();
-        console.warn(`Groq (${model}) HTTP ${response.status}: ${errBody.substring(0, 100)}...`);
-        continue; // try next model
-      }
+  for (const key of GROQ_KEYS) {
+    for (const model of groqModels) {
+      try {
+        console.log(`Trying Groq ${model} with Key ${key.substring(0, 8)}...`);
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+          body: JSON.stringify({
+            model,
+            messages: [{ role: 'user', content: prompt }],
+            temperature: 0.7,
+            max_tokens: 3000
+          })
+        });
+        
+        if (response.status === 429) {
+          console.warn('⏳ Groq Rate Limited — trying next key...');
+          break; // Try next key
+        }
 
-      const data = await response.json();
-      if (data.choices && data.choices[0]?.message?.content) {
-        console.log(`✅ Groq (${model}) Success!`);
-        return extractJSON(data.choices[0].message.content);
+        if (response.ok) {
+          const data = await response.json();
+          if (data.choices?.[0]?.message?.content) {
+            return extractJSON(data.choices[0].message.content);
+          }
+        }
+      } catch (e) {
+        console.error(`Groq Error:`, e.message);
       }
-    } catch (e) {
-      console.error(`Groq (${model}) connection error:`, e.message);
     }
   }
   return null;
@@ -211,43 +220,38 @@ async function generateWithGroq(prompt) {
 
 
 async function generateWithOpenRouter(prompt) {
-  if (!OPENROUTER_API_KEY) {
-    console.log('Skipping OpenRouter: OPENROUTER_API_KEY not found.');
-    return null;
-  }
-  try {
-    console.log('Requesting from OpenRouter (google/gemini-2.0-flash-lite-001)...');
-    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json', 
-        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
-        'X-Title': 'Sarkari Exam AI Blog Bot'
-      },
-      body: JSON.stringify({
-        model: 'google/gemini-2.0-flash-lite-001',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 2000
-      })
-    });
+  if (OPENROUTER_KEYS.length === 0) return null;
 
-    if (!response.ok) {
-      const errBody = await response.text();
-      console.warn(`OpenRouter API HTTP ${response.status}: ${errBody.substring(0, 100)}...`);
-      return null;
-    }
+  for (const key of OPENROUTER_KEYS) {
+    try {
+      console.log(`Trying OpenRouter with Key ${key.substring(0, 8)}...`);
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json', 
+          'Authorization': `Bearer ${key}`,
+          'X-Title': 'Sarkari Exam AI Blog Bot'
+        },
+        body: JSON.stringify({
+          model: 'google/gemini-2.0-flash-lite-001',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7,
+          max_tokens: 2000
+        })
+      });
 
-    const data = await response.json();
-    if (data.choices && data.choices[0]?.message?.content) {
-      console.log('✅ OpenRouter Success!');
-      return extractJSON(data.choices[0].message.content);
+      if (response.status === 429) continue;
+      if (response.ok) {
+        const data = await response.json();
+        if (data.choices?.[0]?.message?.content) {
+          return extractJSON(data.choices[0].message.content);
+        }
+      }
+    } catch (e) {
+      console.error('OpenRouter Error:', e.message);
     }
-    return null;
-  } catch (e) {
-    console.error('OpenRouter connection error:', e.message);
-    return null;
   }
+  return null;
 }
 
 

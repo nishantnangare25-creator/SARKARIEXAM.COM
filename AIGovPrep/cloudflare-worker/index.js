@@ -1,6 +1,5 @@
-// Cloudflare Worker - AI Backend Proxy with Multi-Provider Cascade Failover
-// Handles 2-3 lakh students/day by cascading across all AI providers
-// Cascade Order: Groq (5 keys) → Gemini → OpenRouter (Gemini) → OpenRouter (Llama Free)
+// Cloudflare Worker - AI Backend Proxy with Advanced Multi-Key Rotation & Failover
+// Engineered for 1,00,000+ students/day with dynamic key discovery and cool-off logic.
 
 export default {
   async fetch(request, env) {
@@ -19,40 +18,28 @@ export default {
         return corsResponse(JSON.stringify({ error: 'messages required' }), 400);
       }
 
-      // ===== CACHE CHECK =====
+      // 1. CACHE CHECK (KV)
       if (cacheKey && env.QUESTION_CACHE) {
-        const cached = await env.QUESTION_CACHE.get(cacheKey, 'json');
+        const cached = await env.QUESTION_CACHE.get(`cache:${cacheKey}`, 'json');
         if (cached && cached.questionSets && cached.questionSets.length > 0) {
           const randomSet = cached.questionSets[Math.floor(Math.random() * cached.questionSets.length)];
-          console.log(`Cache HIT for ${cacheKey}`);
+          console.log(`Cache HIT: ${cacheKey}`);
           return corsResponse(JSON.stringify({ content: randomSet, fromCache: true }), 200);
         }
       }
 
-      // ===== AI CALL with Full Cascade Failover =====
-      const result = await callAIWithCascade(messages, options, env);
+      // 2. AI CALL (Multi-Provider Cascade + Rotation)
+      const result = await callAIWithRotation(messages, options, env);
 
-      // ===== STORE IN CACHE =====
+      // 3. STORE IN CACHE (KV)
       if (cacheKey && env.QUESTION_CACHE && result) {
         try {
-          let isValidForCache = true;
-          if (cacheKey.startsWith('mock:') || cacheKey.startsWith('pyq:')) {
-            const jsonMatch = result.match(/\{[\s\S]*"questions"[\s\S]*\}/);
-            if (jsonMatch) {
-              try { JSON.parse(jsonMatch[0]); } catch { isValidForCache = false; }
-            } else {
-              isValidForCache = false;
-            }
-          }
-          if (isValidForCache) {
-            const existing = await env.QUESTION_CACHE.get(cacheKey, 'json') || { questionSets: [] };
-            existing.questionSets.push(result);
-            if (existing.questionSets.length > 20) existing.questionSets.shift();
-            await env.QUESTION_CACHE.put(cacheKey, JSON.stringify(existing), { expirationTtl: 86400 });
-            console.log(`Cache STORED for ${cacheKey}, total: ${existing.questionSets.length}`);
-          }
+          const existing = await env.QUESTION_CACHE.get(`cache:${cacheKey}`, 'json') || { questionSets: [] };
+          existing.questionSets.push(result);
+          if (existing.questionSets.length > 10) existing.questionSets.shift(); // Keep last 10 versions
+          await env.QUESTION_CACHE.put(`cache:${cacheKey}`, JSON.stringify(existing), { expirationTtl: 86400 });
         } catch (e) {
-          console.warn('Cache write error:', e.message);
+          console.warn('Cache store failed:', e.message);
         }
       }
 
@@ -65,159 +52,161 @@ export default {
   }
 };
 
-// ===== CASCADING AI CALL WITH INTELLIGENT RATE-LIMIT DETECTION =====
-async function callAIWithCascade(messages, options, env) {
-
-  // --- BUILD PROVIDER LIST IN PRIORITY ORDER ---
-  // Priority 1-5: Groq keys (fastest free tier, highest accuracy)
-  const groqKeys = [
-    env.GROQ_API_KEY, env.GROQ_KEY_2, env.GROQ_KEY_3,
-    env.GROQ_KEY_4, env.GROQ_KEY_5
-  ].filter(Boolean);
-
-  // Priority 6: Google Gemini (high accuracy)
-  const geminiKey = env.GEMINI_API_KEY;
-
-  // Priority 7-8: OpenRouter (Gemini Flash Lite → Llama 3.1 Free)
-  const openrouterKey = env.OPENROUTER_API_KEY;
-
+/**
+ * Advanced AI Caller with Multi-Key Rotation and Priority Cascading
+ */
+async function callAIWithRotation(messages, options, env) {
   const errors = [];
 
-  // === PRIORITY 1-5: GROQ KEYS (try each individually) ===
-  for (let i = 0; i < groqKeys.length; i++) {
-    const key = groqKeys[i];
-    const keyLabel = `Groq Key ${i + 1}`;
-    try {
-      console.log(`Trying ${keyLabel}...`);
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages,
-          temperature: options.temperature || 0.7,
-          max_tokens: options.max_tokens || 4000,
-        }),
-      });
+  // Helper: Discover all keys for a prefix (e.g., GROQ_KEY_1, GROQ_KEY_2...)
+  const getKeys = (prefix) => {
+    const keys = [];
+    // Manual check for common keys first
+    if (env[`${prefix}`]) keys.push(env[`${prefix}`]);
+    for (let i = 1; i <= 20; i++) {
+      const k = env[`${prefix}_${i}`] || env[`${prefix}${i}`];
+      if (k && !keys.includes(k)) keys.push(k);
+    }
+    return keys;
+  };
 
-      const data = await response.json();
+  // Helper: Check if a key is "cooling off" (marked as 429 in KV)
+  const isAvailable = async (keyId) => {
+    if (!env.QUESTION_CACHE) return true;
+    const status = await env.QUESTION_CACHE.get(`status:${keyId}`);
+    return status !== 'cooling';
+  };
 
-      if (response.status === 429) {
-        // Rate limited — cascade to next key immediately
-        console.warn(`${keyLabel} RATE LIMITED (429). Cascading to next...`);
-        errors.push(`${keyLabel}: 429 Rate Limited`);
+  // Helper: Mark a key as "cooling off"
+  const markCooling = async (keyId) => {
+    if (env.QUESTION_CACHE) {
+      await env.QUESTION_CACHE.put(`status:${keyId}`, 'cooling', { expirationTtl: 60 });
+      console.warn(`Key ${keyId} marked as COOLING for 60s`);
+    }
+  };
+
+  // --- PROVIDER CONFIG ---
+  const providers = [
+    { name: 'Groq', prefix: 'GROQ_KEY', endpoint: 'https://api.groq.com/openai/v1/chat/completions' },
+    { name: 'Gemini', prefix: 'GEMINI_KEY', endpoint: 'gemini' }, // Custom handling
+    { name: 'OpenRouter', prefix: 'OPENROUTER_KEY', endpoint: 'https://openrouter.ai/api/v1/chat/completions' }
+  ];
+
+  for (const provider of providers) {
+    const keys = getKeys(provider.prefix);
+    if (keys.length === 0) continue;
+
+    // Start with a random key to distribute load (Seamless Rotation)
+    const startIndex = Math.floor(Math.random() * keys.length);
+    console.log(`Starting ${provider.name} rotation at index ${startIndex} (${keys.length} keys)`);
+
+    for (let i = 0; i < keys.length; i++) {
+      const idx = (startIndex + i) % keys.length;
+      const key = keys[idx];
+      const keyId = `${provider.name}_${idx}`;
+
+      if (!(await isAvailable(keyId))) {
+        console.log(`Skipping ${keyId} (In Cool-off)`);
         continue;
       }
 
-      if (response.ok && data.choices?.[0]) {
-        console.log(`✅ ${keyLabel} SUCCESS`);
-        return data.choices[0].message.content;
-      }
-
-      // Other error (not rate limit) — still try next key
-      console.warn(`${keyLabel} failed: ${data.error?.message}`);
-      errors.push(`${keyLabel}: ${data.error?.message}`);
-
-    } catch (e) {
-      console.warn(`${keyLabel} network error:`, e.message);
-      errors.push(`${keyLabel}: ${e.message}`);
-    }
-  }
-
-  // === PRIORITY 6: GOOGLE GEMINI FLASH ===
-  if (geminiKey) {
-    try {
-      console.log('Trying Google Gemini Flash...');
-      const systemMsg = messages.find(m => m.role === 'system');
-      const userMessages = messages.filter(m => m.role !== 'system');
-      const geminiMessages = userMessages.map(m => ({
-        role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }]
-      }));
-
-      const body = {
-        contents: geminiMessages,
-        generationConfig: { temperature: options.temperature || 0.7, maxOutputTokens: options.max_tokens || 4000 }
-      };
-      if (systemMsg) body.systemInstruction = { parts: [{ text: systemMsg.content }] };
-
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
-        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-      );
-
-      const data = await response.json();
-
-      if (response.status === 429) {
-        console.warn('Gemini RATE LIMITED (429). Cascading to OpenRouter...');
-        errors.push('Gemini: 429 Rate Limited');
-      } else if (response.ok && data.candidates?.[0]) {
-        console.log('✅ Gemini Flash SUCCESS');
-        return data.candidates[0].content.parts[0].text;
-      } else {
-        console.warn('Gemini failed:', data.error?.message);
-        errors.push(`Gemini: ${data.error?.message}`);
-      }
-    } catch (e) {
-      console.warn('Gemini network error:', e.message);
-      errors.push(`Gemini: ${e.message}`);
-    }
-  }
-
-  // === PRIORITY 7-8: OPENROUTER CASCADE (2 models) ===
-  const openrouterModels = [
-    { model: 'google/gemini-2.0-flash-lite-001', label: 'OpenRouter Gemini Flash Lite' },
-    { model: 'meta-llama/llama-3.1-8b-instruct:free', label: 'OpenRouter Llama 3.1 Free (Emergency)' },
-  ];
-
-  if (openrouterKey) {
-    for (const { model, label } of openrouterModels) {
       try {
-        console.log(`Trying ${label}...`);
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${openrouterKey}`,
-            'X-Title': 'Sarkari Exam AI',
-          },
-          body: JSON.stringify({
-            model,
-            messages,
-            temperature: options.temperature || 0.7,
-            max_tokens: Math.min(options.max_tokens || 2000, 2000),
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.status === 429) {
-          console.warn(`${label} RATE LIMITED (429). Cascading...`);
-          errors.push(`${label}: 429 Rate Limited`);
-          continue;
+        let result;
+        if (provider.name === 'Gemini') {
+          result = await tryGemini(key, messages, options);
+        } else if (provider.name === 'Groq') {
+          result = await tryGroq(key, messages, options);
+        } else {
+          result = await tryOpenRouter(key, messages, options);
         }
 
-        if (response.ok && data.choices?.[0]) {
-          console.log(`✅ ${label} SUCCESS`);
-          return data.choices[0].message.content;
+        if (result.status === 429) {
+          await markCooling(keyId);
+          errors.push(`${keyId}: Rate Limited`);
+          continue; // Try next key in rotation
         }
 
-        console.warn(`${label} failed:`, data.error?.message);
-        errors.push(`${label}: ${data.error?.message}`);
+        if (result.success) {
+          console.log(`✅ Success with ${keyId}`);
+          return result.content;
+        }
 
+        errors.push(`${keyId}: ${result.error}`);
       } catch (e) {
-        console.warn(`${label} error:`, e.message);
-        errors.push(`${label}: ${e.message}`);
+        errors.push(`${keyId}: Request failed - ${e.message}`);
       }
     }
   }
 
-  // === ALL PROVIDERS EXHAUSTED ===
-  console.error('❌ ALL AI providers exhausted. Errors:', errors);
-  throw new Error('All AI providers are temporarily at capacity. Please try again in a minute.');
+  throw new Error(`All providers exhausted. Errors: ${errors.slice(-3).join(', ')}`);
 }
 
-// ===== CORS =====
+/** Specific Provider Handlers returning { success, content, status, error } **/
+
+async function tryGroq(key, messages, options) {
+  const models = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+  for (const model of models) {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` },
+      body: JSON.stringify({ 
+        model, 
+        messages, 
+        temperature: options.temperature || 0.7, 
+        max_tokens: options.max_tokens || 4000 
+      })
+    });
+    if (res.status === 429) return { status: 429 };
+    if (res.ok) {
+      const data = await res.json();
+      return { success: true, content: data.choices[0].message.content };
+    }
+  }
+  return { success: false, error: 'Groq failed' };
+}
+
+async function tryGemini(key, messages, options) {
+  const systemMsg = messages.find(m => m.role === 'system');
+  const userMessages = messages.filter(m => m.role !== 'system');
+  const body = {
+    contents: userMessages.map(m => ({ 
+      role: m.role === 'assistant' ? 'model' : 'user', 
+      parts: [{ text: m.content }] 
+    })),
+    generationConfig: { temperature: options.temperature || 0.7, maxOutputTokens: options.max_tokens || 4000 }
+  };
+  if (systemMsg) body.systemInstruction = { parts: [{ text: systemMsg.content }] };
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+  );
+  if (res.status === 429) return { status: 429 };
+  if (res.ok) {
+    const data = await res.json();
+    return { success: true, content: data.candidates[0].content.parts[0].text };
+  }
+  return { success: false, error: 'Gemini failed' };
+}
+
+async function tryOpenRouter(key, messages, options) {
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}`, 'X-Title': 'Sarkari AI' },
+    body: JSON.stringify({ 
+      model: 'google/gemini-2.0-flash-lite-001', 
+      messages, 
+      temperature: options.temperature || 0.7
+    })
+  });
+  if (res.status === 429) return { status: 429 };
+  if (res.ok) {
+    const data = await res.json();
+    return { success: true, content: data.choices[0].message.content };
+  }
+  return { success: false, error: 'OpenRouter failed' };
+}
+
 function corsResponse(body, status) {
   return new Response(body, {
     status,
@@ -226,8 +215,6 @@ function corsResponse(body, status) {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
-    },
+    }
   });
 }
-
-
