@@ -75,12 +75,21 @@ jobs:
       if: steps.check_changes.outputs.changed == 'true'
       run: npm run build
 
-    - name: Deploy to MilesWeb (LFTP)
+    - name: Install lftp
       if: steps.check_changes.outputs.changed == 'true'
-      uses: pressidium/lftp-mirror-action@v1
-      with:
-        host: ${{ secrets.FTP_SERVER }}
-        user: ${{ secrets.FTP_USERNAME }}
-        pass: ${{ secrets.FTP_PASSWORD }}
-        localDir: "./AIGovPrep/dist"
-        remoteDir: "/public_html"
+      run: sudo apt-get install -y lftp
+
+    - name: Deploy to MilesWeb via FTP
+      if: steps.check_changes.outputs.changed == 'true'
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USER: ${{ secrets.FTP_USERNAME }}
+        FTP_PASS: ${{ secrets.FTP_PASSWORD }}
+      run: |
+        lftp -c "
+          set ftp:ssl-allow no;
+          set net:timeout 30;
+          set net:max-retries 3;
+          open -u '$FTP_USER','$FTP_PASS' ftp://$FTP_SERVER;
+          mirror --reverse --delete --verbose ./dist/ /public_html/;
+        "
