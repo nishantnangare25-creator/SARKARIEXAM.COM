@@ -28,11 +28,11 @@ jobs:
     - name: Build Project
       run: npm run build
 
-    - name: Deploy to MilesWeb via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+    - name: Deploy to MilesWeb (LFTP)
+      uses: pressidium/lftp-mirror-action@v1
       with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./AIGovPrep/dist/
-        server-dir: /public_html/
+        host: ${{ secrets.FTP_SERVER }}
+        user: ${{ secrets.FTP_USERNAME }}
+        pass: ${{ secrets.FTP_PASSWORD }}
+        localDir: "./AIGovPrep/dist"
+        remoteDir: "/public_html"

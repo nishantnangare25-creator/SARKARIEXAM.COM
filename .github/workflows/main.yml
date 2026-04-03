@@ -28,11 +28,11 @@ jobs:
         working-directory: ./AIGovPrep
         run: npm run build
         
-      - name: 🚀 Sync files to FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      - name: 🚀 Sync files to FTP (LFTP)
+        uses: pressidium/lftp-mirror-action@v1
         with:
-          server: sarkariexamai.com
-          username: 253@sarkariexamai.com
-          password: "30nW=+YeE&G!m2&4"
-          local-dir: ./AIGovPrep/dist/
-          server-dir: ./
+          host: ${{ secrets.FTP_SERVER }}
+          user: ${{ secrets.FTP_USERNAME }}
+          pass: ${{ secrets.FTP_PASSWORD }}
+          localDir: "./AIGovPrep/dist"
+          remoteDir: "./"
