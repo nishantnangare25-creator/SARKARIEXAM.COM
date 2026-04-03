@@ -316,7 +316,7 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
   for (const key of orKeys) {
     const openrouterModels = [
       { model: 'google/gemini-2.0-flash-lite-001', label: 'OpenRouter Gemini Flash Lite' },
-      { model: 'meta-llama/llama-3.1-8b-instruct:free', label: 'OpenRouter Llama 3.1 Free (Emergency)' },
+      { model: 'meta-llama/llama-3.1-8b-instruct:free', label: 'OpenRouter Llama 3.1 Free' },
     ];
 
     for (const { model, label } of openrouterModels) {
@@ -414,7 +414,7 @@ Explanation: [1-2 sentences of explanation]`
   ];
   try {
     // Intentionally removed cacheKey to prevent students from getting repeating questions
-    const result = await callAI(messages, { max_tokens: 4000 });
+    const result = await callAI(messages, { max_tokens: 2000 });
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
       // Fallback for strict JSON parser if text parsing didn't catch anything due to model ignoring formatting
