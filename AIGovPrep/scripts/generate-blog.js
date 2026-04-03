@@ -24,13 +24,12 @@ console.log(`OPENROUTER_API_KEY: ${OPENROUTER_API_KEY ? '✅ Present' : '❌ Mis
 
 
 const KEYWORDS = [
-  ['AI chatbot', 'AI', 'Midjourney', 'Artificial Intelligence', 'Midjourney AI'],
-  ['Chat GPT 4', 'AI chat', 'OpenAI', 'Open AI', 'Generative AI'],
-  ['AI website', 'AI chatbot online', 'Conversational AI', 'AI assistant', 'AI generated'],
-  ['AI GPT', 'AI robot', 'Chat GPT4', 'Open AI Assistant', 'Future of AI'],
-  ['AI for students', 'Best AI for exams', 'Indian AI tools', 'Sarkari AI tips'],
-  ['AI content writing', 'AI prompts for beginners', 'Smart AI tools 2025']
+  'AI chatbot', 'AI', 'Midjourney', 'Artificial Intelligence', 'Midjourney AI',
+  'Chat GPT 4', 'AI chat', 'OpenAI', 'Open AI', 'Generative AI',
+  'AI website', 'AI chatbot online', 'Conversational AI', 'AI assistant',
+  'AI generated', 'AI GPT', 'AI robot', 'Chat GPT4'
 ];
+
 
 const REAL_IMAGE_KEYWORDS = {
   'chatbot': 'robotics customer service',
@@ -338,7 +337,8 @@ async function main() {
     
     const success = currentNews 
       ? await generateBlogPost(currentNews) 
-      : await generateBlogPost(null, KEYWORDS[SLOT_ID % KEYWORDS.length][Math.floor(Math.random() * 5)]);
+      : await generateBlogPost(null, KEYWORDS[SLOT_ID % KEYWORDS.length]);
+
     
     if (success) successCount++;
     if (i < POSTS_TO_GENERATE - 1) await new Promise(r => setTimeout(r, 2000));

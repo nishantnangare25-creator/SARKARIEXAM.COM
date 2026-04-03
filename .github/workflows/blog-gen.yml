@@ -5,8 +5,8 @@ permissions:
 
 on:
   schedule:
-    # Run daily at 10:00 AM IST (04:30 AM UTC)
-    - cron: '30 4 * * *'
+    # Run hourly
+    - cron: '0 * * * *'
   workflow_dispatch: # Allow manual trigger from GitHub Actions tab
 
 
@@ -43,9 +43,11 @@ jobs:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
-    - name: Generate 2 New AI Blog Posts
-      run: node scripts/generate-blog.js --count=2
-
+    - name: Generate 1 New AI Blog Post
+      run: |
+        HOUR=$(date +%H)
+        echo "Running for Hour slot: $HOUR"
+        node scripts/generate-blog.js --count=1 --slot=$HOUR
       env:
         GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
