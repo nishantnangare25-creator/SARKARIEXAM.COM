@@ -45,13 +45,13 @@ jobs:
 
       - name: 📁 Deploy to MilesWeb via FTP
         run: |
-          lftp <<EOF
-            set ftp:ssl-allow no
-            set ftp:passive-mode true
-            set net:timeout 30
-            set net:max-retries 3
-            open ftp://${{ secrets.FTP_SERVER }}
-            user "${{ secrets.FTP_USERNAME }}" "${{ secrets.FTP_PASSWORD }}"
-            mirror --reverse --delete --continue --verbose ./dist/ /public_html/
-            quit
-          EOF
+          lftp <<'FTPEOF'
+          set ftp:ssl-allow no
+          set ftp:passive-mode true
+          set net:timeout 30
+          set net:max-retries 3
+          open ftp://${{ secrets.FTP_SERVER }}
+          user "${{ secrets.FTP_USERNAME }}" "${{ secrets.FTP_PASSWORD }}"
+          mirror --reverse --delete --continue --verbose ./dist/ /public_html/
+          quit
+          FTPEOF
