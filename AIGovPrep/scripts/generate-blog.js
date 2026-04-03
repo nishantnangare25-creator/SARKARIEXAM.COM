@@ -50,41 +50,67 @@ const getRealImageUrl = (topic) => {
 const NEWS_CACHE_PATH = path.join(__dirname, 'news-cache.json');
 
 function extractJSON(text) {
+  const raw = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+
+  // Strategy 1: Direct parse — try cleanly first
   try {
-    // 1. Initial Cleanup: Remove markdown delimiters
-    let cleanText = text.replace(/```json/gi, '').replace(/```/g, '').trim();
+    const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s !== -1 && e !== -1) return JSON.parse(raw.substring(s, e + 1));
+  } catch (_) {}
 
-    // 2. Pre-parsing Robustness: Fix common AI JSON mistakes
-    cleanText = cleanText
-      .replace(/'/g, '"') // Replace single quotes with double quotes
-      .replace(/([{,]\s*)([a-zA-Z0-9_]+)\s*:/g, '$1"$2":') // Wrap unquoted keys
-      .replace(/,\s*([}\]])/g, '$1') // Remove trailing commas
-      // Fix literal newlines inside quotes
-      .replace(/"([^"]*)"/g, (match, p1) => {
-        return '"' + p1.replace(/\n/g, '\\n').replace(/\r/g, '\\r').replace(/\t/g, '\\t') + '"';
+  // Strategy 2: Fix ONLY real control characters (safe — does NOT touch single quotes or HTML)
+  try {
+    const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s !== -1 && e !== -1) {
+      const fixed = raw.substring(s, e + 1).replace(/[\u0000-\u001F\u007F]/g, (ch) => {
+        if (ch === '\n') return '\\n';
+        if (ch === '\r') return '\\r';
+        if (ch === '\t') return '\\t';
+        return '';
       });
-
-    // 3. Find the main JSON block
-    const start = cleanText.indexOf('{');
-    const end = cleanText.lastIndexOf('}');
-    if (start !== -1 && end !== -1) {
-      const jsonStr = cleanText.substring(start, end + 1);
-      try {
-        return JSON.parse(jsonStr);
-      } catch (e) {
-        // secondary cleanup for persistent errors
-        const bruteClean = jsonStr
-          .replace(/\n/g, ' ')
-          .replace(/\\/g, '\\\\')
-          .replace(/\\\\n/g, '\\n');
-        return JSON.parse(bruteClean);
-      }
+      return JSON.parse(fixed);
     }
-    return JSON.parse(cleanText);
-  } catch (e) {
-    console.error('Failed to parse AI JSON:', e.message);
-    return null;
-  }
+  } catch (_) {}
+
+  // Strategy 3: Fix trailing commas + control chars
+  try {
+    const s = raw.indexOf('{'), e = raw.lastIndexOf('}');
+    if (s !== -1 && e !== -1) {
+      const fixed = raw.substring(s, e + 1)
+        .replace(/,\s*([}\]])/g, '$1')               // remove trailing commas
+        .replace(/[\u0000-\u001F\u007F]/g, (ch) => {
+          if (ch === '\n') return '\\n';
+          if (ch === '\r') return '\\r';
+          if (ch === '\t') return '\\t';
+          return '';
+        });
+      return JSON.parse(fixed);
+    }
+  } catch (_) {}
+
+  // Strategy 4: Regex field extraction as last resort
+  try {
+    const get = (key) => {
+      const m = raw.match(new RegExp(`"${key}"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"`));
+      return m ? m[1] : '';
+    };
+    const getArr = (key) => {
+      const m = raw.match(new RegExp(`"${key}"\\s*:\\s*(\\[[^\\]]*\\])`));
+      try { return m ? JSON.parse(m[1]) : []; } catch (_) { return []; }
+    };
+    const title = get('title');
+    if (!title) throw new Error('No title found');
+    return {
+      title,
+      excerpt: get('excerpt'),
+      content: get('content').replace(/\\n/g, '\n'),
+      tags: getArr('tags'),
+      faqSchema: []
+    };
+  } catch (_) {}
+
+  console.error('All JSON extraction strategies failed.');
+  return null;
 }
 
 async function generateWithGemini(prompt) {
