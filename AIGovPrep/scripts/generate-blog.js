@@ -118,39 +118,50 @@ async function generateWithGemini(prompt) {
     console.log('Skipping Gemini: GEMINI_API_KEY not found.');
     return null;
   }
-  const versions = ['v1beta', 'v1'];
-  const models = ['gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-flash-8b'];
+  // Only use currently available models (1.5-flash and 1.5-flash-8b are deprecated/404)
+  const models = [
+    { name: 'gemini-2.0-flash', version: 'v1beta' },
+    { name: 'gemini-2.0-flash-lite', version: 'v1beta' },
+  ];
   
-  for (const model of models) {
-    for (const version of versions) {
+  for (const { name: model, version } of models) {
+    for (let attempt = 0; attempt < 2; attempt++) {
       try {
-        console.log(`Trying Gemini ${version} model: ${model}...`);
+        console.log(`Trying Gemini ${version}/${model} (attempt ${attempt + 1})...`);
         const url = `https://generativelanguage.googleapis.com/${version}/models/${model}:generateContent?key=${GEMINI_API_KEY}`;
         const response = await fetch(url, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { maxOutputTokens: 4000, temperature: 0.7 }
+            generationConfig: { maxOutputTokens: 3000, temperature: 0.7 }
           })
         });
         
+        if (response.status === 429 && attempt === 0) {
+          console.warn('⏳ Rate limited — waiting 60 seconds before retry...');
+          await new Promise(r => setTimeout(r, 60000));
+          continue;
+        }
+
         if (!response.ok) {
           const errBody = await response.text();
           console.warn(`Gemini API HTTP ${response.status}: ${errBody.substring(0, 100)}...`);
-          continue;
+          break; // try next model
         }
 
         const data = await response.json();
         if (data.candidates && data.candidates[0]?.content?.parts[0]?.text) {
-          console.log(`✅ Gemini ${version} ${model} Success!`);
+          console.log(`✅ Gemini ${version}/${model} Success!`);
           return extractJSON(data.candidates[0].content.parts[0].text);
         }
         if (data.error) {
-          console.warn(`Gemini ${version} (${model}) error:`, data.error.message.substring(0, 100) + '...');
+          console.warn(`Gemini error:`, data.error.message.substring(0, 100));
         }
+        break;
       } catch (e) {
         console.warn(`Gemini connection error: ${e.message}`);
+        break;
       }
     }
   }
@@ -163,35 +174,39 @@ async function generateWithGroq(prompt) {
     console.log('Skipping Groq: GROQ_API_KEY not found.');
     return null;
   }
-  try {
-    console.log('Requesting from Groq (llama-3.3-70b-versatile)...');
-    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 3000
-      })
-    });
-    
-    if (!response.ok) {
-      const errBody = await response.text();
-      console.warn(`Groq API HTTP ${response.status}: ${errBody.substring(0, 100)}...`);
-      return null;
-    }
+  // Try multiple Groq models — llama-3.1-8b-instant has much higher free rate limits
+  const groqModels = ['llama-3.3-70b-versatile', 'llama-3.1-8b-instant'];
+  
+  for (const model of groqModels) {
+    try {
+      console.log(`Requesting from Groq (${model})...`);
+      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${GROQ_API_KEY}` },
+        body: JSON.stringify({
+          model,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.7,
+          max_tokens: 3000
+        })
+      });
+      
+      if (!response.ok) {
+        const errBody = await response.text();
+        console.warn(`Groq (${model}) HTTP ${response.status}: ${errBody.substring(0, 100)}...`);
+        continue; // try next model
+      }
 
-    const data = await response.json();
-    if (data.choices && data.choices[0]?.message?.content) {
-      console.log('✅ Groq Success!');
-      return extractJSON(data.choices[0].message.content);
+      const data = await response.json();
+      if (data.choices && data.choices[0]?.message?.content) {
+        console.log(`✅ Groq (${model}) Success!`);
+        return extractJSON(data.choices[0].message.content);
+      }
+    } catch (e) {
+      console.error(`Groq (${model}) connection error:`, e.message);
     }
-    return null;
-  } catch (e) {
-    console.error('Groq connection error:', e.message);
-    return null;
   }
+  return null;
 }
 
 
