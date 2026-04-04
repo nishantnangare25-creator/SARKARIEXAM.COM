@@ -89,7 +89,7 @@ export default function CurrentAffairs() {
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
             <div>
               <h1 style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                <Newspaper size={32} className="text-saffron" /> {t('ca.title')}
+                <Newspaper size={32} className="text-saffron" /> Current Affairs
               </h1>
               <p>{t('ca.subtitle')}</p>
             </div>

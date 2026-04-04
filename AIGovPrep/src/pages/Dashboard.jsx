@@ -59,7 +59,7 @@ export default function Dashboard({ onToggleSidebar }) {
       { name: t('common.history') || 'History', progress: 0, color: 'blue' },
       { name: t('common.geography') || 'Geography', progress: 0, color: 'saffron' },
       { name: t('common.polity') || 'Polity', progress: 0, color: 'green' },
-      { name: t('ca.title') || 'Current Affairs', progress: 0, color: 'red' },
+      { name: 'Current Affairs', progress: 0, color: 'red' },
     ];
 
     if (!testHistory.length) return defaultStats;
@@ -106,7 +106,7 @@ export default function Dashboard({ onToggleSidebar }) {
     { name: t('common.history'), progress: 75, color: 'blue' },
     { name: t('common.geography'), progress: 45, color: 'saffron' },
     { name: t('common.polity'), progress: 90, color: 'green' },
-    { name: t('ca.title'), progress: 30, color: 'red' },
+    { name: 'Current Affairs', progress: 30, color: 'red' },
   ];
 
   const suggestions = getSuggestions(dynamicSubjects);
