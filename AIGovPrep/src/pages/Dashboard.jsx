@@ -305,9 +305,9 @@ export default function Dashboard({ onToggleSidebar }) {
             <section className="card">
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
                 <h3 style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <Newspaper size={20} className="text-saffron" /> {t('dashboard.ca.title')}
+                  <Newspaper size={20} className="text-saffron" /> Current Affairs
                 </h3>
-                <span className="badge badge-orange">{t('dashboard.ca.latest')}</span>
+                <span className="badge badge-orange">Latest Updates</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {caLoading ? (
@@ -329,7 +329,7 @@ export default function Dashboard({ onToggleSidebar }) {
                   ))
                 )}
                 <Link to="/current-affairs" className="btn btn-ghost btn-sm" style={{ width: '100%', justifyContent: 'center', marginTop: 8, textDecoration: 'none' }}>
-                  {t('dashboard.ca.viewAll')} <ArrowRight size={14} />
+                  View All Current Affairs <ArrowRight size={14} />
                 </Link>
               </div>
             </section>
