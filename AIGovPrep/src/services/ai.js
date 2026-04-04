@@ -253,140 +253,60 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     console.warn('Worker failed after 3 attempts, trying direct API...');
   }
 
-  // LOCAL DEV / DIRECT FALLBACK: Full Cascade with 429 Rate-Limit Detection
-  // Cascade Order: Groq (5 keys) → Gemini → OpenRouter Gemini → OpenRouter Llama Free
-
-  const COOLDOWN_MS = 5 * 60 * 1000; // 5 minutes cooldown per rate-limited key
-
+  // ROBUST CASCADE: Groq, Gemini, and OpenRouter (Free Models)
+  const COOLDOWN_MS = 5 * 60 * 1000;
   const isOnCooldown = (key) => {
     try {
-      const ts = sessionStorage.getItem(`rl_cooldown_${key.slice(-6)}`);
+      const ts = sessionStorage.getItem(`rl_${key.slice(-8)}`);
       return ts && (Date.now() - parseInt(ts)) < COOLDOWN_MS;
     } catch { return false; }
   };
-
   const markCooldown = (key) => {
-    try { sessionStorage.setItem(`rl_cooldown_${key.slice(-6)}`, Date.now().toString()); } catch { }
+    try { sessionStorage.setItem(`rl_${key.slice(-8)}`, Date.now().toString()); } catch { }
   };
 
-  const groqKeys = getGroqKeys(); // Already shuffled
-  const geminiKeys = getGeminiKeys(); // Already shuffled
-  const orKeys = getOpenRouterKeys(); // Already shuffled
+  // All available free OpenRouter models for maximum capacity
+  const OR_FREE_MODELS = [
+    'google/gemini-2.0-flash-lite-001:free',
+    'google/gemini-2.5-pro-exp-03-25:free',
+    'meta-llama/llama-4-scout:free',
+    'meta-llama/llama-4-maverick:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'meta-llama/llama-3.2-3b-instruct:free',
+    'deepseek/deepseek-chat-v3-0324:free',
+    'deepseek/deepseek-r1:free',
+    'mistralai/mistral-7b-instruct:free',
+    'qwen/qwen3-235b-a22b:free',
+    'microsoft/phi-4-reasoning-plus:free',
+  ];
 
-  // === PRIORITY 1-5: GROQ KEYS ===
-  for (let i = 0; i < groqKeys.length; i++) {
-    const groqKey = groqKeys[i];
-    const label = `Groq Key ${i + 1}`;
+  const providers = [
+    // Groq — fastest, highest quality
+    ...getGroqKeys().map(k => ({ type: 'groq', key: k, url: 'https://api.groq.com/openai/v1/chat/completions', model: 'llama-3.3-70b-versatile' })),
+    // Gemini — direct
+    ...getGeminiKeys().map(k => ({ type: 'gemini', key: k, url: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${k}` })),
+    // OpenRouter — 11 free models × 3 keys = 33 fallback slots
+    ...getOpenRouterKeys().flatMap(k => OR_FREE_MODELS.map(model => ({ type: 'or', key: k, url: 'https://openrouter.ai/api/v1/chat/completions', model })))
+  ];
 
-    if (isOnCooldown(groqKey)) {
-      console.warn(`[Cascade] ${label} is on 429 cooldown, skipping.`);
-      continue;
-    }
-
+  for (const p of providers) {
+    if (isOnCooldown(p.key)) continue;
     try {
-      const groqResponse = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${groqKey}` },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          messages,
-          temperature: options.temperature || 0.7,
-          max_tokens: options.max_tokens || 1500,
-        }),
-      });
-
-      const groqData = await groqResponse.json();
-
-      if (groqResponse.status === 429) {
-        console.warn(`[Cascade] ${label} RATE LIMITED (429). Cooling down & cascading...`);
-        markCooldown(groqKey);
-        continue;
+      let body, headers = { 'Content-Type': 'application/json' };
+      if (p.type === 'groq' || p.type === 'or') {
+        headers['Authorization'] = `Bearer ${p.key}`;
+        if (p.type === 'or') headers['HTTP-Referer'] = window.location.origin;
+        body = JSON.stringify({ model: p.model, messages, temperature: options.temperature || 0.7, max_tokens: options.max_tokens || 1500 });
+      } else {
+        body = JSON.stringify({ contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }] });
       }
 
-      if (groqResponse.ok && groqData.choices?.[0]) {
-        console.log(`[Cascade] ✅ ${label} SUCCESS`);
-        return saveCache(groqData.choices[0].message.content);
-      }
-
-      console.warn(`[Cascade] ${label} failed:`, groqData.error?.message);
-    } catch (e) {
-      console.warn(`[Cascade] ${label} network error:`, e.message);
-    }
-  }
-
-  // === PRIORITY 6: GOOGLE GEMINI (DIRECT ROTATION) ===
-  for (const key of geminiKeys) {
-    if (isOnCooldown(key)) continue;
-    try {
-      console.log(`[Cascade] Trying Google Gemini Direct (Key ${key.substring(0, 8)})...`);
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }],
-          generationConfig: {
-            maxOutputTokens: options.max_tokens || 1500,
-            temperature: options.temperature || 0.7,
-          }
-        })
-      });
-
-      const data = await response.json();
-      if (response.status === 429) {
-        console.warn('[Cascade] Gemini RATE LIMITED (429). Switching key...');
-        markCooldown(key);
-        continue;
-      }
-      if (response.ok && data.candidates?.[0]?.content?.parts?.[0]?.text) {
-        return saveCache(data.candidates[0].content.parts[0].text);
-      }
-    } catch (e) {
-      console.warn(`[Cascade] Gemini key ${key.substring(0, 8)} error:`, e.message);
-    }
-  }
-
-  // === PRIORITY 7: OPENROUTER ROTATION ===
-  for (const key of orKeys) {
-    const openrouterModels = [
-      { model: 'google/gemini-2.0-flash-lite-001:free', label: 'OpenRouter Gemini Flash Lite (Free)' },
-      { model: 'meta-llama/llama-3.2-3b-instruct:free', label: 'OpenRouter Llama 3.2 Free' },
-    ];
-
-    for (const { model, label } of openrouterModels) {
-      const cooldownKey = `or_${model}_${key.substring(0, 8)}`;
-      if (isOnCooldown(cooldownKey)) continue;
-
-      try {
-        console.log(`[Cascade] Trying ${label} with Key ${key.substring(0, 8)}...`);
-        const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${key}`,
-            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : '',
-            'X-Title': 'Sarkari Exam AI',
-          },
-          body: JSON.stringify({
-            model,
-            messages,
-            temperature: options.temperature || 0.7,
-            max_tokens: Math.min(options.max_tokens || 1500, 2000),
-          }),
-        });
-
-        const data = await response.json();
-        if (response.status === 429) {
-          console.warn(`[Cascade] ${label} RATE LIMITED. Trying next...`);
-          markCooldown(cooldownKey);
-          continue;
-        }
-        if (response.ok && data.choices?.[0]) {
-          return saveCache(data.choices[0].message.content);
-        }
-      } catch (e) {
-        console.error(`[Cascade] OpenRouter key error:`, e.message);
-      }
-    }
+      const res = await fetch(p.url, { method: 'POST', headers, body });
+      if (res.status === 429) { markCooldown(p.key); continue; }
+      const data = await res.json();
+      const content = p.type === 'gemini' ? data.candidates?.[0]?.content?.parts?.[0]?.text : data.choices?.[0]?.message?.content;
+      if (res.ok && content) return saveCache(content);
+    } catch (e) { console.warn(`Cascade failed for ${p.type}:`, e.message); }
   }
 
   throw new Error('Our servers are currently experiencing extreme student traffic. Please wait a few seconds and try again.');
