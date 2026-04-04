@@ -1,0 +1,98 @@
+name: Build Mobile App (Flutter)
+
+on:
+  push:
+    paths:
+      - 'Sarkari Exam AI App/**' # Only run when mobile app files change
+  workflow_dispatch: # Allow manual trigger from GitHub Actions tab
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Initialize Flutter Project
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app .
+          
+      - name: Configure Android Permissions (Internet)
+        run: |
+          cd "Sarkari Exam AI App/android/app/src/main"
+          # Insert uses-permission before the <application> tag
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET" />' AndroidManifest.xml
+          # Add cleartextTrafficPermitted just in case
+          sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' AndroidManifest.xml
+
+      - name: Install Dependencies
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter pub get
+
+      - name: Build APK
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter build apk --release
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sarkari-exam-ai-android-apk
+          path: "Sarkari Exam AI App/build/app/outputs/flutter-apk/app-release.apk"
+
+  build-ios:
+    name: Build iOS (No Sign)
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+
+      - name: Initialize Flutter Project
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app .
+
+      - name: Configure iOS Permissions
+        run: |
+          cd "Sarkari Exam AI App/ios/Runner"
+          # Typically, iOS allows internet automatically, but we can ensure Info.plist allows arbitrary loads
+          sed -i '' '/<dict>/a\
+          <key>NSAppTransportSecurity</key>\
+          <dict>\
+              <key>NSAllowsArbitraryLoads</key>\
+              <true/>\
+          </dict>\
+          ' Info.plist
+
+      - name: Install Dependencies
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter pub get
+
+      - name: Build iOS App
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter build ios --release --no-codesign
+
+      - name: Upload iOS Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: sarkari-exam-ai-ios-build
+          path: "Sarkari Exam AI App/build/ios/iphoneos/Runner.app"
