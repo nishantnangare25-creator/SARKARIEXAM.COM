@@ -50,7 +50,7 @@ export default function Navbar({ onToggleSidebar }) {
         {!isLanding && (
           <div className="navbar-search">
             <Search size={16} />
-            <input type="text" placeholder={t('common.searchPlaceholder') || 'Search topics, exams, notes…'} aria-label="Search" />
+            <input type="text" placeholder="Search topics, exams, notes..." aria-label="Search" />
           </div>
 
 
