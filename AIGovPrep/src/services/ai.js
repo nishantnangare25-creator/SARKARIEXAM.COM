@@ -389,7 +389,7 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     }
   }
 
-  throw new Error('All AI providers are temporarily at capacity. Please try again in a moment.');
+  throw new Error('Our servers are currently experiencing extreme student traffic. Please wait a few seconds and try again.');
 };
 
 
@@ -458,7 +458,7 @@ Explanation: [1-2 sentences of explanation]`
     return parsed;
   } catch (err) {
     console.error("AI call failed:", err);
-    throw new Error("AI Server is too busy or API limits exhausted. Please try again later.");
+    throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
   }
 };
 
@@ -504,7 +504,7 @@ Explanation: [1-2 sentences of explanation]`
     return parsed;
   } catch (err) {
     console.error("AI call failed:", err);
-    throw new Error("AI Server is too busy or API limits exhausted. Please try again later.");
+    throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
   }
 };
 
