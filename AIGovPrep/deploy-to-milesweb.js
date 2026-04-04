@@ -8,7 +8,7 @@ async function deploy() {
         await client.access({
             host: "sarkariexamai.com",
             user: "253@sarkariexamai.com",
-            password: "30nW=+YeE&G!m2&4",
+            password: "SarkariExam99).",
             secure: false
         });
 

@@ -92,7 +92,7 @@ jobs:
           flutter build ios --release --no-codesign
 
       - name: Upload iOS Build Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: sarkari-exam-ai-ios-build
           path: "Sarkari Exam AI App/build/ios/iphoneos/Runner.app"
