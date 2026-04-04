@@ -291,7 +291,7 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
           model: 'llama-3.3-70b-versatile',
           messages,
           temperature: options.temperature || 0.7,
-          max_tokens: options.max_tokens || 4000,
+          max_tokens: options.max_tokens || 1500,
         }),
       });
 
@@ -325,7 +325,7 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
         body: JSON.stringify({
           contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }],
           generationConfig: {
-            maxOutputTokens: options.max_tokens || 4000,
+            maxOutputTokens: options.max_tokens || 1500,
             temperature: options.temperature || 0.7,
           }
         })
@@ -447,7 +447,7 @@ Explanation: [1-2 sentences of explanation]`
   ];
   try {
     // Intentionally removed cacheKey to prevent students from getting repeating questions
-    const result = await callAI(messages, { max_tokens: 2000 });
+    const result = await callAI(messages, { max_tokens: 1500 });
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
       // Fallback for strict JSON parser if text parsing didn't catch anything due to model ignoring formatting
@@ -494,7 +494,7 @@ Explanation: [1-2 sentences of explanation]`
   ];
   try {
     // Intentionally removed cacheKey so multiple attempts of the same PYQ give different question batches
-    const result = await callAI(messages, { max_tokens: 4000 });
+    const result = await callAI(messages, { max_tokens: 1500 });
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
       const fallbackParsed = extractJSON(result);
