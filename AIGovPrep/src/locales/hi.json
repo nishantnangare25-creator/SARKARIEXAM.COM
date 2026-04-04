@@ -183,6 +183,11 @@
       "paperSolution": "प्रश्न पत्र + समाधान",
       "paper": "प्रश्न पत्र"
     },
+    "ca": {
+      "title": "Current Affairs",
+      "latest": "नवीनतम",
+      "viewAll": "सभी देखें"
+    },
     "testsCompleted": "पूर्ण किए गए टेस्ट",
     "dailyQuiz": "दैनिक क्विज़",
     "takeQuiz": "आज की क्विज़ दें",

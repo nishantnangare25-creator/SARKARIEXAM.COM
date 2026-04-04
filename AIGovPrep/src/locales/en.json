@@ -147,6 +147,11 @@
       "paperSolution": "Question Paper + Solution",
       "paper": "Question Paper"
     },
+    "ca": {
+      "title": "Current Affairs",
+      "latest": "LATEST",
+      "viewAll": "View All"
+    },
     "testsCompleted": "Tests Completed",
     "dailyQuiz": "Daily Quiz",
     "takeQuiz": "Take Today's Quiz",

@@ -315,8 +315,8 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
   // === PRIORITY 7: OPENROUTER ROTATION ===
   for (const key of orKeys) {
     const openrouterModels = [
-      { model: 'google/gemini-2.0-flash-lite-001', label: 'OpenRouter Gemini Flash Lite' },
-      { model: 'meta-llama/llama-3.1-8b-instruct:free', label: 'OpenRouter Llama 3.1 Free' },
+      { model: 'google/gemini-2.0-flash-lite-001:free', label: 'OpenRouter Gemini Flash Lite (Free)' },
+      { model: 'meta-llama/llama-3.2-3b-instruct:free', label: 'OpenRouter Llama 3.2 Free' },
     ];
 
     for (const { model, label } of openrouterModels) {
