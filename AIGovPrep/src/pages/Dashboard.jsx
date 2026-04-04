@@ -10,7 +10,9 @@ import { getLatestCurrentAffairs } from '../services/currentAffairs';
 import { getTestHistory } from '../services/firebase';
 
 export default function Dashboard({ onToggleSidebar }) {
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(); // Translation hooks for app-wide labels
+  // UI Fix: Hardcoded Current Affairs labels to ensure consistency on dashboard.
+
   const { user, profile } = useAuth();
   const [greeting, setGreeting] = useState('');
   const [currentAffairs, setCurrentAffairs] = useState([]);
