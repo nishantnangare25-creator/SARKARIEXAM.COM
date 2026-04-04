@@ -2,12 +2,14 @@
 // API key is stored in environment variables (VITE_GROQ_API_KEY)
 
 import i18n, { languages } from '../i18n';
+import { db } from './firebase';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const getGroqKeys = () => {
   const keys = [];
   const primary = import.meta.env.VITE_GROQ_API_KEY;
   if (primary) keys.push(primary);
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const k = import.meta.env[`VITE_GROQ_API_KEY_${i}`];
     if (k && !keys.includes(k)) keys.push(k);
   }
@@ -18,7 +20,7 @@ const getGeminiKeys = () => {
   const keys = [];
   const primary = import.meta.env.VITE_GEMINI_API_KEY;
   if (primary) keys.push(primary);
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const k = import.meta.env[`VITE_GEMINI_API_KEY_${i}`];
     if (k && !keys.includes(k)) keys.push(k);
   }
@@ -29,7 +31,7 @@ const getOpenRouterKeys = () => {
   const keys = [];
   const primary = import.meta.env.VITE_OPENROUTER_API_KEY;
   if (primary) keys.push(primary);
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 10; i++) {
     const k = import.meta.env[`VITE_OPENROUTER_API_KEY_${i}`];
     if (k && !keys.includes(k)) keys.push(k);
   }
@@ -175,6 +177,25 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
         }
       }
     } catch(e) { console.warn("Cache read error:", e); }
+
+    // --- GLOBAL FIRESTORE CACHE ---
+    try {
+      // Create a URL-safe document ID from cacheKey
+      const safeDocId = cacheKey.replace(/[^a-zA-Z0-9_\-]/g, '_').substring(0, 500); 
+      const docRef = doc(db, 'ai_global_cache', safeDocId);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        if (data.content) {
+          console.log(`[Global Firestore Cache Hit] ${safeDocId}`);
+          // Save to local cache so next time it's instant
+          try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), content: data.content })); } catch(e) {}
+          return data.content;
+        }
+      }
+    } catch(e) { 
+      console.warn("Global cache read error:", e); 
+    }
   }
 
   const saveCache = (data) => {
@@ -185,6 +206,18 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
       localStorage.clear(); // Clear space if quota exceeded
       try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), content: data })); } catch(err) {}
     }
+
+    // Asynchronously save to Firestore without blocking response
+    try {
+      const safeDocId = cacheKey.replace(/[^a-zA-Z0-9_\-]/g, '_').substring(0, 500);
+      setDoc(doc(db, 'ai_global_cache', safeDocId), {
+        content: data,
+        timestamp: serverTimestamp()
+      }, { merge: true }).catch(err => console.warn("Global cache write error:", err));
+    } catch (e) { 
+      console.warn("Global cache write error:", e); 
+    }
+
     return data;
   };
 
