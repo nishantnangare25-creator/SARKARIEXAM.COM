@@ -6,36 +6,45 @@ import { db } from './firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const getGroqKeys = () => {
-  const keys = [];
-  const primary = import.meta.env.VITE_GROQ_API_KEY;
-  if (primary) keys.push(primary);
-  for (let i = 1; i <= 50; i++) {
-    const k = import.meta.env[`VITE_GROQ_API_KEY_${i}`];
-    if (k && !keys.includes(k)) keys.push(k);
-  }
-  return keys.sort(() => Math.random() - 0.5);
+  const keys = [
+    import.meta.env.VITE_GROQ_API_KEY,
+    import.meta.env.VITE_GROQ_API_KEY_1, import.meta.env.VITE_GROQ_API_KEY_2, import.meta.env.VITE_GROQ_API_KEY_3,
+    import.meta.env.VITE_GROQ_API_KEY_4, import.meta.env.VITE_GROQ_API_KEY_5, import.meta.env.VITE_GROQ_API_KEY_6,
+    import.meta.env.VITE_GROQ_API_KEY_7, import.meta.env.VITE_GROQ_API_KEY_8, import.meta.env.VITE_GROQ_API_KEY_9,
+    import.meta.env.VITE_GROQ_API_KEY_10, import.meta.env.VITE_GROQ_API_KEY_11, import.meta.env.VITE_GROQ_API_KEY_12,
+    import.meta.env.VITE_GROQ_API_KEY_13, import.meta.env.VITE_GROQ_API_KEY_14, import.meta.env.VITE_GROQ_API_KEY_15,
+    import.meta.env.VITE_GROQ_API_KEY_16, import.meta.env.VITE_GROQ_API_KEY_17, import.meta.env.VITE_GROQ_API_KEY_18,
+    import.meta.env.VITE_GROQ_API_KEY_19, import.meta.env.VITE_GROQ_API_KEY_20
+  ].filter(Boolean);
+  return [...new Set(keys)].sort(() => Math.random() - 0.5);
 };
 
 const getGeminiKeys = () => {
-  const keys = [];
-  const primary = import.meta.env.VITE_GEMINI_API_KEY;
-  if (primary) keys.push(primary);
-  for (let i = 1; i <= 50; i++) {
-    const k = import.meta.env[`VITE_GEMINI_API_KEY_${i}`];
-    if (k && !keys.includes(k)) keys.push(k);
-  }
-  return keys.sort(() => Math.random() - 0.5);
+  const keys = [
+    import.meta.env.VITE_GEMINI_API_KEY,
+    import.meta.env.VITE_GEMINI_API_KEY_1, import.meta.env.VITE_GEMINI_API_KEY_2, import.meta.env.VITE_GEMINI_API_KEY_3,
+    import.meta.env.VITE_GEMINI_API_KEY_4, import.meta.env.VITE_GEMINI_API_KEY_5, import.meta.env.VITE_GEMINI_API_KEY_6,
+    import.meta.env.VITE_GEMINI_API_KEY_7, import.meta.env.VITE_GEMINI_API_KEY_8, import.meta.env.VITE_GEMINI_API_KEY_9,
+    import.meta.env.VITE_GEMINI_API_KEY_10, import.meta.env.VITE_GEMINI_API_KEY_11, import.meta.env.VITE_GEMINI_API_KEY_12,
+    import.meta.env.VITE_GEMINI_API_KEY_13, import.meta.env.VITE_GEMINI_API_KEY_14, import.meta.env.VITE_GEMINI_API_KEY_15,
+    import.meta.env.VITE_GEMINI_API_KEY_16, import.meta.env.VITE_GEMINI_API_KEY_17, import.meta.env.VITE_GEMINI_API_KEY_18,
+    import.meta.env.VITE_GEMINI_API_KEY_19, import.meta.env.VITE_GEMINI_API_KEY_20
+  ].filter(Boolean);
+  return [...new Set(keys)].sort(() => Math.random() - 0.5);
 };
 
 const getOpenRouterKeys = () => {
-  const keys = [];
-  const primary = import.meta.env.VITE_OPENROUTER_API_KEY;
-  if (primary) keys.push(primary);
-  for (let i = 1; i <= 50; i++) {
-    const k = import.meta.env[`VITE_OPENROUTER_API_KEY_${i}`];
-    if (k && !keys.includes(k)) keys.push(k);
-  }
-  return keys.sort(() => Math.random() - 0.5);
+  const keys = [
+    import.meta.env.VITE_OPENROUTER_API_KEY,
+    import.meta.env.VITE_OPENROUTER_API_KEY_1, import.meta.env.VITE_OPENROUTER_API_KEY_2, import.meta.env.VITE_OPENROUTER_API_KEY_3,
+    import.meta.env.VITE_OPENROUTER_API_KEY_4, import.meta.env.VITE_OPENROUTER_API_KEY_5, import.meta.env.VITE_OPENROUTER_API_KEY_6,
+    import.meta.env.VITE_OPENROUTER_API_KEY_7, import.meta.env.VITE_OPENROUTER_API_KEY_8, import.meta.env.VITE_OPENROUTER_API_KEY_9,
+    import.meta.env.VITE_OPENROUTER_API_KEY_10, import.meta.env.VITE_OPENROUTER_API_KEY_11, import.meta.env.VITE_OPENROUTER_API_KEY_12,
+    import.meta.env.VITE_OPENROUTER_API_KEY_13, import.meta.env.VITE_OPENROUTER_API_KEY_14, import.meta.env.VITE_OPENROUTER_API_KEY_15,
+    import.meta.env.VITE_OPENROUTER_API_KEY_16, import.meta.env.VITE_OPENROUTER_API_KEY_17, import.meta.env.VITE_OPENROUTER_API_KEY_18,
+    import.meta.env.VITE_OPENROUTER_API_KEY_19, import.meta.env.VITE_OPENROUTER_API_KEY_20
+  ].filter(Boolean);
+  return [...new Set(keys)].sort(() => Math.random() - 0.5);
 };
 
 const getLanguageName = (code) => {
@@ -302,7 +311,12 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
       }
 
       const res = await fetch(p.url, { method: 'POST', headers, body });
-      if (res.status === 429) { markCooldown(p.key); continue; }
+      if (res.status === 429) { 
+        markCooldown(p.key); 
+        // Small delay before trying next key to prevent rapid-fire 429s
+        await new Promise(r => setTimeout(r, 1000));
+        continue; 
+      }
       const data = await res.json();
       const content = p.type === 'gemini' ? data.candidates?.[0]?.content?.parts?.[0]?.text : data.choices?.[0]?.message?.content;
       if (res.ok && content) return saveCache(content);
