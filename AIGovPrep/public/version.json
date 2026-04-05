@@ -1,6 +1,6 @@
 {
-  "version": "1.0.4",
-  "build_number": 5,
+  "version": "1.0.5",
+  "build_number": 6,
   "download_url": "https://github.com/nishantnangare25-creator/Resume-Builder--1-/actions",
-  "release_notes": "Corrected dependency conflict and enabled native PDF downloads with version 1.0.4."
+  "release_notes": "Version 1.0.5: Fixed white screen crash on result page and resolved Flutter syntax errors."
 }

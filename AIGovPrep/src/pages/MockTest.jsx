@@ -145,9 +145,19 @@ export default function MockTest() {
   }
 
   if (showResult) {
-    const score = getScore();
-    const total = questions.length;
+    const score = getScore() || 0;
+    const total = questions?.length || 0;
     const percent = total > 0 ? Math.round((score / total) * 100) : 0;
+
+    if (total === 0 && loading) {
+      return (
+        <main className="page-wrapper">
+          <div className="page-with-sidebar" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+            <div className="spinner"></div>
+          </div>
+        </main>
+      );
+    }
 
     return (
       <main className="page-wrapper" id="mock-test-result">
