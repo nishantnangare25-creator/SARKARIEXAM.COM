@@ -1,6 +1,6 @@
 {
-  "version": "1.0.3",
-  "build_number": 4,
+  "version": "1.0.4",
+  "build_number": 5,
   "download_url": "https://github.com/nishantnangare25-creator/Resume-Builder--1-/actions",
-  "release_notes": "Added Native PDF Downloads for mobile, fixed Google login 403 error, and upgraded mock test UI."
+  "release_notes": "Corrected dependency conflict and enabled native PDF downloads with version 1.0.4."
 }

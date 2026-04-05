@@ -42,7 +42,7 @@ class WebViewScreen extends StatefulWidget {
 class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
-  final String _currentVersion = "1.0.3"; // Standard version comparison
+  final String _currentVersion = "1.0.4"; // Standard version comparison
 
   @override
   void initState() {
