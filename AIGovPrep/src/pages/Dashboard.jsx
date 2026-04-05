@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { getLatestCurrentAffairs } from '../services/currentAffairs';
 import { getTestHistory } from '../services/firebase';
+import { getAIStatus } from '../services/ai';
 
 export default function Dashboard({ onToggleSidebar }) {
   const { t, i18n } = useTranslation(); // Translation hooks for app-wide labels
@@ -19,6 +20,7 @@ export default function Dashboard({ onToggleSidebar }) {
   const [caLoading, setCaLoading] = useState(true);
   const [testHistory, setTestHistory] = useState([]);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const aiStatus = getAIStatus();
 
   useEffect(() => {
     const hour = new Date().getHours();
@@ -291,6 +293,37 @@ export default function Dashboard({ onToggleSidebar }) {
           {/* Right Column: Daily Feed */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             
+            {/* AI Engine Status Card */}
+            <section className="card" style={{ border: '1px solid var(--border-color)', background: 'var(--bg-secondary)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '1rem' }}>
+                  <Zap size={18} className={aiStatus.status === 'online' ? "text-saffron" : "text-muted"} fill={aiStatus.status === 'online' ? "var(--accent-orange)" : "none"} /> 
+                  AI Engine Status
+                </h3>
+                <span className={`badge ${aiStatus.status === 'online' ? 'badge-green' : 'badge-red'}`} style={{ fontSize: '0.7rem' }}>
+                  {aiStatus.status.toUpperCase()}
+                </span>
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
+                  <span className="text-muted">Active AI Slots:</span>
+                  <span style={{ fontWeight: 700, color: 'var(--primary)' }}>{aiStatus.total} Slots Loaded</span>
+                </div>
+                <div style={{ display: 'flex', gap: 4, marginTop: 4 }}>
+                  {[...Array(Math.min(aiStatus.total, 15))].map((_, i) => (
+                    <div key={i} style={{ width: 8, height: 8, borderRadius: '2px', background: 'var(--accent-green)', opacity: 0.8 }} />
+                  ))}
+                  {aiStatus.total > 15 && <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>+{aiStatus.total - 15} more</span>}
+                  {aiStatus.total === 0 && <span style={{ fontSize: '0.8rem', color: 'var(--accent-red)' }}>No API Keys Detected</span>}
+                </div>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4, lineHeight: 1.4 }}>
+                  {aiStatus.total > 0 
+                    ? "System is using a high-capacity token cascade. All models are calibrated for premium performance." 
+                    : "Please configure VITE_GROQ_API_KEY or VITE_GEMINI_API_KEY in your environment to enable AI features."}
+                </p>
+              </div>
+            </section>
+
             {/* Daily Quiz Highlight */}
             <section className="card" style={{ background: 'var(--gradient-primary)', color: 'white', border: 'none', position: 'relative', overflow: 'hidden' }}>
               <div style={{ position: 'relative', zIndex: 2 }}>

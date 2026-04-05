@@ -9,7 +9,7 @@ const getGroqKeys = () => {
   const keys = [];
   const primary = import.meta.env.VITE_GROQ_API_KEY;
   if (primary) keys.push(primary);
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 50; i++) {
     const k = import.meta.env[`VITE_GROQ_API_KEY_${i}`];
     if (k && !keys.includes(k)) keys.push(k);
   }
@@ -20,7 +20,7 @@ const getGeminiKeys = () => {
   const keys = [];
   const primary = import.meta.env.VITE_GEMINI_API_KEY;
   if (primary) keys.push(primary);
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 50; i++) {
     const k = import.meta.env[`VITE_GEMINI_API_KEY_${i}`];
     if (k && !keys.includes(k)) keys.push(k);
   }
@@ -31,7 +31,7 @@ const getOpenRouterKeys = () => {
   const keys = [];
   const primary = import.meta.env.VITE_OPENROUTER_API_KEY;
   if (primary) keys.push(primary);
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 1; i <= 50; i++) {
     const k = import.meta.env[`VITE_OPENROUTER_API_KEY_${i}`];
     if (k && !keys.includes(k)) keys.push(k);
   }
@@ -630,6 +630,17 @@ export const testAIConnections = async () => {
   return results;
 };
 
-export const hasApiKey = () => !!(getOpenRouterKeys().length > 0 || getGroqKeys().length > 0);
+export const getAIStatus = () => {
+  const groq = getGroqKeys().length;
+  const gemini = getGeminiKeys().length;
+  const or = getOpenRouterKeys().length;
+  return {
+    total: groq + gemini + or,
+    providers: { groq, gemini, or },
+    status: (groq + gemini + or) > 0 ? 'online' : 'offline'
+  };
+};
+
+export const hasApiKey = () => getAIStatus().total > 0;
 
 export default callAI;
