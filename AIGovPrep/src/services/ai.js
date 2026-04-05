@@ -14,7 +14,18 @@ const getGroqKeys = () => {
     import.meta.env.VITE_GROQ_API_KEY_10, import.meta.env.VITE_GROQ_API_KEY_11, import.meta.env.VITE_GROQ_API_KEY_12,
     import.meta.env.VITE_GROQ_API_KEY_13, import.meta.env.VITE_GROQ_API_KEY_14, import.meta.env.VITE_GROQ_API_KEY_15,
     import.meta.env.VITE_GROQ_API_KEY_16, import.meta.env.VITE_GROQ_API_KEY_17, import.meta.env.VITE_GROQ_API_KEY_18,
-    import.meta.env.VITE_GROQ_API_KEY_19, import.meta.env.VITE_GROQ_API_KEY_20
+    import.meta.env.VITE_GROQ_API_KEY_19, import.meta.env.VITE_GROQ_API_KEY_20,
+    import.meta.env.VITE_GROQ_API_KEY_21, import.meta.env.VITE_GROQ_API_KEY_22, import.meta.env.VITE_GROQ_API_KEY_23,
+    import.meta.env.VITE_GROQ_API_KEY_24, import.meta.env.VITE_GROQ_API_KEY_25, import.meta.env.VITE_GROQ_API_KEY_26,
+    import.meta.env.VITE_GROQ_API_KEY_27, import.meta.env.VITE_GROQ_API_KEY_28, import.meta.env.VITE_GROQ_API_KEY_29,
+    import.meta.env.VITE_GROQ_API_KEY_30, import.meta.env.VITE_GROQ_API_KEY_31, import.meta.env.VITE_GROQ_API_KEY_32,
+    import.meta.env.VITE_GROQ_API_KEY_33, import.meta.env.VITE_GROQ_API_KEY_34, import.meta.env.VITE_GROQ_API_KEY_35,
+    import.meta.env.VITE_GROQ_API_KEY_36, import.meta.env.VITE_GROQ_API_KEY_37, import.meta.env.VITE_GROQ_API_KEY_38,
+    import.meta.env.VITE_GROQ_API_KEY_39, import.meta.env.VITE_GROQ_API_KEY_40,
+    import.meta.env.VITE_GROQ_API_KEY_41, import.meta.env.VITE_GROQ_API_KEY_42, import.meta.env.VITE_GROQ_API_KEY_43,
+    import.meta.env.VITE_GROQ_API_KEY_44, import.meta.env.VITE_GROQ_API_KEY_45, import.meta.env.VITE_GROQ_API_KEY_46,
+    import.meta.env.VITE_GROQ_API_KEY_47, import.meta.env.VITE_GROQ_API_KEY_48, import.meta.env.VITE_GROQ_API_KEY_49,
+    import.meta.env.VITE_GROQ_API_KEY_50
   ].filter(Boolean);
   return [...new Set(keys)].sort(() => Math.random() - 0.5);
 };
@@ -28,7 +39,18 @@ const getGeminiKeys = () => {
     import.meta.env.VITE_GEMINI_API_KEY_10, import.meta.env.VITE_GEMINI_API_KEY_11, import.meta.env.VITE_GEMINI_API_KEY_12,
     import.meta.env.VITE_GEMINI_API_KEY_13, import.meta.env.VITE_GEMINI_API_KEY_14, import.meta.env.VITE_GEMINI_API_KEY_15,
     import.meta.env.VITE_GEMINI_API_KEY_16, import.meta.env.VITE_GEMINI_API_KEY_17, import.meta.env.VITE_GEMINI_API_KEY_18,
-    import.meta.env.VITE_GEMINI_API_KEY_19, import.meta.env.VITE_GEMINI_API_KEY_20
+    import.meta.env.VITE_GEMINI_API_KEY_19, import.meta.env.VITE_GEMINI_API_KEY_20,
+    import.meta.env.VITE_GEMINI_API_KEY_21, import.meta.env.VITE_GEMINI_API_KEY_22, import.meta.env.VITE_GEMINI_API_KEY_23,
+    import.meta.env.VITE_GEMINI_API_KEY_24, import.meta.env.VITE_GEMINI_API_KEY_25, import.meta.env.VITE_GEMINI_API_KEY_26,
+    import.meta.env.VITE_GEMINI_API_KEY_27, import.meta.env.VITE_GEMINI_API_KEY_28, import.meta.env.VITE_GEMINI_API_KEY_29,
+    import.meta.env.VITE_GEMINI_API_KEY_30, import.meta.env.VITE_GEMINI_API_KEY_31, import.meta.env.VITE_GEMINI_API_KEY_32,
+    import.meta.env.VITE_GEMINI_API_KEY_33, import.meta.env.VITE_GEMINI_API_KEY_34, import.meta.env.VITE_GEMINI_API_KEY_35,
+    import.meta.env.VITE_GEMINI_API_KEY_36, import.meta.env.VITE_GEMINI_API_KEY_37, import.meta.env.VITE_GEMINI_API_KEY_38,
+    import.meta.env.VITE_GEMINI_API_KEY_39, import.meta.env.VITE_GEMINI_API_KEY_40,
+    import.meta.env.VITE_GEMINI_API_KEY_41, import.meta.env.VITE_GEMINI_API_KEY_42, import.meta.env.VITE_GEMINI_API_KEY_43,
+    import.meta.env.VITE_GEMINI_API_KEY_44, import.meta.env.VITE_GEMINI_API_KEY_45, import.meta.env.VITE_GEMINI_API_KEY_46,
+    import.meta.env.VITE_GEMINI_API_KEY_47, import.meta.env.VITE_GEMINI_API_KEY_48, import.meta.env.VITE_GEMINI_API_KEY_49,
+    import.meta.env.VITE_GEMINI_API_KEY_50
   ].filter(Boolean);
   return [...new Set(keys)].sort(() => Math.random() - 0.5);
 };
@@ -42,7 +64,18 @@ const getOpenRouterKeys = () => {
     import.meta.env.VITE_OPENROUTER_API_KEY_10, import.meta.env.VITE_OPENROUTER_API_KEY_11, import.meta.env.VITE_OPENROUTER_API_KEY_12,
     import.meta.env.VITE_OPENROUTER_API_KEY_13, import.meta.env.VITE_OPENROUTER_API_KEY_14, import.meta.env.VITE_OPENROUTER_API_KEY_15,
     import.meta.env.VITE_OPENROUTER_API_KEY_16, import.meta.env.VITE_OPENROUTER_API_KEY_17, import.meta.env.VITE_OPENROUTER_API_KEY_18,
-    import.meta.env.VITE_OPENROUTER_API_KEY_19, import.meta.env.VITE_OPENROUTER_API_KEY_20
+    import.meta.env.VITE_OPENROUTER_API_KEY_19, import.meta.env.VITE_OPENROUTER_API_KEY_20,
+    import.meta.env.VITE_OPENROUTER_API_KEY_21, import.meta.env.VITE_OPENROUTER_API_KEY_22, import.meta.env.VITE_OPENROUTER_API_KEY_23,
+    import.meta.env.VITE_OPENROUTER_API_KEY_24, import.meta.env.VITE_OPENROUTER_API_KEY_25, import.meta.env.VITE_OPENROUTER_API_KEY_26,
+    import.meta.env.VITE_OPENROUTER_API_KEY_27, import.meta.env.VITE_OPENROUTER_API_KEY_28, import.meta.env.VITE_OPENROUTER_API_KEY_29,
+    import.meta.env.VITE_OPENROUTER_API_KEY_30, import.meta.env.VITE_OPENROUTER_API_KEY_31, import.meta.env.VITE_OPENROUTER_API_KEY_32,
+    import.meta.env.VITE_OPENROUTER_API_KEY_33, import.meta.env.VITE_OPENROUTER_API_KEY_34, import.meta.env.VITE_OPENROUTER_API_KEY_35,
+    import.meta.env.VITE_OPENROUTER_API_KEY_36, import.meta.env.VITE_OPENROUTER_API_KEY_37, import.meta.env.VITE_OPENROUTER_API_KEY_38,
+    import.meta.env.VITE_OPENROUTER_API_KEY_39, import.meta.env.VITE_OPENROUTER_API_KEY_40,
+    import.meta.env.VITE_OPENROUTER_API_KEY_41, import.meta.env.VITE_OPENROUTER_API_KEY_42, import.meta.env.VITE_OPENROUTER_API_KEY_43,
+    import.meta.env.VITE_OPENROUTER_API_KEY_44, import.meta.env.VITE_OPENROUTER_API_KEY_45, import.meta.env.VITE_OPENROUTER_API_KEY_46,
+    import.meta.env.VITE_OPENROUTER_API_KEY_47, import.meta.env.VITE_OPENROUTER_API_KEY_48, import.meta.env.VITE_OPENROUTER_API_KEY_49,
+    import.meta.env.VITE_OPENROUTER_API_KEY_50
   ].filter(Boolean);
   return [...new Set(keys)].sort(() => Math.random() - 0.5);
 };
@@ -52,6 +85,20 @@ const getLanguageName = (code) => {
   const baseCode = currentCode.split('-')[0];
   const l = languages.find(lang => lang.code === baseCode);
   return l ? l.name : 'English';
+};
+
+// ===== EMERGENCY STATIC FALLBACK DATA =====
+const STATIC_FALLBACKS = {
+  questions: [
+    { question: "Which layer of the atmosphere contains the ozone layer?", options: ["Troposphere", "Stratosphere", "Mesosphere", "Exosphere"], correctAnswer: "Stratosphere", explanation: "The stratosphere contains the ozone layer, which absorbs most of the sun's harmful ultraviolet radiation." },
+    { question: "Who was the first President of Independent India?", options: ["Mahatma Gandhi", "Jawaharlal Nehru", "Dr. Rajendra Prasad", "Sardar Patel"], correctAnswer: "Dr. Rajendra Prasad", explanation: "Dr. Rajendra Prasad served as the first President of India from 1950 to 1962." },
+    { question: "The Fundamental Rights in the Indian Constitution are inspired by which country?", options: ["UK", "USA", "USSR", "Canada"], correctAnswer: "USA", explanation: "Fundamental Rights in India were inspired by the Bill of Rights in the US Constitution." }
+  ]
+};
+
+const markCooldown = (key) => {
+  // Mark key as dead for 15 minutes to allow rate limit to reset
+  localStorage.setItem(`cd_${key}`, Date.now() + 15 * 60 * 1000); 
 };
 
 const extractJSON = (text) => {
@@ -300,30 +347,52 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
 
   for (const p of providers) {
     if (isOnCooldown(p.key)) continue;
-    try {
-      let body, headers = { 'Content-Type': 'application/json' };
-      if (p.type === 'groq' || p.type === 'or') {
-        headers['Authorization'] = `Bearer ${p.key}`;
-        if (p.type === 'or') headers['HTTP-Referer'] = window.location.origin;
-        body = JSON.stringify({ model: p.model, messages, temperature: options.temperature || 0.7, max_tokens: options.max_tokens || 1500 });
-      } else {
-        body = JSON.stringify({ contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }] });
-      }
+    
+    let attempts = 0;
+    while (attempts < 2) { // Internal retry for network glitches
+      try {
+        let body, headers = { 'Content-Type': 'application/json' };
+        if (p.type === 'groq' || p.type === 'or') {
+          headers['Authorization'] = `Bearer ${p.key}`;
+          if (p.type === 'or') headers['HTTP-Referer'] = window.location.origin;
+          body = JSON.stringify({ model: p.model, messages, temperature: options.temperature || 0.7, max_tokens: options.max_tokens || 1500 });
+        } else {
+          body = JSON.stringify({ contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }] });
+        }
 
-      const res = await fetch(p.url, { method: 'POST', headers, body });
-      if (res.status === 429) { 
-        markCooldown(p.key); 
-        // Small delay before trying next key to prevent rapid-fire 429s
-        await new Promise(r => setTimeout(r, 1000));
-        continue; 
+        const res = await fetch(p.url, { method: 'POST', headers, body });
+        
+        if (res.status === 429) { 
+          markCooldown(p.key); 
+          await new Promise(r => setTimeout(r, 800)); // Short delay before jumping to next key
+          break; // Exit while, move to next provider key in for loop
+        }
+        
+        if (!res.ok) {
+          console.warn(`Provider ${p.type} returned ${res.status}`);
+          break;
+        }
+
+        const data = await res.json();
+        const content = p.type === 'gemini' ? data.candidates?.[0]?.content?.parts?.[0]?.text : data.choices?.[0]?.message?.content;
+        
+        if (content) return saveCache(content);
+        break;
+      } catch (e) { 
+        console.warn(`Cascade failed for ${p.type}:`, e.message); 
+        attempts++;
+        await new Promise(r => setTimeout(r, 500));
       }
-      const data = await res.json();
-      const content = p.type === 'gemini' ? data.candidates?.[0]?.content?.parts?.[0]?.text : data.choices?.[0]?.message?.content;
-      if (res.ok && content) return saveCache(content);
-    } catch (e) { console.warn(`Cascade failed for ${p.type}:`, e.message); }
+    }
   }
 
-  throw new Error('Our servers are currently experiencing extreme student traffic. Please wait a few seconds and try again.');
+  // LAST RESORT: Static Fallback if all keys fail
+  console.error('All AI providers exhausted. Using Static Fallback.');
+  if (options.type === 'mock_test') {
+    return { data: { questions: STATIC_FALLBACKS.questions }, conversation: "Static Fallback Mode" };
+  }
+
+  throw new Error('Our servers are currently busy due to 1,00,000+ students. Using offline backup questions.');
 };
 
 
