@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:open_file_plus/open_file_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +42,7 @@ class WebViewScreen extends StatefulWidget {
 class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
-  final String _currentVersion = "1.0.1"; // Standard version comparison
+  final String _currentVersion = "1.0.3"; // Standard version comparison
 
   @override
   void initState() {
@@ -54,6 +57,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent("Mozilla/5.0 (Linux; Android 10) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.6045.163 Mobile Safari/537.36")
       ..setBackgroundColor(Colors.white)
+      ..addJavaScriptChannel(
+        'FlutterDownload',
+        onMessageReceived: (JavaScriptMessage message) {
+          _handleDownload(message.message);
+        },
+      )
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
@@ -75,6 +84,43 @@ class _WebViewScreenState extends State<WebViewScreen> {
         ),
       )
       ..loadRequest(Uri.parse('https://sarkariexamai.com'));
+  }
+
+  Future<void> _handleDownload(String message) async {
+    try {
+      final decoded = json.decode(message);
+      final String base64Data = decoded['data'];
+      final String fileName = decoded['fileName'];
+
+      // Request storage permission
+      if (Platform.isAndroid) {
+        await Permission.storage.request();
+      }
+
+      final bytes = base64Decode(base64Data);
+      final directory = Platform.isAndroid 
+          ? await getTemporaryDirectory() 
+          : await getApplicationDocumentsDirectory();
+
+      final file = File('${directory.path}/$fileName');
+      await file.writeAsBytes(bytes);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text("Download Complete: $fileName"),
+            action: SnackBarAction(
+              label: "OPEN",
+              onPressed: () => OpenFile.open(file.path),
+            ),
+          ),
+        );
+        // Automatically try to open
+        await OpenFile.open(file.path);
+      }
+    } catch (e) {
+      debugPrint("Download failed: $e");
+    }
   }
 
   Future<void> _checkForUpdates() async {
@@ -152,4 +198,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ),
     );
   }
+}
+
 }
