@@ -120,20 +120,17 @@ export default function MockTest() {
         <main className="page-wrapper" id="mock-test-locked">
           <div className="page-with-sidebar">
             <div className="content-area">
-              <section className="card animate-fadeInUp" style={{ maxWidth: 550, margin: '40px auto', textAlign: 'center', padding: '40px 32px', border: '1px solid var(--border-blue)', background: 'var(--primary-bg)' }}>
-                <div className="feature-icon blue" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+              <section className="card-trial-barrier animate-fadeInUp">
+                <div className="feature-icon blue" style={{ margin: '0 auto', width: 64, height: 64 }}>
                   <Zap size={32} fill="currentColor" />
                 </div>
-                <h2 style={{ marginBottom: 16 }}>{t('mockTest.trialOver') || 'Daily Trial Completed!'}</h2>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.6 }}>
-                  {t('mockTest.trialOverDesc') || 'You have successfully experienced our AI Mock Test. To unlock unlimited tests, track your progress, and get personalized AI feedback, please login or create an account.'}
+                <h2 style={{ marginBottom: 12 }}>Trial Completed</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
+                  You have experienced our AI Mock Test. To continue taking tests and save your progress, please login.
                 </p>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-                  <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }}>
-                    {t('common.login') || 'Login to Continue'}
-                  </Link>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>It only takes 30 seconds to sync your progress.</p>
-                </div>
+                <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }}>
+                  Login to Continue
+                </Link>
               </section>
             </div>
           </div>

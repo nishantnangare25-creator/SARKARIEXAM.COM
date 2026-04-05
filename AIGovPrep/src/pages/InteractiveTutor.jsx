@@ -200,16 +200,16 @@ export default function InteractiveTutor() {
         <div className="riya-chat-area" ref={scrollRef}>
           {trialUsed && !user ? (
             <div style={{ margin: 'auto', textAlign: 'center', maxWidth: 450 }} className="animate-fadeIn">
-               <section className="card" style={{ padding: '40px 32px', border: '1px solid var(--border-blue)', background: 'var(--primary-bg)' }}>
-                <div className="feature-icon indigo" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+               <section className="card-trial-barrier">
+                <div className="feature-icon indigo" style={{ margin: '0 auto', width: 64, height: 64 }}>
                   <Zap size={32} fill="currentColor" />
                 </div>
-                <h2 style={{ marginBottom: 16 }}>Personal AI Tutor Locked</h2>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.6 }}>
-                  You have completed your free trial with Riya AI. To continue this session, save your logs, and get unlimited 24/7 tutoring, please login.
+                <h2 style={{ marginBottom: 12 }}>Trial Completed</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
+                  You have completed your free trial with Riya AI. To continue this session and get 24/7 tutoring, please login.
                 </p>
                 <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
-                  Login to Chat with Riya
+                  Login to Continue
                 </Link>
               </section>
             </div>

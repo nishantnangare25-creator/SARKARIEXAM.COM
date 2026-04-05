@@ -86,23 +86,21 @@ export default function StudyPlanner() {
           <p>{t('studyPlanner.subtitle')}</p>
         </header>
 
-        {/* Config Form or Login Barrier */}
         {(() => {
           const trialUsed = localStorage.getItem('sarkari_trial_used') === 'true';
           if (trialUsed && !user) {
             return (
-              <section className="card animate-fadeInUp" style={{ maxWidth: 550, margin: '20px auto', textAlign: 'center', padding: '40px 32px', border: '1px solid var(--border-blue)', background: 'var(--primary-bg)' }}>
-                <div className="feature-icon blue" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+              <section className="card-trial-barrier animate-fadeInUp">
+                <div className="feature-icon blue" style={{ margin: '0 auto', width: 64, height: 64 }}>
                   <Zap size={32} fill="currentColor" />
                 </div>
-                <h2 style={{ marginBottom: 16 }}>AI Planner Locked</h2>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.6 }}>
-                  You have successfully created your first AI Study Plan. To generate more plans for different schedules or levels, please login to your account.
+                <h2 style={{ marginBottom: 12 }}>Trial Completed</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
+                  You have successfully created your first AI Study Plan. To generate more plans and stay organized, please login.
                 </p>
                 <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
                   Login to Continue
                 </Link>
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 16 }}>Your previous plan will be saved in your profile.</p>
               </section>
             );
           }

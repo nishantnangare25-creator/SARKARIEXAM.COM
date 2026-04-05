@@ -109,16 +109,16 @@ export default function PYQSMockTest() {
         <main className="page-wrapper">
           <div className="page-with-sidebar">
             <div className="content-area">
-              <section className="card animate-fadeInUp" style={{ maxWidth: 550, margin: '40px auto', textAlign: 'center', padding: '40px 32px', border: '1px solid var(--border-blue)', background: 'var(--primary-bg)' }}>
-                <div className="feature-icon red" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+              <section className="card-trial-barrier animate-fadeInUp">
+                <div className="feature-icon red" style={{ margin: '0 auto', width: 64, height: 64 }}>
                   <Target size={32} fill="currentColor" />
                 </div>
-                <h2 style={{ marginBottom: 16 }}>Trial Successfully Completed!</h2>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.6 }}>
-                  You have experienced our PYQ Mock Test system. To attempt more papers, view correct answers, and track your performance, please login to your account.
+                <h2 style={{ marginBottom: 12 }}>Trial Completed</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 24, lineHeight: 1.6 }}>
+                  You have experienced our PYQ Mock Test. To access more papers and track results, please login.
                 </p>
                 <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }}>
-                  Login to Unlock All Features
+                  Login to Continue
                 </Link>
               </section>
             </div>

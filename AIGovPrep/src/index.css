@@ -806,3 +806,44 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
     padding-bottom: 12px !important;
   }
 }
+
+/* ===== TRIAL BARRIER RESPONSIVENESS ===== */
+.card-trial-barrier {
+  max-width: 550px;
+  margin: 40px auto;
+  text-align: center;
+  padding: 40px 32px;
+  border: 1.5px solid var(--border-blue);
+  background: var(--primary-bg);
+  box-shadow: var(--shadow-lg);
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+@media (max-width: 600px) {
+  .card-trial-barrier {
+    margin: 20px 0;
+    padding: 32px 16px;
+    border-radius: var(--radius-lg);
+    width: 100%;
+  }
+  .card-trial-barrier h2 {
+    font-size: 1.4rem;
+  }
+  .card-trial-barrier p {
+    font-size: 0.85rem;
+  }
+}
+
+.mobile-stack {
+  display: flex;
+}
+@media (max-width: 600px) {
+  .mobile-stack {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+}
