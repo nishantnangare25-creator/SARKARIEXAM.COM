@@ -1,16 +1,17 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { generateNotes } from '../services/ai';
 import { EXAMS, SUBJECTS } from '../utils/constants';
-import { GraduationCap, Sparkles, Download } from 'lucide-react';
+import { GraduationCap, Sparkles, Download, Zap } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import './Auth.css';
 import { generateNotesPdf } from '../utils/pdfGenerator';
 
 export default function NotesGenerator() {
   const { t, i18n } = useTranslation();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [exam, setExam] = useState(profile?.exam || '');
   const [subject, setSubject] = useState('');
   const [topics, setTopics] = useState('');
@@ -24,8 +25,12 @@ export default function NotesGenerator() {
     setLoading(true);
     setError('');
     try {
-      const result = await generateNotes({ exam, subject, topics: topics ? topics.split(',').map(t => t.trim()) : null, language: i18n.language || profile?.language });
+      const language = i18n.language || profile?.language || 'en';
+      const result = await generateNotes({ exam, subject, topics: topics ? topics.split(',').map(t => t.trim()) : null, language });
       setNotes(result);
+      if (!user) {
+        localStorage.setItem('sarkari_trial_used', 'true');
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -60,32 +65,54 @@ export default function NotesGenerator() {
           <p>{t('notes.subtitle')}</p>
         </div>
 
-        <div className="card animate-fadeInUp" style={{ marginBottom: 24 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
-            <div className="input-group">
-              <label>{t('notes.selectExam')}</label>
-              <select value={exam} onChange={e => { setExam(e.target.value); setSubject(''); }}>
-                <option value="">{t('common.select') || 'Select Exam'}</option>
-                {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
-              </select>
+        {(() => {
+          const trialUsed = localStorage.getItem('sarkari_trial_used') === 'true';
+          if (trialUsed && !user) {
+            return (
+              <section className="card animate-fadeInUp" style={{ maxWidth: 550, margin: '20px auto', textAlign: 'center', padding: '40px 32px', border: '1px solid var(--border-blue)', background: 'var(--primary-bg)' }}>
+                <div className="feature-icon blue" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+                  <Zap size={32} fill="currentColor" />
+                </div>
+                <h2 style={{ marginBottom: 16 }}>AI Study Trial Completed</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.6 }}>
+                  You have experienced our AI Notes Generator. To generate unlimited notes for different subjects and exams, please log in to your account.
+                </p>
+                <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center' }}>
+                  Login to Continue
+                </Link>
+              </section>
+            );
+          }
+
+          return (
+            <div className="card animate-fadeInUp" style={{ marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16, marginBottom: 16 }}>
+                <div className="input-group">
+                  <label>{t('notes.selectExam')}</label>
+                  <select value={exam} onChange={e => { setExam(e.target.value); setSubject(''); }}>
+                    <option value="">{t('common.select') || 'Select Exam'}</option>
+                    {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label>{t('notes.selectSubject')}</label>
+                  <select value={subject} onChange={e => setSubject(e.target.value)}>
+                    <option value="">{t('common.select') || 'Select Subject'}</option>
+                    {subjects.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+              <div className="input-group" style={{ marginBottom: 16 }}>
+                <label>{t('notes.topics')}</label>
+                <input type="text" value={topics} onChange={e => setTopics(e.target.value)} placeholder={t('notes.topics') + ' (e.g. Indian Independence, Fundamental Rights)'} />
+              </div>
+              <button className="btn btn-primary" onClick={handleGenerate} disabled={loading || !exam || !subject}>
+                {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} /> {t('notes.generating')}</> : <><Sparkles size={18} /> {t('notes.generate')}</>}
+              </button>
+              {error && <p style={{ color: '#ff6b6b', marginTop: 12, fontSize: '0.85rem' }}>{error}</p>}
             </div>
-            <div className="input-group">
-              <label>{t('notes.selectSubject')}</label>
-              <select value={subject} onChange={e => setSubject(e.target.value)}>
-                <option value="">{t('common.select') || 'Select Subject'}</option>
-                {subjects.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="input-group" style={{ marginBottom: 16 }}>
-            <label>{t('notes.topics')}</label>
-            <input type="text" value={topics} onChange={e => setTopics(e.target.value)} placeholder={t('notes.topics') + ' (e.g. Indian Independence, Fundamental Rights)'} />
-          </div>
-          <button className="btn btn-primary" onClick={handleGenerate} disabled={loading || !exam || !subject}>
-            {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} /> {t('notes.generating')}</> : <><Sparkles size={18} /> {t('notes.generate')}</>}
-          </button>
-          {error && <p style={{ color: '#ff6b6b', marginTop: 12, fontSize: '0.85rem' }}>{error}</p>}
-        </div>
+          );
+        })()}
 
         {notes && (
           <div className="animate-fadeInUp">

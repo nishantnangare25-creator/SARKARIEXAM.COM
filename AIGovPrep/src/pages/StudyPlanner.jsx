@@ -3,16 +3,16 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
 import { generateStudyPlan } from '../services/ai';
 import { EXAMS, SUBJECTS, PREP_LEVELS } from '../utils/constants';
-import { BookOpen, Sparkles, Clock, CheckCircle } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { BookOpen, Sparkles, Clock, CheckCircle, Download, Zap } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import './Auth.css';
-import { Download } from 'lucide-react';
 import { generateNotesPdf } from '../utils/pdfGenerator';
 
 export default function StudyPlanner() {
   const { t } = useTranslation();
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [exam, setExam] = useState(profile?.exam || '');
   const [hours, setHours] = useState(profile?.hours || 4);
   const [level, setLevel] = useState(profile?.level || 'beginner');
@@ -26,8 +26,11 @@ export default function StudyPlanner() {
     setLoading(true);
     setError('');
     try {
-      const result = await generateStudyPlan({ exam, hours, level, weakSubjects: profile?.weakSubjects, strongSubjects: profile?.strongSubjects, language: profile?.language });
+      const result = await generateStudyPlan({ exam, hours, level, weakSubjects: profile?.weakSubjects, strongSubjects: profile?.strongSubjects, language: profile?.language || 'en' });
       setPlan(result);
+      if (!user) {
+        localStorage.setItem('sarkari_trial_used', 'true');
+      }
     } catch (err) {
       setError(err.message);
     }
@@ -83,34 +86,57 @@ export default function StudyPlanner() {
           <p>{t('studyPlanner.subtitle')}</p>
         </header>
 
-        {/* Config Form */}
-        <section className="card animate-fadeInUp" style={{ marginBottom: 24 }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
-            <div className="input-group">
-              <label htmlFor="exam-select">{t('studyPlanner.exam')}</label>
-              <select id="exam-select" value={exam} onChange={e => setExam(e.target.value)}>
-                <option value="">{t('onboarding.step1')}</option>
-                {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
-              </select>
-            </div>
-            <div className="input-group">
-              <label htmlFor="hours-select">{t('studyPlanner.hours')}</label>
-              <select id="hours-select" value={hours} onChange={e => setHours(Number(e.target.value))}>
-                {[1,2,3,4,5,6,7,8,9,10,11,12].map(h => <option key={h} value={h}>{h} {t('dashboard.stats.days').includes('दिन') ? 'घंटे' : 'hrs'}</option>)}
-              </select>
-            </div>
-            <div className="input-group">
-              <label htmlFor="level-select">{t('studyPlanner.level')}</label>
-              <select id="level-select" value={level} onChange={e => setLevel(e.target.value)}>
-                {PREP_LEVELS.map(l => <option key={l} value={l}>{t(`studyPlanner.${l}`)}</option>)}
-              </select>
-            </div>
-          </div>
-          <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={handleGenerate} disabled={loading || !exam} aria-busy={loading}>
-            {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} aria-hidden="true" /> {t('studyPlanner.generating')}</> : <><Sparkles size={18} aria-hidden="true" /> {t('studyPlanner.generate')}</>}
-          </button>
-          {error && <p role="alert" style={{ color: '#ff6b6b', marginTop: 12, fontSize: '0.85rem' }}>{error}</p>}
-        </section>
+        {/* Config Form or Login Barrier */}
+        {(() => {
+          const trialUsed = localStorage.getItem('sarkari_trial_used') === 'true';
+          if (trialUsed && !user) {
+            return (
+              <section className="card animate-fadeInUp" style={{ maxWidth: 550, margin: '20px auto', textAlign: 'center', padding: '40px 32px', border: '1px solid var(--border-blue)', background: 'var(--primary-bg)' }}>
+                <div className="feature-icon blue" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+                  <Zap size={32} fill="currentColor" />
+                </div>
+                <h2 style={{ marginBottom: 16 }}>AI Planner Locked</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.6 }}>
+                  You have successfully created your first AI Study Plan. To generate more plans for different schedules or levels, please login to your account.
+                </p>
+                <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
+                  Login to Continue
+                </Link>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: 16 }}>Your previous plan will be saved in your profile.</p>
+              </section>
+            );
+          }
+
+          return (
+            <section className="card animate-fadeInUp" style={{ marginBottom: 24 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 16 }}>
+                <div className="input-group">
+                  <label htmlFor="exam-select">{t('studyPlanner.exam')}</label>
+                  <select id="exam-select" value={exam} onChange={e => setExam(e.target.value)}>
+                    <option value="">{t('onboarding.step1')}</option>
+                    {EXAMS.map(e => <option key={e.id} value={e.id}>{e.icon} {e.name}</option>)}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label htmlFor="hours-select">{t('studyPlanner.hours')}</label>
+                  <select id="hours-select" value={hours} onChange={e => setHours(Number(e.target.value))}>
+                    {[1,2,3,4,5,6,7,8,9,10,11,12].map(h => <option key={h} value={h}>{h} {t('dashboard.stats.days').includes('दिन') ? 'घंटे' : 'hrs'}</option>)}
+                  </select>
+                </div>
+                <div className="input-group">
+                  <label htmlFor="level-select">{t('studyPlanner.level')}</label>
+                  <select id="level-select" value={level} onChange={e => setLevel(e.target.value)}>
+                    {PREP_LEVELS.map(l => <option key={l} value={l}>{t(`studyPlanner.${l}`)}</option>)}
+                  </select>
+                </div>
+              </div>
+              <button className="btn btn-primary" style={{ marginTop: 16 }} onClick={handleGenerate} disabled={loading || !exam} aria-busy={loading}>
+                {loading ? <><span className="spinner" style={{ width: 18, height: 18 }} aria-hidden="true" /> {t('studyPlanner.generating')}</> : <><Sparkles size={18} aria-hidden="true" /> {t('studyPlanner.generate')}</>}
+              </button>
+              {error && <p role="alert" style={{ color: '#ff6b6b', marginTop: 12, fontSize: '0.85rem' }}>{error}</p>}
+            </section>
+          );
+        })()}
 
         {plan && (
           <div className="animate-fadeInUp">

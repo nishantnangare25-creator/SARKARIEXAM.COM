@@ -14,9 +14,7 @@ import './InteractiveTutor.css';
 
 export default function InteractiveTutor() {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
-  const navigate = useNavigate();
-  
+    const trialUsed = localStorage.getItem('sarkari_trial_used') === 'true';
   const [messages, setMessages] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
   const [loading, setLoading] = useState(false);
@@ -54,6 +52,11 @@ export default function InteractiveTutor() {
       
       const finalHistory = [...newHistory, { role: 'assistant', content: aiResponse }];
       setMessages(finalHistory);
+      
+      // Mark trial used after first response
+      if (!user) {
+        localStorage.setItem('sarkari_trial_used', 'true');
+      }
     } catch (err) {
       setError(err.message || t('common.error'));
     } finally {
@@ -195,7 +198,22 @@ export default function InteractiveTutor() {
 
         {/* Chat Scrolling Area */}
         <div className="riya-chat-area" ref={scrollRef}>
-          {messages.length === 0 ? (
+          {trialUsed && !user ? (
+            <div style={{ margin: 'auto', textAlign: 'center', maxWidth: 450 }} className="animate-fadeIn">
+               <section className="card" style={{ padding: '40px 32px', border: '1px solid var(--border-blue)', background: 'var(--primary-bg)' }}>
+                <div className="feature-icon indigo" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+                  <Zap size={32} fill="currentColor" />
+                </div>
+                <h2 style={{ marginBottom: 16 }}>Personal AI Tutor Locked</h2>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: 32, lineHeight: 1.6 }}>
+                  You have completed your free trial with Riya AI. To continue this session, save your logs, and get unlimited 24/7 tutoring, please login.
+                </p>
+                <Link to="/login" className="btn btn-primary btn-lg" style={{ width: '100%', justifyContent: 'center', textDecoration: 'none' }}>
+                  Login to Chat with Riya
+                </Link>
+              </section>
+            </div>
+          ) : messages.length === 0 ? (
             <div style={{ margin: 'auto', textAlign: 'center', maxWidth: 450 }} className="animate-fadeIn">
               <div className="feature-icon indigo" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
                 <article>
