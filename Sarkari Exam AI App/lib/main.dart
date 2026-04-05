@@ -1,7 +1,10 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +19,8 @@ class SarkariExamApp extends StatelessWidget {
     return MaterialApp(
       title: 'Sarkari Exam AI',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primaryColor: const Color(0xFF2563EB),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF2563EB)),
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
@@ -35,37 +39,36 @@ class WebViewScreen extends StatefulWidget {
 class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
+  final String _currentVersion = "1.0.1"; // Standard version comparison
 
   @override
   void initState() {
     super.initState();
+    
+    _initializeWebView();
+    _checkForUpdates();
+  }
 
+  void _initializeWebView() {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(const Color(0x00000000))
+      ..setBackgroundColor(Colors.white)
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageStarted: (String url) {
-            setState(() {
-              _isLoading = true;
-            });
+            setState(() => _isLoading = true);
           },
           onPageFinished: (String url) {
-            setState(() {
-              _isLoading = false;
-            });
+            setState(() => _isLoading = false);
           },
           onWebResourceError: (WebResourceError error) {
-            debugPrint('''
-              Page resource error:
-              code: ${error.errorCode}
-              description: ${error.description}
-              errorType: ${error.errorType}
-              isForMainFrame: ${error.isForMainFrame}
-          ''');
+            debugPrint("WebView Error: ${error.description}");
           },
           onNavigationRequest: (NavigationRequest request) {
-            // Add custom link handling here if necessary
+            if (request.url.startsWith("mailto:") || request.url.startsWith("tel:")) {
+              launchUrl(Uri.parse(request.url), mode: LaunchMode.externalApplication);
+              return NavigationDecision.prevent;
+            }
             return NavigationDecision.navigate;
           },
         ),
@@ -73,13 +76,56 @@ class _WebViewScreenState extends State<WebViewScreen> {
       ..loadRequest(Uri.parse('https://sarkariexamai.com'));
   }
 
-  // Handle hardware back button to enable in-app backwards navigation instead of closing
+  Future<void> _checkForUpdates() async {
+    try {
+      final response = await http.get(Uri.parse('https://sarkariexamai.com/version.json'));
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        final String latestVersion = data['version'];
+        
+        if (latestVersion != _currentVersion && mounted) {
+           _showUpdateDialog(latestVersion, data['download_url'], data['release_notes']);
+        }
+      }
+    } catch (e) {
+      debugPrint("Update check failed: $e");
+    }
+  }
+
+  void _showUpdateDialog(String version, String url, String notes) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        title: const Text("🚀 New Update Available!"),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+             Text("Version $version is now available.", style: const TextStyle(fontWeight: FontWeight.bold)),
+             const SizedBox(height: 8),
+             Text(notes, style: const TextStyle(fontSize: 0.9, color: Colors.grey)),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Skip")),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFF97316), foregroundColor: Colors.white),
+            onPressed: () => launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication), 
+            child: const Text("Download Update")
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<bool> _handleBackPress() async {
     if (await _controller.canGoBack()) {
       await _controller.goBack();
-      return Future.value(false); // Do not close app
+      return false;
     }
-    return Future.value(true); // Close app if nothing to go back to
+    return true;
   }
 
   @override
@@ -95,6 +141,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               if (_isLoading)
                 const Center(
                   child: CircularProgressIndicator(
+                    strokeWidth: 5,
                     color: Color(0xFFF97316), // Saffron Color
                   ),
                 ),
