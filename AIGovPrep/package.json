@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "generate-blog": "node scripts/generate-blog.js",
-    "automation": "node scripts/bulk_mock_generator.js"
+    "automation": "node scripts/bulk_mock_generator.js",
+    "automation-planners": "node scripts/bulk_planner_generator.js"
   },
   "dependencies": {
     "basic-ftp": "^5.2.0",

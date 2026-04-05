@@ -220,6 +220,45 @@ const parseTextToQuestions = (text) => {
 const getWorkerUrl = () => import.meta.env.VITE_WORKER_URL || '';
 
 const callAI = async (messages, options = {}, cacheKey = null) => {
+  const saveCache = (data) => {
+    if (!cacheKey || !data) return data;
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), content: data }));
+    } catch (e) {
+      localStorage.clear();
+      try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), content: data })); } catch(err) {}
+    }
+    // Asynchronously save to Firestore without blocking response
+    try {
+      const safeDocId = cacheKey.replace(/[^a-zA-Z0-9_\-]/g, '_').substring(0, 500);
+      setDoc(doc(db, 'ai_global_cache', safeDocId), {
+        content: data,
+        timestamp: serverTimestamp()
+      }, { merge: true }).catch(err => console.warn("Global cache write error:", err));
+    } catch (e) {}
+    return data;
+  };
+
+  // --- BYOK (Bring Your Own Key) LAYER ---
+  try {
+    const customKey = localStorage.getItem('sarkari_custom_gemini_key');
+    if (customKey && customKey.length > 20) {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${customKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: messages.map(m => m.content).join('\n') }] }],
+          generationConfig: { maxOutputTokens: options.max_tokens || 2000 }
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        return saveCache(data.candidates[0].content.parts[0].text);
+      }
+      console.warn("Custom BYOK key failed, falling back to system keys...");
+    }
+  } catch (e) { console.warn("BYOK Error:", e); }
+
   // --- LOCAL CACHING LAYER ---
   if (cacheKey) {
     try {
@@ -254,28 +293,7 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     }
   }
 
-  const saveCache = (data) => {
-    if (!cacheKey || !data) return data;
-    try {
-      localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), content: data }));
-    } catch (e) {
-      localStorage.clear(); // Clear space if quota exceeded
-      try { localStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), content: data })); } catch(err) {}
-    }
 
-    // Asynchronously save to Firestore without blocking response
-    try {
-      const safeDocId = cacheKey.replace(/[^a-zA-Z0-9_\-]/g, '_').substring(0, 500);
-      setDoc(doc(db, 'ai_global_cache', safeDocId), {
-        content: data,
-        timestamp: serverTimestamp()
-      }, { merge: true }).catch(err => console.warn("Global cache write error:", err));
-    } catch (e) { 
-      console.warn("Global cache write error:", e); 
-    }
-
-    return data;
-  };
 
   const workerUrl = getWorkerUrl();
 
@@ -415,7 +433,23 @@ export const generateStudyPlan = async ({ exam, hours, level, weakSubjects, stro
 - Respond in: ${lang}`
     }
   ];
-  return await callAI(messages, { max_tokens: 1500 });
+  try {
+    return await callAI(messages, { max_tokens: 1500 });
+  } catch (err) {
+    console.error("AI call failed, activating offline fallback for Study Planner:", err);
+    try {
+      const fallbackDb = await import('../data/fallback_planners.json');
+      const planners = fallbackDb.default?.planners || [];
+      // Find the closest match
+      const match = planners.find(p => p.exam.toLowerCase().includes(exam.toLowerCase())) || planners[0];
+      if (match) {
+        return match.content;
+      }
+    } catch(e) {
+      console.error("Fallback DB also unavailable for Planners:", e);
+    }
+    throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
+  }
 };
 
 // ===== MOCK TEST QUESTIONS =====
@@ -637,7 +671,24 @@ export const generateTutorLesson = async ({ history, language }) => {
   };
   
   const messages = [systemPrompt, ...history];
-  return await callAI(messages, { max_tokens: 1500 });
+  try {
+    return await callAI(messages, { max_tokens: 1500 });
+  } catch (err) {
+    console.error("AI call failed, activating offline chat fallback:", err);
+    try {
+      const fallbackDb = await import('../data/fallback_chat.json');
+      const lastMsg = history[history.length - 1]?.content?.toLowerCase() || '';
+      for (const rule of fallbackDb.default.answers) {
+        if (rule.keywords.some(kw => lastMsg.includes(kw))) {
+          return rule.response;
+        }
+      }
+      return fallbackDb.default.default;
+    } catch (e) {
+      console.error("Fallback chat unavailable", e);
+    }
+    throw new Error("I apologize, but our servers are extremely busy. Please try again in a few moments.");
+  }
 };
 
 // ===== DIAGNOSTICS =====
