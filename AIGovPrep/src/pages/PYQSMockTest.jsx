@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import { generatePYQSMockQuestions } from '../services/ai';
 import { 
   Brain, Clock, CheckCircle, XCircle, Sparkles, 

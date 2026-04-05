@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Shield, Lock, Eye, FileText, UserCheck, Mail } from 'lucide-react';
 
 export default function PrivacyPolicy() {
