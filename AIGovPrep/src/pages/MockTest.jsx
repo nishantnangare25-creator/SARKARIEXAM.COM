@@ -146,56 +146,86 @@ export default function MockTest() {
 
   if (showResult) {
     const score = getScore();
+    const total = questions.length;
+    const percent = total > 0 ? Math.round((score / total) * 100) : 0;
+
     return (
       <main className="page-wrapper" id="mock-test-result">
         <div className="page-with-sidebar">
+          <header className="animate-fadeInUp" style={{ textAlign: 'center', marginBottom: 40 }}>
+            <p className="badge badge-primary">Test Completed</p>
+            <h1 style={{ marginTop: 12 }}>{t('mockTest.result')}</h1>
+          </header>
+
           <div className="content-area">
-            <header className="animate-fadeInUp" style={{ textAlign: 'center', marginBottom: 32 }}>
-              <h1>{t('mockTest.result')}</h1>
-              <div style={{ fontSize: '3rem', fontWeight: 900, color: score / questions.length >= 0.7 ? 'var(--accent-green)' : score / questions.length >= 0.4 ? 'var(--accent-orange)' : '#ff6b6b', margin: '16px 0' }}>
-                {score}/{questions.length}
-              </div>
-              <p>{Math.round((score / questions.length) * 100)}% {t('dashboard.stats.readiness')}</p>
-              <div className="download-actions" style={{ marginTop: 24 }}>
-                <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); }}>
-                  <RotateCcw size={16} aria-hidden="true" /> {t('mockTest.retake')}
+            <div className="grid-2 animate-fadeInUp" style={{ marginBottom: 32 }}>
+              <section className="card" style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+                <div style={{ width: 100, height: 100, borderRadius: '50%', border: '8px solid var(--primary-bg)', borderTopColor: 'var(--primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 800, color: 'var(--primary)', flexShrink: 0 }}>
+                  {percent}%
+                </div>
+                <div>
+                  <h3 style={{ marginBottom: 4 }}>{t('mockTest.score')} {score}/{total}</h3>
+                  <p style={{ fontSize: '0.9rem' }}>{t('mockTest.accuracy')} {percent}% - {percent >= 70 ? 'Excellent!' : percent >= 40 ? 'Good progress!' : 'Keep practicing!'}</p>
+                </div>
+              </section>
+
+              <div className="card" style={{ background: 'var(--bg-accent-green)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); setAnswers({}); }}>
+                  <RotateCcw size={18} style={{ marginRight: 8 }} /> {t('mockTest.retake')}
                 </button>
               </div>
-              {!user && (
-                <div className="card" style={{ marginTop: 24, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
-                  <h4 style={{ color: 'var(--primary)', marginBottom: 8 }}>{t('mockTest.saveResultsTitle')}</h4>
-                  <p style={{ fontSize: '0.9rem', marginBottom: 16 }}>{t('mockTest.saveResultsDesc')}</p>
-                  <Link to="/login" className="btn btn-primary" style={{ margin: '0 auto' }}>{t('mockTest.loginCreate')}</Link>
-                </div>
-              )}
-            </header>
-            {user && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {questions.map((q, i) => {
-                const correctAnswer = q.correctAnswer;
-                const isCorrect = answers[q.id] === correctAnswer;
-                return (
-                  <article key={q.id} className="card animate-fadeInUp" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-green)' : '#ff6b6b'}` }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-                      {isCorrect ? <CheckCircle size={18} color="var(--accent-green)" aria-hidden="true" /> : <XCircle size={18} color="#ff6b6b" aria-hidden="true" />}
-                      <strong>Q{i + 1}.</strong> {q.question}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, marginBottom: 8 }}>
-                      {q.options?.map((opt, oi) => {
-                        const isSelected = answers[q.id] === opt;
-                        const isAnswer = correctAnswer === opt;
-                        return (
-                          <div key={oi} style={{ padding: '6px 12px', borderRadius: 8, fontSize: '0.9rem', background: isAnswer ? 'rgba(0,201,167,0.1)' : isSelected && !isAnswer ? 'rgba(255,64,64,0.1)' : 'transparent', color: isAnswer ? 'var(--accent-green)' : isSelected && !isAnswer ? '#ff6b6b' : 'var(--text-secondary)', fontWeight: isAnswer || isSelected ? 600 : 400 }}>
-                            {opt} {isAnswer && '✓'} {isSelected && !isAnswer && '✗'}
-                          </div>
-                        );
-                      })}
-                    </div>
-                    {q.explanation && <div style={{ padding: '10px 14px', background: 'var(--bg-glass)', borderRadius: 8, fontSize: '0.85rem', color: 'var(--text-secondary)' }}>💡 {q.explanation}</div>}
-                  </article>
-                );
-              })}
             </div>
+
+            {!user && (
+              <div className="card animate-fadeInUp" style={{ marginBottom: 32, background: 'var(--primary-bg)', border: '1px solid var(--border-blue)', textAlign: 'center' }}>
+                <h3 style={{ color: 'var(--primary)', marginBottom: 8 }}>{t('mockTest.saveResultsTitle')}</h3>
+                <p style={{ marginBottom: 20 }}>{t('mockTest.saveResultsDesc')}</p>
+                <Link to="/login" className="btn btn-primary" style={{ margin: '0 auto' }}>{t('mockTest.loginCreate')}</Link>
+              </div>
+            )}
+
+            {user && (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                <h3 style={{ marginBottom: 4 }}>Question Review</h3>
+                {questions.map((q, i) => {
+                  const correctAnswer = q.correctAnswer;
+                  const isCorrect = answers[q.id] === correctAnswer;
+                  return (
+                    <article key={q.id} className="card animate-fadeInUp" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-green)' : 'var(--accent-red)'}` }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                        <span className={`badge ${isCorrect ? 'badge-green' : 'badge-red'}`}>
+                          {isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                        <span className="text-muted" style={{ fontSize: '0.8rem' }}>Question {i + 1}</span>
+                      </div>
+                      <h4 style={{ marginBottom: 16 }}>{q.question}</h4>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+                        {q.options?.map((opt, oi) => {
+                          const isSelected = answers[q.id] === opt;
+                          const isAnswer = correctAnswer === opt;
+                          return (
+                            <div key={oi} style={{ padding: '10px 14px', borderRadius: 8, fontSize: '0.9rem', background: isAnswer ? 'rgba(0,201,167,0.1)' : isSelected && !isAnswer ? 'rgba(239,68,68,0.1)' : 'var(--bg-tertiary)', color: isAnswer ? 'var(--accent-green)' : isSelected && !isAnswer ? 'var(--accent-red)' : 'var(--text-secondary)', fontWeight: isAnswer || isSelected ? 600 : 400, display: 'flex', justifyContent: 'space-between' }}>
+                              <span>{opt}</span>
+                              {isAnswer && <CheckCircle size={16} />}
+                              {isSelected && !isAnswer && <XCircle size={16} />}
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {q.explanation && (
+                        <div style={{ padding: '16px', background: 'var(--primary-bg)', borderRadius: 12, borderTop: '1px solid var(--border-blue)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, color: 'var(--primary)', fontWeight: 600, fontSize: '0.85rem' }}>
+                            <Sparkles size={14} /> AI EXPLANATION
+                          </div>
+                          <div style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>
+                            {q.explanation}
+                          </div>
+                        </div>
+                      )}
+                    </article>
+                  );
+                })}
+              </div>
             )}
           </div>
         </div>
