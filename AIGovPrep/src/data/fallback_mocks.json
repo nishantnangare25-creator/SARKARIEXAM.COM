@@ -1,0 +1,139 @@
+{
+  "questions": [
+    {
+      "Q": "Which article of the Indian Constitution deals with the fundamental rights?",
+      "A": "Part II",
+      "B": "Part III",
+      "C": "Part IV",
+      "D": "Part V",
+      "Answer": "B",
+      "Explanation": "Part III of the Indian Constitution (Articles 12 to 35) deals with Fundamental Rights."
+    },
+    {
+      "Q": "Who was the first Governor-General of independent India?",
+      "A": "C. Rajagopalachari",
+      "B": "Lord Mountbatten",
+      "C": "Dr. Rajendra Prasad",
+      "D": "Jawaharlal Nehru",
+      "Answer": "B",
+      "Explanation": "Lord Mountbatten was the first Governor-General of independent India."
+    },
+    {
+      "Q": "The Reserve Bank of India (RBI) was established in which year?",
+      "A": "1935",
+      "B": "1947",
+      "C": "1950",
+      "D": "1952",
+      "Answer": "A",
+      "Explanation": "RBI was established on April 1, 1935, in accordance with the provisions of the RBI Act, 1934."
+    },
+    {
+      "Q": "Which of the following is not a Kharif crop?",
+      "A": "Rice",
+      "B": "Maize",
+      "C": "Wheat",
+      "D": "Cotton",
+      "Answer": "C",
+      "Explanation": "Wheat is a Rabi crop, sown in winter and harvested in spring."
+    },
+    {
+      "Q": "What is the SI unit of electric current?",
+      "A": "Volt",
+      "B": "Ohm",
+      "C": "Ampere",
+      "D": "Watt",
+      "Answer": "C",
+      "Explanation": "The SI unit of electric current is Ampere (A)."
+    },
+    {
+      "Q": "The Indus Valley Civilization is known for its sophisticated urban planning, with which of the following being a notable feature?",
+      "A": "Use of iron tools",
+      "B": "Existence of a robust system of writing",
+      "C": "Well-planned drainage system",
+      "D": "Extensive use of bronze weaponry",
+      "Answer": "C",
+      "Explanation": "The Indus Valley Civilization had advanced drainage systems, with well-planned sewage and drainage infrastructure. This is a hallmark of their sophisticated urban planning."
+    },
+    {
+      "Q": "The concept of 'Dharma' in ancient Indian societies referred to",
+      "A": "The natural order of the universe",
+      "B": "The social and moral order of human society",
+      "C": "The economic system of ancient India",
+      "D": "The political structure of ancient Indian kingdoms",
+      "Answer": "B",
+      "Explanation": "Dharma referred to the social and moral order of human society, encompassing an individual's duties and responsibilities. It was a central concept in ancient Indian thought."
+    },
+    {
+      "Q": "The Gupta period is often referred to as the 'Golden Age' of ancient India due to its significant achievements in",
+      "A": "Military conquests and expansion",
+      "B": "Science, technology, and the arts",
+      "C": "Trade and commerce",
+      "D": "Agriculture and irrigation",
+      "Answer": "B",
+      "Explanation": "The Gupta period saw significant advancements in science, technology, and the arts, with notable contributions in fields like mathematics, astronomy, and literature. This earned it the reputation as the 'Golden Age' of ancient India."
+    },
+    {
+      "Q": "The Mauryan Empire, which ruled much of ancient India, was founded by",
+      "A": "Chandragupta Maurya",
+      "B": "Ashoka the Great",
+      "C": "Samudragupta",
+      "D": "Bimbisara",
+      "Answer": "A",
+      "Explanation": "Chandragupta Maurya, with the help of Chanakya, overthrew the Nanda dynasty and established the Mauryan Empire, which would go on to become one of the largest and most influential empires in ancient Indian history."
+    },
+    {
+      "Q": "The ancient Indian text that describes the duties and responsibilities of a king is",
+      "A": "The Mahabharata",
+      "B": "The Ramayana",
+      "C": "The Arthashastra",
+      "D": "The Manusmriti",
+      "Answer": "C",
+      "Explanation": "The Arthashastra, written by Chanakya, is an ancient Indian text that outlines the duties and responsibilities of a king, including governance, diplomacy, and warfare. It is a seminal work on statecraft and political economy."
+    },
+    {
+      "Q": "The Vijayanagara Empire, which flourished in southern India, was founded by",
+      "A": "Harihara and Bukka Raya",
+      "B": "Krishnadeva Raya",
+      "C": "Shivaji",
+      "D": "Tipu Sultan",
+      "Answer": "A",
+      "Explanation": "The Vijayanagara Empire was founded by Harihara and Bukka Raya, two brothers who established the empire in the 14th century and went on to create a powerful and culturally rich kingdom in southern India."
+    },
+    {
+      "Q": "The Mughal emperor who built the Taj Mahal was",
+      "A": "Babur",
+      "B": "Humayun",
+      "C": "Akbar",
+      "D": "Shah Jahan",
+      "Answer": "D",
+      "Explanation": "Shah Jahan, the fifth Mughal emperor, built the Taj Mahal as a mausoleum for his wife, Mumtaz Mahal, in the 17th century. It is one of the most famous and beautiful buildings in the world."
+    },
+    {
+      "Q": "The Indian National Congress, a major political party in India, was founded in",
+      "A": "1885",
+      "B": "1905",
+      "C": "1915",
+      "D": "1925",
+      "Answer": "A",
+      "Explanation": "The Indian National Congress was founded in 1885 by Allan Octavian Hume, with the aim of promoting Indian rights and self-governance under British rule. It would go on to play a major role in the Indian independence movement."
+    },
+    {
+      "Q": "The Quit India Movement, a major civil disobedience campaign against British rule, was launched by Mahatma Gandhi in",
+      "A": "1920",
+      "B": "1930",
+      "C": "1942",
+      "D": "1947",
+      "Answer": "C",
+      "Explanation": "The Quit India Movement, also known as the August Movement, was launched by Mahatma Gandhi in 1942, with the aim of ending British rule in India through non-violent civil disobedience."
+    },
+    {
+      "Q": "The Government of India Act of 1935, a major constitutional reform, provided for",
+      "A": "Complete independence for India",
+      "B": "Dominion status for India",
+      "C": "A federal system of government with provincial autonomy",
+      "D": "The abolition of the Indian princely states",
+      "Answer": "C",
+      "Explanation": "The Government of India Act of 1935 provided for a federal system of government, with provincial autonomy and a degree of self-governance, although it still maintained British control over key areas of governance."
+    }
+  ]
+}

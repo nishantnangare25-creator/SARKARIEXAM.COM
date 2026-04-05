@@ -460,7 +460,19 @@ Explanation: [1-2 sentences of explanation]`
     }
     return parsed;
   } catch (err) {
-    console.error("AI call failed:", err);
+    console.error("AI call failed, activating offline fallback:", err);
+    try {
+      // Import the huge static database dynamically
+      const fallbackDb = await import('../data/fallback_mocks.json');
+      const staticQuestions = fallbackDb.default?.questions || [];
+      if (staticQuestions.length >= count) {
+        // Shuffle and pick
+        const shuffled = staticQuestions.sort(() => 0.5 - Math.random());
+        return { data: { questions: shuffled.slice(0, count) } };
+      }
+    } catch (e) {
+      console.error("Fallback DB also unavailable:", e);
+    }
     throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
   }
 };
@@ -506,7 +518,17 @@ Explanation: [1-2 sentences of explanation]`
     }
     return parsed;
   } catch (err) {
-    console.error("AI call failed:", err);
+    console.error("AI call failed, activating offline fallback:", err);
+    try {
+      const fallbackDb = await import('../data/fallback_mocks.json');
+      const staticQuestions = fallbackDb.default?.questions || [];
+      if (staticQuestions.length >= count) {
+        const shuffled = staticQuestions.sort(() => 0.5 - Math.random());
+        return { data: { questions: shuffled.slice(0, count) } };
+      }
+    } catch (e) {
+      console.error("Fallback DB also unavailable:", e);
+    }
     throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
   }
 };
