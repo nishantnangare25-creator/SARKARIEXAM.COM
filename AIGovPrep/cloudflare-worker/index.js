@@ -138,7 +138,7 @@ async function callAIWithRotation(messages, options, env) {
     }
   }
 
-  throw new Error(`All providers exhausted. Errors: ${errors.slice(-3).join(', ')}`);
+  throw new Error(`All providers exhausted. Errors: ${errors.join(', ')}`);
 }
 
 /** Specific Provider Handlers returning { success, content, status, error } **/
@@ -156,13 +156,15 @@ async function tryGroq(key, messages, options) {
         max_tokens: options.max_tokens || 4000 
       })
     });
-    if (res.status === 429) return { status: 429 };
     if (res.ok) {
       const data = await res.json();
       return { success: true, content: data.choices[0].message.content };
+    } else {
+      const errTxt = await res.text().catch(()=>'');
+      return { success: false, error: `Groq failed: ${res.status} ${errTxt.substring(0, 100)}` };
     }
   }
-  return { success: false, error: 'Groq failed' };
+  return { success: false, error: 'Groq failed completely' };
 }
 
 async function tryGemini(key, messages, options) {
@@ -185,8 +187,10 @@ async function tryGemini(key, messages, options) {
   if (res.ok) {
     const data = await res.json();
     return { success: true, content: data.candidates[0].content.parts[0].text };
+  } else {
+    const errTxt = await res.text().catch(()=>'');
+    return { success: false, error: `Gemini failed: ${res.status} ${errTxt.substring(0, 100)}` };
   }
-  return { success: false, error: 'Gemini failed' };
 }
 
 async function tryOpenRouter(key, messages, options) {
@@ -203,8 +207,10 @@ async function tryOpenRouter(key, messages, options) {
   if (res.ok) {
     const data = await res.json();
     return { success: true, content: data.choices[0].message.content };
+  } else {
+    const errTxt = await res.text().catch(()=>'');
+    return { success: false, error: `OpenRouter failed: ${res.status} ${errTxt.substring(0, 100)}` };
   }
-  return { success: false, error: 'OpenRouter failed' };
 }
 
 function corsResponse(body, status) {
