@@ -31,7 +31,8 @@ jobs:
           cd "Sarkari Exam AI App"
           cp pubspec.yaml /tmp/pubspec_backup.yaml
           cp lib/main.dart /tmp/main_backup.dart
-          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app . || true
+          # Changing the org to generate a totally fresh Android Application ID 
+          flutter create --org com.sarkari.freshbuild --project-name sarkari_exam_ai_app . || true
           # Always restore our custom files
           cp /tmp/pubspec_backup.yaml pubspec.yaml
           cp /tmp/main_backup.dart lib/main.dart
@@ -78,7 +79,14 @@ jobs:
           cd "Sarkari Exam AI App"
           flutter pub get
           echo "=== Package versions ==="
-          flutter pub deps | grep -E "webview|open_file|permission|path_provider"
+          flutter pub deps | grep -E "webview|open_file|permission|path_provider|launcher_icons"
+
+      - name: Generate App Icons (from original logo)
+        run: |
+          cd "Sarkari Exam AI App"
+          dart run flutter_launcher_icons
+          echo "=== App icons generated ==="
+          ls android/app/src/main/res/mipmap-*/ic_launcher.png 2>/dev/null || echo "Icons in place"
 
       - name: Build Release APK
         run: |
@@ -90,6 +98,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: SarkariExamAI-v1.0.8-fixed
+          name: SarkariExamAI-v1.0.8-v2
           path: "Sarkari Exam AI App/build/app/outputs/flutter-apk/app-release.apk"
           retention-days: 30
