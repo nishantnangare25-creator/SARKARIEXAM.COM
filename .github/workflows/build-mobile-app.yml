@@ -24,11 +24,18 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Initialize Flutter Project
+      - name: Initialize Flutter Project (preserve pubspec.yaml)
         run: |
           cd "Sarkari Exam AI App"
+          # Backup our custom pubspec.yaml BEFORE flutter create overwrites it
+          cp pubspec.yaml pubspec.yaml.bak
+          # Initialize missing Android/iOS platform files only
           flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app .
-          
+          # Restore our custom pubspec.yaml with correct dependencies
+          cp pubspec.yaml.bak pubspec.yaml
+          echo "=== Final pubspec.yaml ==="
+          cat pubspec.yaml
+
       - name: Configure Android Permissions (Internet)
         run: |
           cd "Sarkari Exam AI App/android/app/src/main"
@@ -37,9 +44,10 @@ jobs:
           # Add cleartextTrafficPermitted just in case
           sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' AndroidManifest.xml
 
-      - name: Install Dependencies
+      - name: Clean and Install Dependencies
         run: |
           cd "Sarkari Exam AI App"
+          flutter clean
           flutter pub get
 
       - name: Build APK
@@ -64,16 +72,21 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Initialize Flutter Project
+      - name: Initialize Flutter Project (preserve pubspec.yaml)
         run: |
           cd "Sarkari Exam AI App"
+          # Backup our custom pubspec.yaml BEFORE flutter create overwrites it
+          cp pubspec.yaml pubspec.yaml.bak
           flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app .
+          # Restore our custom pubspec.yaml with correct dependencies
+          cp pubspec.yaml.bak pubspec.yaml
+          echo "=== Final pubspec.yaml ==="
+          cat pubspec.yaml
 
       - name: Configure iOS Permissions
         run: |
           cd "Sarkari Exam AI App/ios/Runner"
-          # Typically, iOS allows internet automatically, but we can ensure Info.plist allows arbitrary loads
-          sed -i '' '/<dict>/a\
+          sed -i '' '/^<dict>$/a\
           <key>NSAppTransportSecurity</key>\
           <dict>\
               <key>NSAllowsArbitraryLoads</key>\
@@ -81,9 +94,10 @@ jobs:
           </dict>\
           ' Info.plist
 
-      - name: Install Dependencies
+      - name: Clean and Install Dependencies
         run: |
           cd "Sarkari Exam AI App"
+          flutter clean
           flutter pub get
 
       - name: Build iOS App
