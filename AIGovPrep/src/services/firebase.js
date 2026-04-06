@@ -7,6 +7,8 @@ import {
   signOut,
   GoogleAuthProvider,
   signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   onAuthStateChanged,
   updateProfile,
 } from 'firebase/auth';
@@ -79,6 +81,34 @@ export const loginWithGoogle = async () => {
     });
   }
   return result;
+};
+
+// Google Sign-in via Redirect (for WebView / mobile browsers where popup is blocked)
+export const loginWithGoogleRedirect = async () => {
+  await signInWithRedirect(auth, googleProvider);
+  // After redirect returns to the page, getRedirectResult handles it automatically
+};
+
+export const handleGoogleRedirectResult = async () => {
+  try {
+    const result = await getRedirectResult(auth);
+    if (result) {
+      const user = result.user;
+      const existingProfile = await getUserProfile(user.uid);
+      if (!existingProfile) {
+        await saveUserProfile(user.uid, {
+          displayName: user.displayName || 'Student',
+          email: user.email,
+          photoURL: user.photoURL,
+          createdAt: new Date().toISOString()
+        });
+      }
+      return result;
+    }
+  } catch (e) {
+    console.error('Redirect result error:', e);
+  }
+  return null;
 };
 
 export const logout = () => signOut(auth);

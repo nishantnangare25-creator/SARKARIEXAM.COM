@@ -126,7 +126,15 @@ export const generateQuestionPdf = (title, subtitle, questions, filename = 'docu
       fileName: filename
     }));
   } else {
-    doc.save(filename);
+    // Standard download — works on desktop and modern mobile browsers
+    const blob = doc.output('blob');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 1000);
   }
 };
 
@@ -272,6 +280,14 @@ export const generateNotesPdf = (title, content, filename = 'notes.pdf') => {
       fileName: filename
     }));
   } else {
-    doc.save(filename);
+    // Standard download — works on desktop and modern mobile browsers
+    const blob = doc.output('blob');
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); document.body.removeChild(a); }, 1000);
   }
 };

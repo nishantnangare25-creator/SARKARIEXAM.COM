@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { loginWithEmail, loginWithGoogle, registerWithEmail } from '../services/firebase';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { loginWithEmail, loginWithGoogle, loginWithGoogleRedirect, registerWithEmail } from '../services/firebase';
+import { Mail, Lock, Eye, EyeOff, Smartphone } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import logo from '../assets/logo.png';
 import './Auth.css';
@@ -48,11 +48,28 @@ export default function Login() {
   const handleGoogle = async () => {
     setError('');
     try {
+      // Detect if running inside a Flutter WebView — popups are blocked there
+      const isWebView = window.FlutterDownload !== undefined || /wv/.test(navigator.userAgent) || /Version\/[\d.]+.*Mobile\/\S+ Safari/.test(navigator.userAgent) === false && /Mobile/.test(navigator.userAgent);
+      if (isWebView) {
+        // Use redirect-based sign-in for WebView compatibility
+        if (loginWithGoogleRedirect) {
+          await loginWithGoogleRedirect();
+        } else {
+          setError('Google login is not supported in this browser. Please use Email/Password to login.');
+        }
+        return;
+      }
       await loginWithGoogle();
       setSuccess(t('auth.successGoogle') || 'Signed in with Google! Redirecting...');
       setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err) {
-      setError(err.message);
+      // Friendly error messages instead of Firebase codes
+      const msg = err.code === 'auth/popup-blocked'
+        ? 'Popup was blocked. Please use Email/Password login or allow popups in your browser.'
+        : err.code === 'auth/popup-closed-by-user'
+        ? 'Google sign-in was cancelled. Please try again.'
+        : err.message;
+      setError(msg);
     }
   };
 

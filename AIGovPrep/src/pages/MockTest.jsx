@@ -222,49 +222,48 @@ export default function MockTest() {
               </div>
             )}
 
-            {user && (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-                <h3 style={{ marginBottom: 4 }}>Question Review</h3>
-                {questions.map((q, i) => {
-                  const correctAnswer = q.correctAnswer;
-                  const isCorrect = answers[q.id] === correctAnswer;
-                  return (
-                    <article key={q.id} className="card animate-fadeInUp" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-green)' : 'var(--accent-red)'}` }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
-                        <span className={`badge ${isCorrect ? 'badge-green' : 'badge-red'}`}>
-                          {isCorrect ? 'Correct' : 'Incorrect'}
-                        </span>
-                        <span className="text-muted" style={{ fontSize: '0.8rem' }}>Question {i + 1}</span>
-                      </div>
-                      <h4 style={{ marginBottom: 16 }}>{q.question}</h4>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
-                        {q.options?.map((opt, oi) => {
-                          const isSelected = answers[q.id] === opt;
-                          const isAnswer = correctAnswer === opt;
-                          return (
-                            <div key={oi} style={{ padding: '10px 14px', borderRadius: 8, fontSize: '0.9rem', background: isAnswer ? 'rgba(0,201,167,0.1)' : isSelected && !isAnswer ? 'rgba(239,68,68,0.1)' : 'var(--bg-tertiary)', color: isAnswer ? 'var(--accent-green)' : isSelected && !isAnswer ? 'var(--accent-red)' : 'var(--text-secondary)', fontWeight: isAnswer || isSelected ? 600 : 400, display: 'flex', justifyContent: 'space-between' }}>
-                              <span>{opt}</span>
-                              {isAnswer && <CheckCircle size={16} />}
-                              {isSelected && !isAnswer && <XCircle size={16} />}
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {q.explanation && (
-                        <div style={{ padding: '16px', background: 'var(--primary-bg)', borderRadius: 12, borderTop: '1px solid var(--border-blue)' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, color: 'var(--primary)', fontWeight: 600, fontSize: '0.85rem' }}>
-                            <Sparkles size={14} /> AI EXPLANATION
+            {/* Question Review - Shown to ALL users */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+              <h3 style={{ marginBottom: 4 }}>Question Review</h3>
+              {questions.map((q, i) => {
+                const correctAnswer = q.correctAnswer;
+                const isCorrect = answers[q.id] === correctAnswer;
+                return (
+                  <article key={q.id} className="card animate-fadeInUp" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-green)' : 'var(--accent-red)'}` }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12 }}>
+                      <span className={`badge ${isCorrect ? 'badge-green' : 'badge-red'}`}>
+                        {isCorrect ? '✅ Correct' : '❌ Incorrect'}
+                      </span>
+                      <span className="text-muted" style={{ fontSize: '0.8rem' }}>Question {i + 1}</span>
+                    </div>
+                    <h4 style={{ marginBottom: 16 }}>{q.question}</h4>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+                      {q.options?.map((opt, oi) => {
+                        const isSelected = answers[q.id] === opt;
+                        const isAnswer = correctAnswer === opt;
+                        return (
+                          <div key={oi} style={{ padding: '10px 14px', borderRadius: 8, fontSize: '0.9rem', background: isAnswer ? 'rgba(0,201,167,0.1)' : isSelected && !isAnswer ? 'rgba(239,68,68,0.1)' : 'var(--bg-tertiary)', color: isAnswer ? 'var(--accent-green)' : isSelected && !isAnswer ? 'var(--accent-red)' : 'var(--text-secondary)', fontWeight: isAnswer || isSelected ? 600 : 400, display: 'flex', justifyContent: 'space-between' }}>
+                            <span>{opt}</span>
+                            {isAnswer && <CheckCircle size={16} />}
+                            {isSelected && !isAnswer && <XCircle size={16} />}
                           </div>
-                          <div style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>
-                            {q.explanation}
-                          </div>
+                        );
+                      })}
+                    </div>
+                    {q.explanation && (
+                      <div style={{ padding: '16px', background: 'var(--primary-bg)', borderRadius: 12, borderTop: '1px solid var(--border-blue)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8, color: 'var(--primary)', fontWeight: 600, fontSize: '0.85rem' }}>
+                          <Sparkles size={14} /> AI EXPLANATION
                         </div>
-                      )}
-                    </article>
-                  );
-                })}
-              </div>
-            )}
+                        <div style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>
+                          {q.explanation}
+                        </div>
+                      </div>
+                    )}
+                  </article>
+                );
+              })}
+            </div>
           </div>
         </div>
       </main>
