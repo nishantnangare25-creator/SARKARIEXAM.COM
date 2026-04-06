@@ -42,20 +42,20 @@ jobs:
       - name: Configure AndroidManifest permissions
         run: |
           MANIFEST="Sarkari Exam AI App/android/app/src/main/AndroidManifest.xml"
-          echo "=== Current AndroidManifest ==="
-          cat "$MANIFEST"
-
+          
+          # Use safer sed substitution instead of append marker 'a \' which can cause XML syntax errors on Linux
+          
           # INTERNET permission
           grep -q 'INTERNET' "$MANIFEST" || \
-            sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST"
+            sed -i 's|<manifest|<manifest\n    <uses-permission android:name="android.permission.INTERNET" />|' "$MANIFEST"
 
           # WRITE_EXTERNAL_STORAGE (Android 9 and below only)
           grep -q 'WRITE_EXTERNAL_STORAGE' "$MANIFEST" || \
-            sed -i '/<manifest/a \    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />' "$MANIFEST"
+            sed -i 's|<manifest|<manifest\n    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />|' "$MANIFEST"
 
           # READ_EXTERNAL_STORAGE (Android 9 and below only)
           grep -q 'READ_EXTERNAL_STORAGE' "$MANIFEST" || \
-            sed -i '/<manifest/a \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="28" />' "$MANIFEST"
+            sed -i 's|<manifest|<manifest\n    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="28" />|' "$MANIFEST"
 
           # Scoped storage for Android 10+ (no permission needed, but declare)
           grep -q 'requestLegacyExternalStorage' "$MANIFEST" || \
