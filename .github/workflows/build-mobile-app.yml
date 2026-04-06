@@ -27,28 +27,37 @@ jobs:
       - name: Initialize Flutter Project (preserve pubspec.yaml)
         run: |
           cd "Sarkari Exam AI App"
-          # Backup our custom pubspec.yaml BEFORE flutter create overwrites it
-          cp pubspec.yaml pubspec.yaml.bak
-          # Initialize missing Android/iOS platform files only
-          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app .
-          # Restore our custom pubspec.yaml with correct dependencies
-          cp pubspec.yaml.bak pubspec.yaml
-          echo "=== Final pubspec.yaml ==="
+          # Backup our custom pubspec.yaml BEFORE flutter create can touch it
+          cp pubspec.yaml /tmp/pubspec_backup.yaml
+          # Initialize missing Android/iOS platform files
+          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app . || true
+          # Always restore our custom pubspec.yaml (removes any open_file_plus reference)
+          cp /tmp/pubspec_backup.yaml pubspec.yaml
+          echo "=== Verified pubspec.yaml (must show open_file, NOT open_file_plus) ==="
           cat pubspec.yaml
+
+      - name: Remove any cached open_file_plus to prevent old dependency conflicts
+        run: |
+          rm -rf /home/runner/.pub-cache/hosted/pub.dev/open_file_plus* || true
+          echo "Cleaned old open_file_plus cache"
 
       - name: Configure Android Permissions (Internet)
         run: |
           cd "Sarkari Exam AI App/android/app/src/main"
-          # Insert uses-permission before the <application> tag
-          sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET" />' AndroidManifest.xml
-          # Add cleartextTrafficPermitted just in case
-          sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' AndroidManifest.xml
+          # Insert uses-permission before the <application> tag (only if not already there)
+          grep -q 'android.permission.INTERNET' AndroidManifest.xml || \
+            sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET" />' AndroidManifest.xml
+          # Add cleartextTrafficPermitted (only if not already there)
+          grep -q 'usesCleartextTraffic' AndroidManifest.xml || \
+            sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' AndroidManifest.xml
 
       - name: Clean and Install Dependencies
         run: |
           cd "Sarkari Exam AI App"
           flutter clean
           flutter pub get
+          echo "=== Dependencies installed ==="
+          flutter pub deps | head -30
 
       - name: Build APK
         run: |
@@ -75,24 +84,17 @@ jobs:
       - name: Initialize Flutter Project (preserve pubspec.yaml)
         run: |
           cd "Sarkari Exam AI App"
-          # Backup our custom pubspec.yaml BEFORE flutter create overwrites it
-          cp pubspec.yaml pubspec.yaml.bak
-          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app .
-          # Restore our custom pubspec.yaml with correct dependencies
-          cp pubspec.yaml.bak pubspec.yaml
-          echo "=== Final pubspec.yaml ==="
+          cp pubspec.yaml /tmp/pubspec_backup.yaml
+          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app . || true
+          cp /tmp/pubspec_backup.yaml pubspec.yaml
+          echo "=== Verified pubspec.yaml ==="
           cat pubspec.yaml
 
       - name: Configure iOS Permissions
         run: |
           cd "Sarkari Exam AI App/ios/Runner"
-          sed -i '' '/^<dict>$/a\
-          <key>NSAppTransportSecurity</key>\
-          <dict>\
-              <key>NSAllowsArbitraryLoads</key>\
-              <true/>\
-          </dict>\
-          ' Info.plist
+          grep -q 'NSAppTransportSecurity' Info.plist || \
+          sed -i '' 's/<dict>/<dict><key>NSAppTransportSecurity<\/key><dict><key>NSAllowsArbitraryLoads<\/key><true\/><\/dict>/' Info.plist
 
       - name: Clean and Install Dependencies
         run: |
