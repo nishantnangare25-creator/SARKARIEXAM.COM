@@ -3,13 +3,14 @@ name: Build Mobile App (Flutter)
 on:
   push:
     paths:
-      - 'Sarkari Exam AI App/**' # Only run when mobile app files change
-  workflow_dispatch: # Allow manual trigger from GitHub Actions tab
+      - 'Sarkari Exam AI App/**'
+  workflow_dispatch: # Manual trigger from GitHub Actions tab
 
 jobs:
   build-android:
     name: Build Android APK
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -23,92 +24,72 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
+          flutter-version: '3.22.0'
 
-      - name: Initialize Flutter Project (preserve pubspec.yaml)
+      - name: Initialize Flutter Project
         run: |
           cd "Sarkari Exam AI App"
-          # Backup our custom pubspec.yaml BEFORE flutter create can touch it
           cp pubspec.yaml /tmp/pubspec_backup.yaml
-          # Initialize missing Android/iOS platform files
+          cp lib/main.dart /tmp/main_backup.dart
           flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app . || true
-          # Always restore our custom pubspec.yaml (removes any open_file_plus reference)
+          # Always restore our custom files
           cp /tmp/pubspec_backup.yaml pubspec.yaml
-          echo "=== Verified pubspec.yaml (must show open_file, NOT open_file_plus) ==="
+          cp /tmp/main_backup.dart lib/main.dart
+          echo "=== pubspec.yaml verified ==="
           cat pubspec.yaml
 
-      - name: Remove any cached open_file_plus to prevent old dependency conflicts
+      - name: Configure AndroidManifest permissions
+        run: |
+          MANIFEST="Sarkari Exam AI App/android/app/src/main/AndroidManifest.xml"
+          echo "=== Current AndroidManifest ==="
+          cat "$MANIFEST"
+
+          # INTERNET permission
+          grep -q 'INTERNET' "$MANIFEST" || \
+            sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET" />' "$MANIFEST"
+
+          # WRITE_EXTERNAL_STORAGE (Android 9 and below only)
+          grep -q 'WRITE_EXTERNAL_STORAGE' "$MANIFEST" || \
+            sed -i '/<manifest/a \    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />' "$MANIFEST"
+
+          # READ_EXTERNAL_STORAGE (Android 9 and below only)
+          grep -q 'READ_EXTERNAL_STORAGE' "$MANIFEST" || \
+            sed -i '/<manifest/a \    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="28" />' "$MANIFEST"
+
+          # Scoped storage for Android 10+ (no permission needed, but declare)
+          grep -q 'requestLegacyExternalStorage' "$MANIFEST" || \
+            sed -i 's/<application/<application android:requestLegacyExternalStorage="true"/' "$MANIFEST"
+
+          # Allow cleartext traffic for local testing
+          grep -q 'usesCleartextTraffic' "$MANIFEST" || \
+            sed -i 's/<application/<application android:usesCleartextTraffic="true"/' "$MANIFEST"
+
+          echo "=== Updated AndroidManifest ==="
+          cat "$MANIFEST"
+
+      - name: Clean old cache
         run: |
           rm -rf /home/runner/.pub-cache/hosted/pub.dev/open_file_plus* || true
-          echo "Cleaned old open_file_plus cache"
-
-      - name: Configure Android Permissions (Internet)
-        run: |
-          cd "Sarkari Exam AI App/android/app/src/main"
-          # Insert uses-permission before the <application> tag (only if not already there)
-          grep -q 'android.permission.INTERNET' AndroidManifest.xml || \
-            sed -i '/<application/i \    <uses-permission android:name="android.permission.INTERNET" />' AndroidManifest.xml
-          # Add cleartextTrafficPermitted (only if not already there)
-          grep -q 'usesCleartextTraffic' AndroidManifest.xml || \
-            sed -i 's/<application/<application android:usesCleartextTraffic="true"/g' AndroidManifest.xml
-
-      - name: Clean and Install Dependencies
-        run: |
           cd "Sarkari Exam AI App"
           flutter clean
-          flutter pub get
-          echo "=== Dependencies installed ==="
-          flutter pub deps | head -30
 
-      - name: Build APK
+      - name: Install Dependencies
         run: |
           cd "Sarkari Exam AI App"
-          flutter build apk --release
+          flutter pub get
+          echo "=== Package versions ==="
+          flutter pub deps | grep -E "webview|open_file|permission|path_provider"
 
-      - name: Upload APK Artifact
+      - name: Build Release APK
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter build apk --release --no-shrink
+          echo "=== APK Info ==="
+          ls -lh build/app/outputs/flutter-apk/app-release.apk
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: sarkari-exam-ai-android-apk
+          name: SarkariExamAI-v1.0.8-fixed
           path: "Sarkari Exam AI App/build/app/outputs/flutter-apk/app-release.apk"
-
-  build-ios:
-    name: Build iOS (No Sign)
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-
-      - name: Initialize Flutter Project (preserve pubspec.yaml)
-        run: |
-          cd "Sarkari Exam AI App"
-          cp pubspec.yaml /tmp/pubspec_backup.yaml
-          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app . || true
-          cp /tmp/pubspec_backup.yaml pubspec.yaml
-          echo "=== Verified pubspec.yaml ==="
-          cat pubspec.yaml
-
-      - name: Configure iOS Permissions
-        run: |
-          cd "Sarkari Exam AI App/ios/Runner"
-          grep -q 'NSAppTransportSecurity' Info.plist || \
-          sed -i '' 's/<dict>/<dict><key>NSAppTransportSecurity<\/key><dict><key>NSAllowsArbitraryLoads<\/key><true\/><\/dict>/' Info.plist
-
-      - name: Clean and Install Dependencies
-        run: |
-          cd "Sarkari Exam AI App"
-          flutter clean
-          flutter pub get
-
-      - name: Build iOS App
-        run: |
-          cd "Sarkari Exam AI App"
-          flutter build ios --release --no-codesign
-
-      - name: Upload iOS Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: sarkari-exam-ai-ios-build
-          path: "Sarkari Exam AI App/build/ios/iphoneos/Runner.app"
+          retention-days: 30
