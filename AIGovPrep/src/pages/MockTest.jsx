@@ -40,10 +40,14 @@ export default function MockTest() {
     setError('');
     try {
       const result = await generateMockQuestions({ exam, subject, difficulty: 'medium', count: 10, language: i18n.language });
-      if (result.data && result.data.questions) {
-        const newQs = result.data.questions.map((q, i) => ({ ...q, id: `batch1-${i}` }));
+      if (result.data && result.data.questions && result.data.questions.length > 0) {
+        const newQs = result.data.questions.map((q, i) => ({ ...q, id: q.id || `batch1-${i}` }));
         setQuestions(newQs);
         setConversation(result.conversation || '');
+        // Show offline notice if serving from static DB
+        if (result.isOffline) {
+          setError('⚡ AI limit reached — showing offline questions from our database. Full AI resumes soon!');
+        }
         setStarted(true);
         setTimer(600);
         setCurrent(0);

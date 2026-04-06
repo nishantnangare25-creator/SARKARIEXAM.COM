@@ -496,18 +496,41 @@ Explanation: [1-2 sentences of explanation]`
   } catch (err) {
     console.error("AI call failed, activating offline fallback:", err);
     try {
-      // Import the huge static database dynamically
+      // Import the static offline database
       const fallbackDb = await import('../data/fallback_mocks.json');
-      const staticQuestions = fallbackDb.default?.questions || [];
-      if (staticQuestions.length >= count) {
-        // Shuffle and pick
-        const shuffled = staticQuestions.sort(() => 0.5 - Math.random());
-        return { data: { questions: shuffled.slice(0, count) } };
+      const rawQuestions = fallbackDb.default?.questions || [];
+      if (rawQuestions.length > 0) {
+        // Shuffle all questions
+        const shuffled = [...rawQuestions].sort(() => 0.5 - Math.random());
+        const picked = shuffled.slice(0, count || 10);
+        // Convert from {Q,A,B,C,D,Answer,Explanation} → {question,options[],correctAnswer,explanation}
+        const normalized = picked.map((q, i) => {
+          // Support BOTH formats: new {question,options[]} AND old {Q,A,B,C,D}
+          if (q.options && q.question) return q; // Already correct format
+          return {
+            id: `fallback-${i}`,
+            question: q.Q || q.question || '',
+            options: [
+              q.A || '', q.B || '', q.C || '', q.D || ''
+            ].filter(Boolean),
+            correctAnswer: (() => {
+              const ans = q.Answer || q.correctAnswer || '';
+              // If Answer is a letter like 'A','B','C','D', map to its text
+              if (['A','B','C','D'].includes(ans)) {
+                return { A: q.A, B: q.B, C: q.C, D: q.D }[ans] || ans;
+              }
+              return ans;
+            })(),
+            explanation: q.Explanation || q.explanation || 'Study this topic for deeper understanding.'
+          };
+        }).filter(q => q.question && q.options.length > 0);
+        console.log(`[Offline Fallback] Serving ${normalized.length} questions from static DB`);
+        return { data: { questions: normalized }, isOffline: true };
       }
     } catch (e) {
       console.error("Fallback DB also unavailable:", e);
     }
-    throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
+    throw new Error("AI Server is too busy or API limits exhausted. Please try again later.");
   }
 };
 
