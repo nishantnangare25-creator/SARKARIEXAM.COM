@@ -45,7 +45,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
   bool _isLoading = true;
   bool _hasError = false;
-  final String _currentVersion = "1.0.7";
+  final String _currentVersion = "1.0.8";
   final String _homeUrl = 'https://sarkariexamai.com';
 
   // Firebase Web API key (same as in the website)
