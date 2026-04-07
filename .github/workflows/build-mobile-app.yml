@@ -39,6 +39,26 @@ jobs:
           echo "=== pubspec.yaml verified ==="
           cat pubspec.yaml
 
+      - name: Clean old cache
+        run: |
+          rm -rf /home/runner/.pub-cache/hosted/pub.dev/open_file_plus* || true
+          cd "Sarkari Exam AI App"
+          flutter clean
+
+      - name: Install Dependencies
+        run: |
+          cd "Sarkari Exam AI App"
+          flutter pub get
+          echo "=== Package versions ==="
+          flutter pub deps | grep -E "webview|open_file|permission|path_provider|launcher_icons"
+
+      - name: Generate App Icons (from original logo)
+        run: |
+          cd "Sarkari Exam AI App"
+          dart run flutter_launcher_icons
+          echo "=== App icons generated ==="
+          ls android/app/src/main/res/mipmap-*/ic_launcher.png 2>/dev/null || echo "Icons in place"
+
       - name: Configure Android permissions safely
         run: |
           python3 -c "
@@ -60,26 +80,6 @@ jobs:
               f.write(content)
           "
           cat "Sarkari Exam AI App/android/app/src/main/AndroidManifest.xml"
-
-      - name: Clean old cache
-        run: |
-          rm -rf /home/runner/.pub-cache/hosted/pub.dev/open_file_plus* || true
-          cd "Sarkari Exam AI App"
-          flutter clean
-
-      - name: Install Dependencies
-        run: |
-          cd "Sarkari Exam AI App"
-          flutter pub get
-          echo "=== Package versions ==="
-          flutter pub deps | grep -E "webview|open_file|permission|path_provider|launcher_icons"
-
-      - name: Generate App Icons (from original logo)
-        run: |
-          cd "Sarkari Exam AI App"
-          dart run flutter_launcher_icons
-          echo "=== App icons generated ==="
-          ls android/app/src/main/res/mipmap-*/ic_launcher.png 2>/dev/null || echo "Icons in place"
 
       - name: Build Release APK
         run: |
