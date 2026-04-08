@@ -5,7 +5,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_filex/open_filex.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
@@ -316,11 +316,11 @@ class _WebViewScreenState extends State<WebViewScreen> {
           action: SnackBarAction(
             label: 'OPEN',
             textColor: Colors.white,
-            onPressed: () => OpenFile.open(file.path),
+            onPressed: () => OpenFilex.open(file.path),
           ),
         ));
         await Future.delayed(const Duration(milliseconds: 600));
-        await OpenFile.open(file.path);
+        await OpenFilex.open(file.path);
       }
     } catch (e) {
       debugPrint('Download error: $e');
