@@ -65,8 +65,13 @@ jobs:
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools">
               <uses-permission android:name="android.permission.INTERNET" />
-              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:replace="android:maxSdkVersion" />
-              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" tools:replace="android:maxSdkVersion" />
+              <!-- Android 9 and below: legacy storage permissions (no maxSdkVersion conflict with open_filex) -->
+              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="replace" />
+              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="replace" />
+              <!-- Android 13+ (API 33+): granular media permissions -->
+              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+              <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+              <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
               <application
                   android:label="sarkari_exam_ai_app"
                   android:name="${applicationName}"
