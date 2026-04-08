@@ -1754,6 +1754,96 @@
       "D": "National Farmers Policy",
       "Answer": "A",
       "Explanation": "Pradhan Mantri Kisan Samman Nidhi is a scheme launched by the Indian government to provide financial assistance to farmers, with the aim of improving their income and well-being. The scheme provides annual income support to eligible farmers."
+    },
+    {
+      "Q": "A snail is at the bottom of a 20-foot well. Each day, it climbs up 3 feet, but at night, it slips back 2 feet. How many days will it take for the snail to reach the top of the well?",
+      "A": "18",
+      "B": "20",
+      "C": "22",
+      "D": "28",
+      "Answer": "18",
+      "Explanation": "The snail effectively climbs 1 foot per day, and on the 18th day, it will reach the top. It will climb 3 feet on the 18th day and reach the top of the well."
+    },
+    {
+      "Q": "In a certain code language, 'hello' is written as 'olleh'. What is 'world' written as in this code?",
+      "A": "dlrow",
+      "B": "world",
+      "C": "dlorw",
+      "D": "wolrd",
+      "Answer": "A",
+      "Explanation": "The code language is simply reversing the order of the letters, so 'world' becomes 'dlrow'."
+    },
+    {
+      "Q": "A bat and a ball together cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost?",
+      "A": "$0.05",
+      "B": "$0.10",
+      "C": "$0.15",
+      "D": "$0.20",
+      "Answer": "A",
+      "Explanation": "If the bat costs $1.00 more than the ball and together they cost $1.10, then the ball must cost $0.05."
+    },
+    {
+      "Q": "A person has two coins that add up to 30 paise. One coin is not a 15-paise coin. What are the two coins?",
+      "A": "10 paise and 20 paise",
+      "B": "15 paise and 15 paise",
+      "C": "10 paise and 15 paise",
+      "D": "5 paise and 25 paise",
+      "Answer": "A",
+      "Explanation": "Since one coin is not a 15-paise coin, the only option that adds up to 30 paise without using a 15-paise coin is 10 paise and 20 paise."
+    },
+    {
+      "Q": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
+      "A": "1 minute",
+      "B": "5 minutes",
+      "C": "10 minutes",
+      "D": "100 minutes",
+      "Answer": "B",
+      "Explanation": "If 5 machines can make 5 widgets in 5 minutes, then 100 machines can make 100 widgets in the same amount of time, which is 5 minutes."
+    },
+    {
+      "Q": "A woman has two coins that add up to 50 cents. One coin is not a nickel. What are the two coins?",
+      "A": "25 cents and 25 cents",
+      "B": "10 cents and 40 cents",
+      "C": "5 cents and 45 cents",
+      "D": "25 cents and 10 cents and 10 cents and 5 cents",
+      "Answer": "A",
+      "Explanation": "Since one coin is not a nickel (5 cents), the two coins must be two 25-cent coins (2 quarters), which add up to 50 cents."
+    },
+    {
+      "Q": "You are in a room that has three light switches. Each switch corresponds to one of three light bulbs in a room. Each light bulb is off at the start. You can turn the lights on and off as many times as you want, but you can only enter the room one time. How can you figure out which switch corresponds to which light bulb?",
+      "A": "Turn two switches on, then off, then enter the room and observe",
+      "B": "Turn one switch on, then off, then enter the room and observe",
+      "C": "Turn all switches on, then enter the room and observe",
+      "D": "Turn two switches on, wait, then turn one off and enter the room",
+      "Answer": "D",
+      "Explanation": "By turning two switches on, waiting, then turning one off, you can use the process of elimination and observation of the bulbs' temperatures to determine which switch corresponds to which bulb."
+    },
+    {
+      "Q": "There are 8 balls, and one will be slightly heavier or lighter than the rest. How can you find the heavier or lighter ball in only 2 weighings on a balance scale?",
+      "A": "Weigh 3 vs 3, then weigh 2 from the heavier side",
+      "B": "Weigh 4 vs 4, then weigh 2 from the heavier side",
+      "C": "Weigh 2 vs 2, then weigh 3 from the heavier side",
+      "D": "Weigh 1 vs 1, then weigh 3 from the heavier side",
+      "Answer": "A",
+      "Explanation": "By weighing 3 balls against 3 balls, you can determine which side has the heavier or lighter ball. Then, by weighing 2 balls from the heavier or lighter side against each other, you can find the heavier or lighter ball."
+    },
+    {
+      "Q": "If a clock strikes 13, how many times will it strike in 3 hours and 15 minutes, starting from the time it strikes 13?",
+      "A": "4",
+      "B": "6",
+      "C": "8",
+      "D": "10",
+      "Answer": "B",
+      "Explanation": "Starting from the time it strikes 13, the clock will strike at 1, 2, and 3 o'clock within the next 3 hours, which is 3 + 2 + 1 = 6 strikes, and then at the quarter hour it will not strike."
+    },
+    {
+      "Q": "There are three switches, but they are not labelled. Each switch corresponds to one of three light bulbs in a room. Each light bulb is either on or off. You can turn the lights on and off as many times as you want, and you can enter the room one time to observe the bulbs. How can you figure out which switch corresponds to which light bulb?",
+      "A": "Turn one switch on for 5 minutes, then off, then enter the room and observe",
+      "B": "Turn two switches on, then off, then enter the room and observe",
+      "C": "Turn one switch on, then enter the room and observe",
+      "D": "Turn all switches on, then enter the room and observe",
+      "Answer": "A",
+      "Explanation": "By turning one switch on for a period of time, then off, you can use the warmth of the bulb to determine which switch corresponds to which bulb when you enter the room."
     }
   ]
 }

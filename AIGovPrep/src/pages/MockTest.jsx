@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { generateMockQuestions } from '../services/ai';
 import { EXAMS, SUBJECTS } from '../utils/constants';
-import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download, Activity, Zap } from 'lucide-react';
+import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download, Activity, Zap, Target, AlertCircle } from 'lucide-react';
 import { saveTestResult } from '../services/firebase';
 import ReactMarkdown from 'react-markdown';
 import './Auth.css';
@@ -84,28 +84,21 @@ export default function MockTest() {
 
   const handleSubmit = async () => {
     clearInterval(intervalRef.current);
-    setShowResult(true);
-    setStarted(false);
-
-    if (user) {
-      const score = getScore();
-      const accuracy = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
-      try {
+    try {
+      if (user) {
         await saveTestResult(user.uid, {
-          score,
+          exam,
+          subject,
+          score: getScore(),
           total: questions.length,
-          accuracy,
-          subject: subject || 'General',
-          exam: exam || 'UPSC',
-          type: 'Mock Test'
+          timestamp: new Date().toISOString()
         });
-      } catch (err) {
-        console.error("Failed to save test result:", err);
       }
-    } else {
-      // Mark trial as used for guests
-      localStorage.setItem('sarkari_trial_used', 'true');
+    } catch (err) {
+      console.error("Error saving test result:", err);
     }
+    setStarted(false);
+    setShowResult(true);
   };
 
   const getScore = () => {

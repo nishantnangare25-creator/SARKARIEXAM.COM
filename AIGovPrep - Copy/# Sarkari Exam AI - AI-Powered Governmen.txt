@@ -1,4 +1,4 @@
-4 Sarkari Exam AI - AI-Powered Government Exam Preparation | UPSC, SSC, Banking
+# Sarkari Exam AI - AI-Powered Government Exam Preparation | UPSC, SSC, Banking
 
 <!doctype html>
 <html lang="en">

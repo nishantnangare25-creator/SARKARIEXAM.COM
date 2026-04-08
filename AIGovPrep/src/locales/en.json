@@ -177,8 +177,10 @@
   "mockTest": {
     "title": "Daily Smart Mock Test",
     "subtitle": "10-minute adaptive quiz to boost your preparation",
-    "start": "Start Quiz",
-    "generating": "Generating questions...",
+    "start": "Start Mock Test",
+    "generating": "AI is generating questions...",
+    "accuracy": "Accuracy",
+    "loaded": "loaded",
     "error": "Could not generate questions. Check your API key or response format.",
     "question": "Question",
     "of": "of",
