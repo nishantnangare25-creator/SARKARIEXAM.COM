@@ -6,7 +6,7 @@ import { generatePYQSMockQuestions } from '../services/ai';
 import { 
   Brain, Clock, CheckCircle, XCircle, Sparkles, 
   ArrowRight, RotateCcw, AlertCircle, ChevronRight,
-  TrendingUp, FileText, Trophy, Play
+  TrendingUp, FileText, Trophy, Play, Target
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { EXAMS, SUBJECTS } from '../utils/constants';
@@ -91,7 +91,8 @@ export default function PYQSMockTest() {
 
   const getScore = () => {
     let correct = 0;
-    questions.forEach(q => { if (answers[q.id] === q.correctAnswer) correct++; });
+    if (!questions || !Array.isArray(questions)) return 0;
+    questions.forEach(q => { if (q && q.id && answers && answers[q.id] === q.correctAnswer) correct++; });
     return correct;
   };
 
@@ -195,9 +196,26 @@ export default function PYQSMockTest() {
 
   // ── RESULT SCREEN ──
   if (showResult) {
-    const score = getScore();
-    const total = getAttempted();
+    const score = getScore() || 0;
+    const total = (questions && Array.isArray(questions)) ? questions.length : 0;
     const percent = total > 0 ? Math.round((score/total)*100) : 0;
+    
+    if (total === 0) {
+      return (
+        <main className="page-wrapper">
+          <div className="page-with-sidebar" style={{ textAlign: 'center', padding: '100px 20px' }}>
+            <div className="feature-icon red" style={{ margin: '0 auto 24px' }}>
+              <AlertCircle size={32} />
+            </div>
+            <h2>Result Unavailable</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>Difficulty retrieving results. Please try again.</p>
+            <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); setAnswers({}); }}>
+              Go Back
+            </button>
+          </div>
+        </main>
+      );
+    }
     
     return (
       <main className="page-wrapper">
@@ -238,7 +256,7 @@ export default function PYQSMockTest() {
               <>
                 <h3 style={{ marginBottom: 20 }}>Question Review</h3>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-              {questions.map((q, i) => {
+              {questions?.map((q, i) => {
                 const isCorrect = answers[q.id] === q.correctAnswer;
                 return (
                   <article key={q.id} className="card animate-fadeInUp" style={{ borderLeft: `4px solid ${isCorrect ? 'var(--accent-green)' : 'var(--accent-red)'}` }}>

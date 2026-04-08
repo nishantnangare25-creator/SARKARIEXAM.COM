@@ -97,9 +97,11 @@ export default function Analytics() {
   };
 
   const displayStats = showMock ? MOCK_STATS : {
-    accuracy: Math.round(testHistory.reduce((acc, curr) => acc + (curr.score/curr.total)*100, 0) / (testHistory.length || 1)),
-    consistency: Math.min(100, testHistory.length * 10),
-    completion: Math.min(100, Math.round((testHistory.length / 50) * 100)),
+    accuracy: testHistory.length > 0 
+      ? Math.round(testHistory.reduce((acc, curr) => acc + (curr.score/curr.total)*100, 0) / testHistory.length) 
+      : 0,
+    consistency: Math.min(100, (testHistory?.length || 0) * 10),
+    completion: Math.min(100, Math.round(((testHistory?.length || 0) / 50) * 100)),
     subjects: MOCK_STATS.subjects // Fallback subjects for clean UI
   };
 

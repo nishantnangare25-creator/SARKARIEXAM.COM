@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { generateMockQuestions } from '../services/ai';
 import { EXAMS, SUBJECTS } from '../utils/constants';
-import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download, Activity } from 'lucide-react';
+import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download, Activity, Zap } from 'lucide-react';
 import { saveTestResult } from '../services/firebase';
 import ReactMarkdown from 'react-markdown';
 import './Auth.css';
@@ -89,7 +89,7 @@ export default function MockTest() {
 
     if (user) {
       const score = getScore();
-      const accuracy = Math.round((score / questions.length) * 100);
+      const accuracy = questions.length > 0 ? Math.round((score / questions.length) * 100) : 0;
       try {
         await saveTestResult(user.uid, {
           score,
@@ -110,7 +110,8 @@ export default function MockTest() {
 
   const getScore = () => {
     let correct = 0;
-    questions.forEach(q => { if (answers[q.id] === q.correctAnswer) correct++; });
+    if (!questions || !Array.isArray(questions)) return 0;
+    questions.forEach(q => { if (q && q.id && answers && answers[q.id] === q.correctAnswer) correct++; });
     return correct;
   };
 
@@ -178,8 +179,25 @@ export default function MockTest() {
 
   if (showResult) {
     const score = getScore() || 0;
-    const total = questions?.length || 0;
+    const total = (questions && Array.isArray(questions)) ? questions.length : 0;
     const percent = total > 0 ? Math.round((score / total) * 100) : 0;
+
+    if (total === 0 && !loading) {
+       return (
+        <main className="page-wrapper">
+          <div className="page-with-sidebar" style={{ textAlign: 'center', padding: '100px 20px' }}>
+            <div className="feature-icon red" style={{ margin: '0 auto 24px' }}>
+              <AlertCircle size={32} />
+            </div>
+            <h2>No Questions Available</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>Difficulty generating result. Please try taking the test again.</p>
+            <button className="btn btn-primary" onClick={() => { setShowResult(false); setStarted(false); setQuestions([]); }}>
+              Go Back
+            </button>
+          </div>
+        </main>
+      );
+    }
 
     if (total === 0 && loading) {
       return (
@@ -229,7 +247,7 @@ export default function MockTest() {
             {/* Question Review - Shown to ALL users */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
               <h3 style={{ marginBottom: 4 }}>Question Review</h3>
-              {questions.map((q, i) => {
+              {questions?.map((q, i) => {
                 const correctAnswer = q.correctAnswer;
                 const isCorrect = answers[q.id] === correctAnswer;
                 return (
