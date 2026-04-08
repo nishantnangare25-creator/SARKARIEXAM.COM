@@ -100,11 +100,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
             launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
             return NavigationDecision.prevent;
           }
-          // ── FIX: Block Google OAuth in WebView → show native login ──
+          // Allow Google OAuth to proceed natively in the WebView
           if (url.contains('accounts.google.com') ||
               url.contains('google.com/o/oauth2')) {
-            _showLoginSheet();
-            return NavigationDecision.prevent;
+            return NavigationDecision.navigate;
           }
           return NavigationDecision.navigate;
         },
@@ -122,23 +121,27 @@ class _WebViewScreenState extends State<WebViewScreen> {
         // Mark as Flutter WebView
         window.__isFlutterApp = true;
 
-        // Intercept Google Sign-In buttons and route to Flutter native sheet
-        function interceptGoogle() {
-          document.querySelectorAll('.google-btn, [class*="google-btn"]').forEach(function (btn) {
-            if (btn.dataset.flutterOk) return;
-            btn.dataset.flutterOk = '1';
-            btn.addEventListener('click', function (e) {
-              e.preventDefault();
-              e.stopImmediatePropagation();
-              if (window.FlutterGoogleSignIn) {
-                FlutterGoogleSignIn.postMessage('open');
-              }
-            }, true);
+        // Force window.open to redirect in the same tab instead of failing to open a new tab
+        window.open = function(url, target, features) {
+          if (url) {
+            window.location.href = url;
+          }
+          return null;
+        };
+
+        // Intercept functions
+        function applyFixes() {
+          // 1. Change target="_blank" to "_self" on all links
+          document.querySelectorAll('a[target="_blank"]').forEach(function(a) {
+            a.target = '_self';
+            a.removeAttribute('target');
           });
+
+          // Removed Google Sign-In button interceptor to allow web auth flow
         }
 
-        interceptGoogle();
-        new MutationObserver(interceptGoogle)
+        applyFixes();
+        new MutationObserver(applyFixes)
           .observe(document.body, { childList: true, subtree: true });
       })();
     ''');
