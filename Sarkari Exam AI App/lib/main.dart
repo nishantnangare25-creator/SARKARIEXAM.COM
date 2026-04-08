@@ -95,8 +95,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
         },
         onNavigationRequest: (req) {
           final url = req.url;
-          // Open external links
-          if (url.startsWith('mailto:') || url.startsWith('tel:')) {
+          // Open external links and PDF files properly
+          if (url.startsWith('mailto:') || url.startsWith('tel:') || url.toLowerCase().endsWith('.pdf')) {
             launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
             return NavigationDecision.prevent;
           }
@@ -121,23 +121,54 @@ class _WebViewScreenState extends State<WebViewScreen> {
         // Mark as Flutter WebView
         window.__isFlutterApp = true;
 
-        // Force window.open to redirect in the same tab instead of failing to open a new tab
+        // Handle Blob URLs (like generated PDFs) to prevent white screens
+        function downloadBlob(blobUrl) {
+          if (!window.FlutterDownload) return false;
+          fetch(blobUrl)
+            .then(function(res) { return res.blob(); })
+            .then(function(blob) {
+               var reader = new FileReader();
+               reader.onload = function() {
+                  var b64 = reader.result.split(',')[1];
+                  window.FlutterDownload.postMessage(JSON.stringify({
+                    data: b64,
+                    fileName: "Mock_Test_Result.pdf"
+                  }));
+               };
+               reader.readAsDataURL(blob);
+            });
+          return true;
+        }
+
+        // Force window.open to redirect in the same tab or download if it's a blob
         window.open = function(url, target, features) {
           if (url) {
-            window.location.href = url;
+            if (url.startsWith('blob:')) {
+               downloadBlob(url);
+            } else {
+               window.location.href = url;
+            }
           }
-          return null;
+          return window; // Prevent JS exceptions if site expects a window object back
         };
 
         // Intercept functions
         function applyFixes() {
-          // 1. Change target="_blank" to "_self" on all links
-          document.querySelectorAll('a[target="_blank"]').forEach(function(a) {
-            a.target = '_self';
-            a.removeAttribute('target');
+          document.querySelectorAll('a').forEach(function(a) {
+            // 1. Intercept blob links to prevent white screen navigation
+            if (a.href && a.href.startsWith('blob:') && !a.dataset.blobFixed) {
+              a.dataset.blobFixed = "1";
+              a.addEventListener('click', function(e) {
+                e.preventDefault();
+                downloadBlob(a.href);
+              });
+            }
+            // 2. Change target="_blank" to "_self" on normal links
+            else if (a.target === '_blank') {
+              a.target = '_self';
+              a.removeAttribute('target');
+            }
           });
-
-          // Removed Google Sign-In button interceptor to allow web auth flow
         }
 
         applyFixes();
