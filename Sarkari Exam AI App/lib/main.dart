@@ -576,7 +576,7 @@ class _LoginSheetState extends State<_LoginSheet> {
           const SizedBox(width: 12),
           Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text(
-              _isRegister ? 'Create Account' : 'Sign In',
+              _isRegister ? 'Create Account' : 'Login',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const Text('Sarkari Exam AI',
