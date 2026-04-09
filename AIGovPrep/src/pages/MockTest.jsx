@@ -222,9 +222,12 @@ export default function MockTest() {
                 </div>
               </section>
 
-              <div className="card" style={{ background: 'var(--bg-accent-green)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <div className="card" style={{ background: 'var(--bg-accent-green)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
                 <button className="btn btn-primary" onClick={() => { setShowResult(false); setQuestions([]); setAnswers({}); }}>
                   <RotateCcw size={18} style={{ marginRight: 8 }} /> {t('mockTest.retake')}
+                </button>
+                <button className="btn btn-outline" onClick={() => generateQuestionPdf(`Mock Test Result - ${exam}`, subject || 'All Subjects', questions, 'Mock_Test_Result.pdf')}>
+                  <Download size={18} style={{ marginRight: 8 }} /> Download PDF
                 </button>
               </div>
             </div>

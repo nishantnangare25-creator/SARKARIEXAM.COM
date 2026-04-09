@@ -283,7 +283,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               var store = tx.objectStore('firebaseLocalStorage');
               var authKey = 'firebase:authUser:${_fbApiKey}:[DEFAULT]';
               store.put({ fbase_key: authKey, value: $userJson });
-              tx.oncomplete = function() { window.location.href = '/dashboard'; };
+              tx.oncomplete = function() { window.location.href = '/#/dashboard'; };
             };
           } catch(err) {
             // Fallback: localStorage (Firebase v8 compat)
@@ -291,7 +291,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
               'firebase:authUser:${_fbApiKey}:[DEFAULT]',
               JSON.stringify($userJson)
             );
-            window.location.href = '/dashboard';
+            window.location.href = '/#/dashboard';
           }
         })();
       ''');
