@@ -77,7 +77,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
       // ── JS Channel: Trigger native Google/Login sheet ─────
       ..addJavaScriptChannel(
         'FlutterGoogleSignIn',
-        onMessageReceived: (_) => _showLoginSheet(),
+        onMessageReceived: (msg) {
+          bool isReg = msg.message == 'signup';
+          _showLoginSheet(isRegister: isReg);
+        },
       )
 
       ..setNavigationDelegate(NavigationDelegate(
@@ -163,7 +166,19 @@ class _WebViewScreenState extends State<WebViewScreen> {
                 downloadBlob(a.href);
               });
             }
-            // 2. Change target="_blank" to "_self" on normal links
+            // Intercept login/signup links to trigger Native Flutter Login sheet
+            else if (a.href && a.href.includes('/login') && !a.dataset.loginFixed) {
+              a.dataset.loginFixed = "1";
+              a.addEventListener('click', function(e) {
+                if (window.FlutterGoogleSignIn) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  var mode = a.href.includes('mode=signup') ? 'signup' : 'login';
+                  window.FlutterGoogleSignIn.postMessage(mode);
+                }
+              }, true);
+            }
+            // Change target="_blank" to "_self" on normal links
             else if (a.target === '_blank') {
               a.target = '_self';
               a.removeAttribute('target');
@@ -179,16 +194,17 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 
   // ── Show native Flutter Login bottom sheet ───────────────────
-  void _showLoginSheet() {
+  void _showLoginSheet({bool isRegister = false}) {
     if (!mounted) return;
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (_) => _LoginSheet(
-        onSubmit: (email, pw, isRegister) async {
+        initialIsRegister: isRegister,
+        onSubmit: (email, pw, isReg) async {
           Navigator.pop(context);
-          await _doWebLogin(email, pw, isRegister);
+          await _doWebLogin(email, pw, isReg);
         },
       ),
     );
@@ -527,9 +543,9 @@ class _ErrorView extends StatelessWidget {
 // (replaces the broken Google OAuth WebView flow)
 // ─────────────────────────────────────────────────────────────
 class _LoginSheet extends StatefulWidget {
-  final Future<void> Function(String email, String pw, bool isRegister)
-      onSubmit;
-  const _LoginSheet({required this.onSubmit});
+  final Future<void> Function(String email, String pw, bool isRegister) onSubmit;
+  final bool initialIsRegister;
+  const _LoginSheet({required this.onSubmit, this.initialIsRegister = false});
 
   @override
   State<_LoginSheet> createState() => _LoginSheetState();
@@ -540,8 +556,14 @@ class _LoginSheetState extends State<_LoginSheet> {
   final _pwCtrl = TextEditingController();
   bool _showPw = false;
   bool _loading = false;
-  bool _isRegister = false;
+  late bool _isRegister;
   String _error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _isRegister = widget.initialIsRegister;
+  }
 
   @override
   void dispose() {

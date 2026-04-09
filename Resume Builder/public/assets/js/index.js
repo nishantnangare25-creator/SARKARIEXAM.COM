@@ -1,259 +1,237 @@
-let loader = document.getElementById("loader");
-window.addEventListener("load", function () {
-    loader.style.display = "none";
-})
-console.log("Welcome To Swift Builder");
-if (window.screen.width > 630) {
-    //Add your javascript for large screens here 
-    let startBtn = document.getElementById("startBtn");
-    startBtn.addEventListener("click", function () {
-        console.log("You Just Clicked On Get Started Button");
-        let form = document.getElementById("box");
-        form.style.top = "410px";
-    })
-    let createProfile = document.getElementById("createProfile");
-    createProfile.addEventListener("click", function () {
-        console.log("You Just Clicked On Get Started Button");
-        let form = document.getElementById("box");
-        form.style.top = "410px";
-    })
+// ==========================================
+// CV CRAFT - MAIN JAVASCRIPT
+// ==========================================
 
-    let nextBtn1 = document.getElementById("nextBtn1");
-    nextBtn1.addEventListener("click", function () {
-        console.log("Now Fill Eduction Form");
-        let form1 = document.getElementById("form1");
-        form1.style.transform = "translateY(-600px)";
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-530px)";
-    });
+// Loader
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        document.getElementById('loader').classList.add('hidden');
+    }, 1600);
+});
 
-    let backBtn1 = document.getElementById("backBtn1");
-    backBtn1.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form1 = document.getElementById("form1");
-        form1.style.transform = "translateY(0px)";
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(0px)";
-    })
-    let nextBtn2 = document.getElementById("nextBtn2");
-    nextBtn2.addEventListener("click", function () {
-        console.log("Now Fill Skills Form");
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-1200px)";
-        let form3 = document.getElementById("form3");
-        form3.style.transform = "translateY(-1025px)";
-    });
-    let backBtn2 = document.getElementById("backBtn2");
-    backBtn2.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-520px)";
-        let form3 = document.getElementById("form3");
-        form3.style.transform = "translateY(-100px)";
-    })
-    let nextBtn3 = document.getElementById("nextBtn3");
-    nextBtn3.addEventListener("click", function () {
-        console.log("Now Fill Strenght & Hobbies Form");
-        let form2 = document.getElementById("form3");
-        form2.style.transform = "translateY(-1700px)";
-        let form3 = document.getElementById("form4");
-        form3.style.transform = "translateY(-1580px)";
-    });
-    let backBtn3 = document.getElementById("backBtn3");
-    backBtn3.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form2 = document.getElementById("form3");
-        form2.style.transform = "translateY(-1020px)";
-        let form3 = document.getElementById("form4");
-        form3.style.transform = "translateY(-100px)";
-    })
+// Rotating text in hero
+const words = ['Faster', 'Smarter', 'Easier', 'Beautifully'];
+let wordIdx = 0;
+const rotatingEl = document.getElementById('rotating-text');
+setInterval(() => {
+    wordIdx = (wordIdx + 1) % words.length;
+    rotatingEl.style.opacity = '0';
+    rotatingEl.style.transform = 'translateY(10px)';
+    setTimeout(() => {
+        rotatingEl.textContent = words[wordIdx];
+        rotatingEl.style.transition = 'all 0.5s ease';
+        rotatingEl.style.opacity = '1';
+        rotatingEl.style.transform = 'translateY(0)';
+    }, 300);
+}, 2500);
+
+// Scroll to builder
+function scrollToBuilder() {
+    document.getElementById('builder').scrollIntoView({ behavior: 'smooth' });
 }
-else if (window.screen.width >= 375) {
-    //   document.body.style.background = "#ff0099";
-    let startBtn = document.getElementById("startBtn");
-    startBtn.addEventListener("click", function () {
-        console.log("You Just Clicked On Get Started Button");
-        let form = document.getElementById("box");
-        form.style.top = "700px";
-    })
-    let createProfile = document.getElementById("createProfile");
-    createProfile.addEventListener("click", function () {
-        console.log("You Just Clicked On Get Started Button");
-        let form = document.getElementById("box");
-        form.style.top = "700px";
-    })
-
-    let nextBtn1 = document.getElementById("nextBtn1");
-    nextBtn1.addEventListener("click", function () {
-        console.log("Now Fill Eduction Form");
-        let form1 = document.getElementById("form1");
-        form1.style.transform = "translateY(-700px)";
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-580px)";
-    });
-
-    let backBtn1 = document.getElementById("backBtn1");
-    backBtn1.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form1 = document.getElementById("form1");
-        form1.style.transform = "translateY(0px)";
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(0px)";
-    })
-    let nextBtn2 = document.getElementById("nextBtn2");
-    nextBtn2.addEventListener("click", function () {
-        console.log("Now Fill Skills Form");
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-1300px)";
-        let form3 = document.getElementById("form3");
-        form3.style.transform = "translateY(-1155px)";
-    });
-    let backBtn2 = document.getElementById("backBtn2");
-    backBtn2.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-520px)";
-        let form3 = document.getElementById("form3");
-        form3.style.transform = "translateY(-100px)";
-    })
-    let nextBtn3 = document.getElementById("nextBtn3");
-    nextBtn3.addEventListener("click", function () {
-        console.log("Now Fill Strenght & Hobbies Form");
-        let form2 = document.getElementById("form3");
-        form2.style.transform = "translateY(-1900px)";
-        let form3 = document.getElementById("form4");
-        form3.style.transform = "translateY(-1800px)";
-    });
-    let backBtn3 = document.getElementById("backBtn3");
-    backBtn3.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form2 = document.getElementById("form3");
-        form2.style.transform = "translateY(-1020px)";
-        let form3 = document.getElementById("form4");
-        form3.style.transform = "translateY(-100px)";
-    })
-}
-else {
-    //Add your javascript for small screens here 
-    // document.body.style.background = "#181818";
-    let startBtn = document.getElementById("startBtn");
-    startBtn.addEventListener("click", function () {
-        console.log("You Just Clicked On Get Started Button");
-        let form = document.getElementById("box");
-        form.style.top = "350px";
-    })
-    let createProfile = document.getElementById("createProfile");
-    createProfile.addEventListener("click", function () {
-        console.log("You Just Clicked On Get Started Button");
-        let form = document.getElementById("box");
-        form.style.top = "350px";
-    })
-
-    let nextBtn1 = document.getElementById("nextBtn1");
-    nextBtn1.addEventListener("click", function () {
-        console.log("Now Fill Eduction Form");
-        let form1 = document.getElementById("form1");
-        form1.style.transform = "translateY(-700px)";
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-580px)";
-    });
-
-    let backBtn1 = document.getElementById("backBtn1");
-    backBtn1.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form1 = document.getElementById("form1");
-        form1.style.transform = "translateY(0px)";
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(0px)";
-    })
-    let nextBtn2 = document.getElementById("nextBtn2");
-    nextBtn2.addEventListener("click", function () {
-        console.log("Now Fill Skills Form");
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-1300px)";
-        let form3 = document.getElementById("form3");
-        form3.style.transform = "translateY(-1155px)";
-    });
-    let backBtn2 = document.getElementById("backBtn2");
-    backBtn2.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form2 = document.getElementById("form2");
-        form2.style.transform = "translateY(-520px)";
-        let form3 = document.getElementById("form3");
-        form3.style.transform = "translateY(-100px)";
-    })
-    let nextBtn3 = document.getElementById("nextBtn3");
-    nextBtn3.addEventListener("click", function () {
-        console.log("Now Fill Strenght & Hobbies Form");
-        let form2 = document.getElementById("form3");
-        form2.style.transform = "translateY(-1800px)";
-        let form3 = document.getElementById("form4");
-        form3.style.transform = "translateY(-1750px)";
-    });
-    let backBtn3 = document.getElementById("backBtn3");
-    backBtn3.addEventListener("click", function () {
-        console.log("Backed Form");
-        let form2 = document.getElementById("form3");
-        form2.style.transform = "translateY(-1020px)";
-        let form3 = document.getElementById("form4");
-        form3.style.transform = "translateY(-100px)";
-    })
+function scrollToPreview() {
+    document.getElementById('scrollPreview').scrollIntoView({ behavior: 'smooth' });
 }
 
+// ==========================================
+// STEP NAVIGATION
+// ==========================================
+let currentStep = 1;
 
-// Download CV Btn
-let cvBtn = document.getElementById("download");
-cvBtn.addEventListener("click", function () {
-    let myname = document.getElementById("myname").value;
-    localStorage.setItem("myname", myname);
-    myname.value = "";
-    let email = document.getElementById("email").value;
-    localStorage.setItem("email", email);
-    email.value = "";
-    let tel = document.getElementById("tel").value;
-    localStorage.setItem("tel", tel);
-    tel.value = "";
-    let profileText = document.getElementById("profileText").value;
-    localStorage.setItem("profileText", profileText);
-    profileText.value = "";
-    let degree = document.getElementById("degree").value;
-    localStorage.setItem("degree", degree);
-    degree.value = "";
-    let clgname = document.getElementById("clgname").value;
-    localStorage.setItem("clgname", clgname);
-    clgname.value = "";
-    let hsc = document.getElementById("hsc").value;
-    localStorage.setItem("hsc", hsc);
-    hsc.value = "";
-    let sclname = document.getElementById("sclname").value;
-    localStorage.setItem("sclname", sclname);
-    sclname.value = "";
-    let skills = document.getElementById("skills").value;
-    localStorage.setItem("skills", skills);
-    skills.value = "";
-    let projectTitle = document.getElementById("projectTitle").value;
-    localStorage.setItem("projectTitle", projectTitle);
-    projectTitle.value = "";
-    let projectInfo = document.getElementById("projectInfo").value;
-    localStorage.setItem("projectInfo", projectInfo);
-    projectInfo.value = "";
-    let projectURL = document.getElementById("projectURL").value;
-    localStorage.setItem("projectURL", projectURL);
-    projectURL.value = "";
-    let li1 = document.getElementById("li1").value;
-    localStorage.setItem("li1", li1);
-    li1.value = "";
-    let li2 = document.getElementById("li2").value;
-    localStorage.setItem("li2", li2);
-    li2.value = "";
-    let li3 = document.getElementById("li3").value;
-    localStorage.setItem("li3", li3);
-    li3.value = "";
-    let h1 = document.getElementById("h1").value;
-    localStorage.setItem("h1", h1);
-    h1.value = "";
-    let h2 = document.getElementById("h2").value;
-    localStorage.setItem("h2", h2);
-    h2.value = "";
-    return false;
-})
+function goToStep(step) {
+    // Hide current step
+    document.getElementById(`step${currentStep}`).classList.remove('active');
+    document.getElementById(`step-dot-${currentStep}`).classList.remove('active');
+    if (step > currentStep) {
+        document.getElementById(`step-dot-${currentStep}`).classList.add('done');
+    } else {
+        document.getElementById(`step-dot-${currentStep}`).classList.remove('done');
+    }
+
+    // Show new step
+    currentStep = step;
+    document.getElementById(`step${currentStep}`).classList.add('active');
+    document.getElementById(`step-dot-${currentStep}`).classList.add('active');
+
+    // Scroll to form panel
+    document.querySelector('.form-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ==========================================
+// LIVE PREVIEW UPDATES
+// ==========================================
+const fields = [
+    { input: 'myname',        preview: 'rv-name',          fallback: 'Your Name' },
+    { input: 'jobtitle',      preview: 'rv-title',         fallback: 'Job Title' },
+    { input: 'email',         preview: 'rv-email',         fallback: '<i class="uil uil-envelope"></i> email@example.com', icon: '📧 ' },
+    { input: 'tel',           preview: 'rv-tel',           fallback: '<i class="uil uil-phone"></i> 9876543210', icon: '📞 ' },
+    { input: 'location',      preview: 'rv-location',      fallback: '<i class="uil uil-map-marker"></i> Location', icon: '📍 ' },
+    { input: 'profileText',   preview: 'rv-profile',       fallback: 'Your professional summary will appear here...' },
+    { input: 'degree',        preview: 'rv-degree',        fallback: 'Degree Name' },
+    { input: 'clgname',       preview: 'rv-clgname',       fallback: 'College Name' },
+    { input: 'degreeyear',    preview: 'rv-degreeyear',    fallback: 'Year' },
+    { input: 'degreepercent', preview: 'rv-degreepercent', fallback: '' },
+    { input: 'hsc',           preview: 'rv-hsc',           fallback: '12th / HSC' },
+    { input: 'sclname',       preview: 'rv-sclname',       fallback: 'School Name' },
+    { input: 'hscyear',       preview: 'rv-hscyear',       fallback: '' },
+    { input: 'projectTitle',  preview: 'rv-projectTitle',  fallback: 'Project Title' },
+    { input: 'projectInfo',   preview: 'rv-projectInfo',   fallback: 'Project description...' },
+    { input: 'li1',           preview: 'rv-li1',           fallback: 'Strength 1' },
+    { input: 'li2',           preview: 'rv-li2',           fallback: 'Strength 2' },
+    { input: 'li3',           preview: 'rv-li3',           fallback: 'Strength 3' },
+    { input: 'achievements',  preview: 'rv-achievements',  fallback: '' },
+];
+
+fields.forEach(({ input, preview, fallback, icon }) => {
+    const el = document.getElementById(input);
+    const pv = document.getElementById(preview);
+    if (!el || !pv) return;
+
+    el.addEventListener('input', () => {
+        const val = el.value.trim();
+        if (input === 'email') {
+            pv.innerHTML = val
+                ? `<i class="uil uil-envelope"></i> ${val}`
+                : '<i class="uil uil-envelope"></i> email@example.com';
+        } else if (input === 'tel') {
+            pv.innerHTML = val
+                ? `<i class="uil uil-phone"></i> ${val}`
+                : '<i class="uil uil-phone"></i> 9876543210';
+        } else if (input === 'location') {
+            pv.innerHTML = val
+                ? `<i class="uil uil-map-marker"></i> ${val}`
+                : '<i class="uil uil-map-marker"></i> Location';
+        } else if (input === 'myname') {
+            pv.textContent = val || fallback;
+            // Update mini resume card too
+            document.getElementById('miniName').textContent = val || 'Your Name';
+        } else {
+            pv.textContent = val || fallback;
+        }
+    });
+});
+
+// Project URL live update
+document.getElementById('projectURL').addEventListener('input', function () {
+    const link = document.getElementById('rv-projectURL');
+    link.href = this.value || '#';
+    link.style.display = this.value ? 'flex' : 'none';
+});
+
+// Skills live update
+document.getElementById('skills').addEventListener('input', function () {
+    const wrap = document.getElementById('rv-skills');
+    const skills = this.value.split('|').map(s => s.trim()).filter(Boolean);
+    if (skills.length === 0) {
+        wrap.innerHTML = '<span class="rv-skill-tag">HTML</span><span class="rv-skill-tag">CSS</span>';
+        return;
+    }
+    wrap.innerHTML = skills.map(s => `<span class="rv-skill-tag">${s}</span>`).join('');
+});
+
+// Languages live update
+document.getElementById('languages').addEventListener('input', function () {
+    const wrap = document.getElementById('rv-languages');
+    const langs = this.value.split('|').map(l => l.trim()).filter(Boolean);
+    wrap.innerHTML = langs.map(l => `<span class="rv-lang-tag">${l}</span>`).join('');
+});
+
+// Hobbies live update
+['h1', 'h2'].forEach(id => {
+    document.getElementById(id).addEventListener('input', updateHobbies);
+});
+
+function updateHobbies() {
+    const h1 = document.getElementById('h1').value.trim();
+    const h2 = document.getElementById('h2').value.trim();
+    const wrap = document.getElementById('rv-hobbies');
+    const hobbies = [h1, h2].filter(Boolean);
+    wrap.innerHTML = hobbies.length
+        ? hobbies.map(h => `<span>${h}</span>`).join('')
+        : '<span>Reading</span><span>Coding</span>';
+}
+
+// LinkedIn field (no preview needed, but stored)
+// Photo upload
+function loadFile(event) {
+    const imgBox = document.getElementById('imgBox');
+    const file = event.target.files[0];
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    imgBox.style.background = `url(${url}) center/cover`;
+    document.getElementById('fileUpload').style.opacity = '0';
+}
+
+// ==========================================
+// DOWNLOAD PDF
+// ==========================================
+function downloadResume() {
+    saveToStorage();
+    const invoice = document.getElementById('invoice');
+
+    // Temporarily hide upload label for clean PDF
+    document.getElementById('fileUpload').style.display = 'none';
+
+    const name = document.getElementById('myname').value || 'Resume';
+
+    const opt = {
+        margin: 0.3,
+        filename: `${name}-Resume-CVCraft.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().from(invoice).set(opt).save().then(() => {
+        document.getElementById('fileUpload').style.display = 'flex';
+    });
+}
+
+// ==========================================
+// SAVE / RESTORE FROM LOCALSTORAGE
+// ==========================================
+function saveToStorage() {
+    const ids = ['myname', 'jobtitle', 'email', 'tel', 'location', 'linkedin',
+        'profileText', 'degree', 'clgname', 'degreeyear', 'degreepercent',
+        'hsc', 'sclname', 'hscyear', 'skills', 'languages',
+        'projectTitle', 'projectInfo', 'projectURL',
+        'li1', 'li2', 'li3', 'h1', 'h2', 'achievements'];
+    ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) localStorage.setItem('cv_' + id, el.value);
+    });
+}
+
+function restoreFromStorage() {
+    const ids = ['myname', 'jobtitle', 'email', 'tel', 'location', 'linkedin',
+        'profileText', 'degree', 'clgname', 'degreeyear', 'degreepercent',
+        'hsc', 'sclname', 'hscyear', 'skills', 'languages',
+        'projectTitle', 'projectInfo', 'projectURL',
+        'li1', 'li2', 'li3', 'h1', 'h2', 'achievements'];
+    ids.forEach(id => {
+        const val = localStorage.getItem('cv_' + id);
+        const el = document.getElementById(id);
+        if (el && val) {
+            el.value = val;
+            el.dispatchEvent(new Event('input'));
+        }
+    });
+}
+
+// Auto-save every 30 seconds
+setInterval(saveToStorage, 30000);
+
+// Restore on page load
+window.addEventListener('DOMContentLoaded', restoreFromStorage);
+
+// Navbar scroll effect
+window.addEventListener('scroll', () => {
+    const nav = document.getElementById('navbar');
+    if (window.scrollY > 50) {
+        nav.style.background = 'rgba(10,10,15,0.95)';
+    } else {
+        nav.style.background = 'rgba(10,10,15,0.8)';
+    }
+});
+
+console.log('🚀 CV Craft - Premium Resume Builder loaded!');

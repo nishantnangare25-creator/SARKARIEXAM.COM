@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { loginWithEmail, loginWithGoogle, loginWithGoogleRedirect, registerWithEmail } from '../services/firebase';
 import { Mail, Lock, Eye, EyeOff, Smartphone } from 'lucide-react';
@@ -11,7 +11,8 @@ export default function Login() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [isRegister, setIsRegister] = useState(false);
+  const [searchParams] = useSearchParams();
+  const [isRegister, setIsRegister] = useState(searchParams.get('mode') === 'signup');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);

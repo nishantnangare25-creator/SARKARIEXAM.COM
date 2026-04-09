@@ -108,7 +108,7 @@ export default function Navbar({ onToggleSidebar }) {
           ) : (
             <div className="auth-btns">
               <Link to="/login" className="btn btn-sm btn-outline btn-login">{t('nav.login')}</Link>
-              <Link to="/login" className="btn btn-sm btn-nav-dashboard btn-signup">
+              <Link to="/login?mode=signup" className="btn btn-sm btn-nav-dashboard btn-signup">
                 <span className="btn-text-full">{t('nav.signup')}</span>
                 <span className="btn-text-short">{t('nav.signup')}</span>
               </Link>
