@@ -73,6 +73,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
         onMessageReceived: (msg) => _handleDownload(msg.message),
       )
 
+      // ── JS Channel: Trigger native Google/Login sheet ─────
+      ..addJavaScriptChannel(
+        'FlutterGoogleSignIn',
+        onMessageReceived: (msg) {
+          bool isReg = msg.message == 'signup';
+          _showLoginSheet(isRegister: isReg);
+        },
+      )
+
       ..setNavigationDelegate(NavigationDelegate(
         onPageStarted: (_) => setState(() {
           _isLoading = true;
@@ -159,6 +168,18 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   downloadBlob(a.href);
                 });
               }
+              // Intercept login/signup links to trigger Native Flutter Login sheet
+              else if (a.href.includes('/login') && !a.dataset.loginFixed) {
+                a.dataset.loginFixed = "1";
+                a.addEventListener('click', function(e) {
+                  if (window.FlutterGoogleSignIn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var mode = a.href.includes('mode=signup') ? 'signup' : 'login';
+                    window.FlutterGoogleSignIn.postMessage(mode);
+                  }
+                }, true);
+              }
               // Change target="_blank" to "_self" on normal links
               else if (a.target === '_blank') {
                 a.target = '_self';
@@ -177,7 +198,127 @@ class _WebViewScreenState extends State<WebViewScreen> {
     ''');
   }
 
-  // Native Login Sheet has been removed to allow Google Sign In on the Website.
+  // ── Show native Flutter Login bottom sheet ───────────────────
+  void _showLoginSheet({bool isRegister = false}) {
+    if (!mounted) return;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (_) => _LoginSheet(
+        initialIsRegister: isRegister,
+        onGoogleLogin: () {
+          Navigator.pop(context);
+          // Trigger the web Google Sign In flow natively
+          _controller.loadRequest(Uri.parse('$_homeUrl/#/login'));
+          Future.delayed(const Duration(milliseconds: 1500), () {
+            _controller.runJavaScript("if (document.querySelector('.google-btn')) document.querySelector('.google-btn').click();");
+          });
+        },
+        onSubmit: (email, pw, isReg) async {
+          Navigator.pop(context);
+          await _doWebLogin(email, pw, isReg);
+        },
+      ),
+    );
+  }
+
+  // ── Authenticate via Firebase REST API then inject into WebView ─
+  Future<void> _doWebLogin(String email, String pw, bool isRegister) async {
+    _showSnack('Signing in…', loading: true);
+
+    try {
+      final endpoint = isRegister
+          ? 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=$_fbApiKey'
+          : 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=$_fbApiKey';
+
+      final res = await http.post(
+        Uri.parse(endpoint),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'email': email,
+          'password': pw,
+          'returnSecureToken': true,
+        }),
+      );
+
+      final data = json.decode(res.body);
+
+      if (data['error'] != null) {
+        final msg = data['error']['message'] ?? 'Login failed';
+        _showSnack(_friendlyError(msg));
+        return;
+      }
+
+      final idToken = data['idToken'];
+      final uid = data['localId'];
+      final userEmail = data['email'];
+      final displayName = data['displayName'] ?? userEmail.split('@')[0];
+      final refreshToken = data['refreshToken'];
+      final expiresIn = int.tryParse(data['expiresIn'].toString()) ?? 3600;
+      final expirationTime = DateTime.now()
+          .add(Duration(seconds: expiresIn))
+          .millisecondsSinceEpoch;
+
+      final userJson = json.encode({
+        "uid": uid,
+        "email": userEmail,
+        "emailVerified": false,
+        "displayName": displayName,
+        "isAnonymous": false,
+        "providerData": [
+          {"providerId": "password", "uid": userEmail, "email": userEmail}
+        ],
+        "stsTokenManager": {
+          "refreshToken": refreshToken,
+          "accessToken": idToken,
+          "expirationTime": expirationTime
+        },
+        "createdAt": "${DateTime.now().millisecondsSinceEpoch}",
+        "lastLoginAt": "${DateTime.now().millisecondsSinceEpoch}",
+        "apiKey": _fbApiKey,
+        "appName": "[DEFAULT]"
+      });
+
+      await _controller.runJavaScript('''
+        (function() {
+          try {
+            var req = indexedDB.open('firebaseLocalStorageDb', 1);
+            req.onupgradeneeded = function(e) {
+              e.target.result.createObjectStore('firebaseLocalStorage', { keyPath: 'fbase_key' });
+            };
+            req.onsuccess = function(e) {
+              var db = e.target.result;
+              var tx = db.transaction(['firebaseLocalStorage'], 'readwrite');
+              var store = tx.objectStore('firebaseLocalStorage');
+              var authKey = 'firebase:authUser:${_fbApiKey}:[DEFAULT]';
+              store.put({ fbase_key: authKey, value: $userJson });
+              tx.oncomplete = function() { window.location.href = '/#/dashboard'; };
+            };
+          } catch(err) {
+            localStorage.setItem(
+              'firebase:authUser:${_fbApiKey}:[DEFAULT]',
+              JSON.stringify($userJson)
+            );
+            window.location.href = '/#/dashboard';
+          }
+        })();
+      ''');
+    } catch (e) {
+      _showSnack('Error: ${e.toString()}');
+    }
+  }
+
+  String _friendlyError(String code) {
+    switch (code) {
+      case 'EMAIL_NOT_FOUND': return 'No account found with this email.';
+      case 'INVALID_PASSWORD': return 'Wrong password. Please try again.';
+      case 'EMAIL_EXISTS': return 'This email is already registered. Try logging in.';
+      case 'WEAK_PASSWORD : Password should be at least 6 characters': return 'Password must be at least 6 characters.';
+      case 'INVALID_LOGIN_CREDENTIALS': return 'Invalid email or password.';
+      default: return code.replaceAll('_', ' ');
+    }
+  }
 
   // ── PDF / File Download Handler ──────────────────────────────
   Future<void> _handleDownload(String message) async {
@@ -351,6 +492,240 @@ class _ErrorView extends StatelessWidget {
           ),
         ]),
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
+// Native Login Bottom Sheet
+// ─────────────────────────────────────────────────────────────
+class _LoginSheet extends StatefulWidget {
+  final Future<void> Function(String email, String pw, bool isRegister) onSubmit;
+  final VoidCallback onGoogleLogin;
+  final bool initialIsRegister;
+
+  const _LoginSheet({
+    required this.onSubmit,
+    required this.onGoogleLogin,
+    this.initialIsRegister = false,
+  });
+
+  @override
+  State<_LoginSheet> createState() => _LoginSheetState();
+}
+
+class _LoginSheetState extends State<_LoginSheet> {
+  final _emailCtrl = TextEditingController();
+  final _pwCtrl = TextEditingController();
+  bool _showPw = false;
+  bool _loading = false;
+  late bool _isRegister;
+  String _error = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _isRegister = widget.initialIsRegister;
+  }
+
+  @override
+  void dispose() {
+    _emailCtrl.dispose();
+    _pwCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit() async {
+    final email = _emailCtrl.text.trim();
+    final pw = _pwCtrl.text;
+    if (email.isEmpty || pw.isEmpty) {
+      setState(() => _error = 'Email and password are required.');
+      return;
+    }
+    setState(() {
+      _loading = true;
+      _error = '';
+    });
+    try {
+      await widget.onSubmit(email, pw, _isRegister);
+    } catch (e) {
+      if (mounted) setState(() => _error = e.toString());
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(
+        left: 24,
+        right: 24,
+        top: 20,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
+      ),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        // Drag handle
+        Center(
+          child: Container(
+            width: 40,
+            height: 4,
+            decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(2)),
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Header
+        Row(children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF2563EB).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.school_rounded,
+                color: Color(0xFF2563EB), size: 24),
+          ),
+          const SizedBox(width: 12),
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(
+              _isRegister ? 'Create Account' : 'Login',
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            const Text('Sarkari Exam AI',
+                style: TextStyle(color: Colors.grey, fontSize: 12)),
+          ]),
+          const Spacer(),
+          // Toggle login/register
+          TextButton(
+            onPressed: () => setState(() {
+              _isRegister = !_isRegister;
+              _error = '';
+            }),
+            child: Text(
+              _isRegister ? 'Login' : 'Sign up',
+              style: const TextStyle(
+                  color: Color(0xFF2563EB), fontWeight: FontWeight.w600),
+            ),
+          ),
+        ]),
+        const SizedBox(height: 12),
+
+        // ── GOOGLE LOGIN BUTTON ──
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: OutlinedButton.icon(
+            onPressed: widget.onGoogleLogin,
+            icon: const Icon(Icons.g_mobiledata_rounded, color: Colors.black, size: 36),
+            label: const Text(
+              'Sign in with Google',
+              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+            ),
+            style: OutlinedButton.styleFrom(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              side: BorderSide(color: Colors.grey[300]!, width: 1.5),
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+
+        Row(children: [
+          Expanded(child: Divider(color: Colors.grey[300])),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 10),
+            child: Text('OR', style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+          ),
+          Expanded(child: Divider(color: Colors.grey[300])),
+        ]),
+        const SizedBox(height: 16),
+
+        // Error
+        if (_error.isNotEmpty)
+          Container(
+            width: double.infinity,
+            margin: const EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.red[50],
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.red[200]!),
+            ),
+            child: Text(_error,
+                style: TextStyle(color: Colors.red[700], fontSize: 13)),
+          ),
+
+        // Email
+        TextField(
+          controller: _emailCtrl,
+          keyboardType: TextInputType.emailAddress,
+          textInputAction: TextInputAction.next,
+          decoration: InputDecoration(
+            labelText: 'Email',
+            prefixIcon: const Icon(Icons.email_outlined),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: Colors.grey[50],
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        // Password
+        TextField(
+          controller: _pwCtrl,
+          obscureText: !_showPw,
+          textInputAction: TextInputAction.done,
+          onSubmitted: (_) => _submit(),
+          decoration: InputDecoration(
+            labelText: 'Password',
+            prefixIcon: const Icon(Icons.lock_outline_rounded),
+            suffixIcon: IconButton(
+              icon: Icon(_showPw ? Icons.visibility_off : Icons.visibility),
+              onPressed: () => setState(() => _showPw = !_showPw),
+            ),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            filled: true,
+            fillColor: Colors.grey[50],
+          ),
+        ),
+        const SizedBox(height: 20),
+
+        // Submit button
+        SizedBox(
+          width: double.infinity,
+          height: 52,
+          child: ElevatedButton(
+            onPressed: _loading ? null : _submit,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2563EB),
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+              elevation: 0,
+            ),
+            child: _loading
+                ? const SizedBox(
+                    width: 22,
+                    height: 22,
+                    child: CircularProgressIndicator(
+                        color: Colors.white, strokeWidth: 2.5))
+                : Text(
+                    _isRegister ? 'Create Account' : 'Sign In',
+                    style: const TextStyle(
+                        fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+          ),
+        ),
+        const SizedBox(height: 10),
+      ]),
     );
   }
 }
