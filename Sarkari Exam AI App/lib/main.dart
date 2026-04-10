@@ -314,4 +314,43 @@ class _WebViewScreenState extends State<WebViewScreen> {
   }
 }
 
-// End of file
+// ─────────────────────────────────────────────────────────────
+// Error View Widget
+// ─────────────────────────────────────────────────────────────
+class _ErrorView extends StatelessWidget {
+  final VoidCallback onRetry;
+  const _ErrorView({required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.wifi_off_rounded, size: 72, color: Color(0xFFCBD5E1)),
+          const SizedBox(height: 20),
+          const Text('Connection Failed',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          const Text('Check your internet and try again.',
+              textAlign: TextAlign.center,
+              style: TextStyle(color: Colors.grey, fontSize: 14)),
+          const SizedBox(height: 28),
+          ElevatedButton.icon(
+            icon: const Icon(Icons.refresh_rounded),
+            label: const Text('Retry'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF2563EB),
+              foregroundColor: Colors.white,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 32, vertical: 14),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
+            ),
+            onPressed: onRetry,
+          ),
+        ]),
+      ),
+    );
+  }
+}
