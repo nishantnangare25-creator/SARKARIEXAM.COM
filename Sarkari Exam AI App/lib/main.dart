@@ -145,7 +145,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
         // Force window.open to redirect in the same tab or download if it's a blob
         window.open = function(url, target, features) {
-          if (url) {
+          if (url && typeof url === 'string') {
             if (url.startsWith('blob:')) {
                downloadBlob(url);
             } else {
@@ -157,33 +157,39 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
         // Intercept functions
         function applyFixes() {
-          document.querySelectorAll('a').forEach(function(a) {
-            // 1. Intercept blob links to prevent white screen navigation
-            if (a.href && a.href.startsWith('blob:') && !a.dataset.blobFixed) {
-              a.dataset.blobFixed = "1";
-              a.addEventListener('click', function(e) {
-                e.preventDefault();
-                downloadBlob(a.href);
-              });
-            }
-            // Intercept login/signup links to trigger Native Flutter Login sheet
-            else if (a.href && a.href.includes('/login') && !a.dataset.loginFixed) {
-              a.dataset.loginFixed = "1";
-              a.addEventListener('click', function(e) {
-                if (window.FlutterGoogleSignIn) {
+          try {
+            document.querySelectorAll('a').forEach(function(a) {
+              if (!a || !a.href || typeof a.href !== 'string') return;
+              
+              // 1. Intercept blob links to prevent white screen navigation
+              if (a.href.startsWith('blob:') && !a.dataset.blobFixed) {
+                a.dataset.blobFixed = "1";
+                a.addEventListener('click', function(e) {
                   e.preventDefault();
-                  e.stopPropagation();
-                  var mode = a.href.includes('mode=signup') ? 'signup' : 'login';
-                  window.FlutterGoogleSignIn.postMessage(mode);
-                }
-              }, true);
-            }
-            // Change target="_blank" to "_self" on normal links
-            else if (a.target === '_blank') {
-              a.target = '_self';
-              a.removeAttribute('target');
-            }
-          });
+                  downloadBlob(a.href);
+                });
+              }
+              // Intercept login/signup links to trigger Native Flutter Login sheet
+              else if (a.href.includes('/login') && !a.dataset.loginFixed) {
+                a.dataset.loginFixed = "1";
+                a.addEventListener('click', function(e) {
+                  if (window.FlutterGoogleSignIn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var mode = a.href.includes('mode=signup') ? 'signup' : 'login';
+                    window.FlutterGoogleSignIn.postMessage(mode);
+                  }
+                }, true);
+              }
+              // Change target="_blank" to "_self" on normal links
+              else if (a.target === '_blank') {
+                a.target = '_self';
+                a.removeAttribute('target');
+              }
+            });
+          } catch(err) {
+            console.error("Flutter bridge error:", err);
+          }
         }
 
         applyFixes();
