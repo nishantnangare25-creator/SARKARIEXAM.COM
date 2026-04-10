@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthChange, getUserProfile } from '../services/firebase';
+import { onAuthChange, getUserProfile, handleGoogleRedirectResult } from '../services/firebase';
 import i18n from '../i18n';
 
 const AuthContext = createContext(null);
@@ -10,6 +10,9 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Attempt to handle Google Redirect Sign-In (for Flutter WebViews)
+    handleGoogleRedirectResult().catch(err => console.error('Redirect handler error:', err));
+
     const unsubscribe = onAuthChange(async (firebaseUser) => {
       setUser(firebaseUser);
       if (firebaseUser) {
