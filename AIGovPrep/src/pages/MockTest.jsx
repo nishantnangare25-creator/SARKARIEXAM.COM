@@ -289,6 +289,24 @@ export default function MockTest() {
   }
 
   const q = questions[current];
+
+  if (!q && !loadingMore) {
+    return (
+      <main className="page-wrapper">
+        <div className="page-with-sidebar" style={{ textAlign: 'center', padding: '100px 20px' }}>
+          <div className="feature-icon red" style={{ margin: '0 auto 24px' }}>
+            <AlertCircle size={32} />
+          </div>
+          <h2>Data Not Available</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>The question could not be loaded or the test data is empty. Please restart.</p>
+          <button className="btn btn-primary" onClick={() => { setShowResult(false); setStarted(false); setQuestions([]); }}>
+            Go Back
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="page-wrapper" id="mock-test-active">
       <div className="page-with-sidebar">

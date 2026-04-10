@@ -312,7 +312,25 @@ export default function PYQSMockTest() {
 
   // ── ACTIVE TEST SCREEN ──
   const q = questions[current];
-  const progress = Math.round(((current + 1) / questions.length) * 100);
+
+  if (!q && !loadingMore) {
+    return (
+      <main className="page-wrapper">
+        <div className="page-with-sidebar" style={{ textAlign: 'center', padding: '100px 20px' }}>
+          <div className="feature-icon red" style={{ margin: '0 auto 24px' }}>
+            <AlertCircle size={32} />
+          </div>
+          <h2>Data Not Available</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: 24 }}>The question could not be loaded or the test data is empty. Please restart.</p>
+          <button className="btn btn-primary" onClick={() => { setShowResult(false); setStarted(false); setQuestions([]); }}>
+            Go Back
+          </button>
+        </div>
+      </main>
+    );
+  }
+
+  const progress = Math.round(((current + 1) / (questions.length || 1)) * 100);
 
   return (
     <main className="page-wrapper">
