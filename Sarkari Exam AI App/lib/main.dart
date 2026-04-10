@@ -101,8 +101,10 @@ class _WebViewScreenState extends State<WebViewScreen> {
           // 1. Allow internal website navigation
           if (url.startsWith(_homeUrl)) return NavigationDecision.navigate;
           
-          // 2. Allow Google Login OAuth
-          if (url.contains('accounts.google.com') || url.contains('google.com/o/oauth2')) {
+          // 2. Allow Google Login OAuth & Firebase Auth Redirects
+          if (url.contains('accounts.google.com') || 
+              url.contains('google.com/o/oauth2') || 
+              url.contains('firebaseapp.com')) {
             return NavigationDecision.navigate;
           }
 

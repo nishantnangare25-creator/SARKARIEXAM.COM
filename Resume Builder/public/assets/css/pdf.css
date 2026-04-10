@@ -1,0 +1,161 @@
+/* PDF Page Styles */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0f;
+    color: #e8e8f0;
+    min-height: 100vh;
+}
+
+#loader {
+    position: fixed; inset: 0;
+    background: #0a0a0f;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+#loader.hidden { opacity: 0; pointer-events: none; }
+
+.loader-content { text-align: center; }
+.loader-logo { font-size: 2.5rem; font-weight: 800; margin-bottom: 16px; }
+.loader-logo span { color: #6C63FF; }
+.loader-bar { width: 200px; height: 3px; background: #1a1a27; border-radius: 10px; overflow: hidden; margin: 0 auto 12px; }
+.loader-fill { height: 100%; width: 0; background: linear-gradient(90deg, #6C63FF, #43e97b); border-radius: 10px; animation: loadFill 1.2s ease forwards; }
+@keyframes loadFill { to { width: 100%; } }
+.loader-content p { color: #9898b0; font-size: 0.9rem; }
+
+.top-bar {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,10,15,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+}
+.top-logo { font-size: 1.3rem; font-weight: 800; }
+.top-logo span { color: #6C63FF; }
+.top-actions { display: flex; gap: 12px; }
+
+.btn-back-link {
+    padding: 9px 18px;
+    background: transparent; color: #9898b0;
+    border: 1px solid rgba(255,255,255,0.08); border-radius: 50px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    font-size: 0.875rem; text-decoration: none;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.3s ease;
+}
+.btn-back-link:hover { color: #e8e8f0; border-color: #e8e8f0; }
+
+.btn-dl {
+    padding: 9px 22px;
+    background: linear-gradient(135deg, #43e97b, #2fb86e);
+    color: #000; border: none; border-radius: 50px;
+    cursor: pointer; font-family: 'Inter', sans-serif;
+    font-size: 0.875rem; font-weight: 700;
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 20px rgba(67,233,123,0.3);
+}
+.btn-dl:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(67,233,123,0.4); }
+
+.note-bar {
+    background: rgba(108,99,255,0.1);
+    border: 1px solid rgba(108,99,255,0.2);
+    border-radius: 10px; margin: 20px 32px;
+    padding: 12px 20px;
+    font-size: 0.85rem; color: #9898b0;
+    display: flex; align-items: center; gap: 10px;
+}
+
+.pdf-wrapper {
+    display: flex; justify-content: center;
+    padding: 20px 32px 60px;
+}
+
+/* Resume sheet */
+#invoice {
+    width: 794px;
+    background: #ffffff;
+    color: #1a1a2e;
+    padding: 50px;
+    box-shadow: 0 20px 80px rgba(0,0,0,0.5);
+    border-radius: 4px;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.rv-header {
+    display: flex; gap: 24px; margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #6C63FF;
+}
+.rv-photo {
+    width: 90px; height: 90px; border-radius: 50%;
+    background: linear-gradient(135deg, #6C63FF22, #6C63FF44);
+    border: 3px solid #6C63FF;
+    overflow: hidden; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; position: relative;
+}
+#fileUpload {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; color: #6C63FF; font-size: 1.5rem;
+    background: rgba(108,99,255,0.1);
+    transition: opacity 0.3s;
+}
+#fileUpload:hover { background: rgba(108,99,255,0.2); }
+
+.rv-header-info h1 { font-size: 28px; font-weight: 800; color: #1a1a2e; margin-bottom: 4px; }
+.rv-subtitle { color: #6C63FF; font-weight: 500; font-size: 14px; margin-bottom: 10px; }
+.rv-contacts { display: flex; flex-wrap: wrap; gap: 14px; }
+.rv-contacts span { font-size: 12px; color: #555; display: flex; align-items: center; gap: 4px; }
+.rv-contacts i { color: #6C63FF; }
+
+.rv-section { margin-bottom: 18px; }
+.rv-section-title {
+    font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 2px;
+    color: #6C63FF; padding-bottom: 6px;
+    border-bottom: 1px solid #e0e0f0; margin-bottom: 10px;
+}
+.rv-section p { font-size: 13px; color: #444; }
+
+.rv-edu-item { margin-bottom: 10px; }
+.rv-edu-head { display: flex; justify-content: space-between; align-items: center; }
+.rv-edu-head strong { font-size: 13px; color: #1a1a2e; font-weight: 600; }
+.rv-year { font-size: 11px; color: #888; }
+.rv-edu-sub { font-size: 12px; color: #555; margin-top: 2px; }
+.rv-edu-grade { font-size: 11px; color: #6C63FF; margin-top: 2px; font-weight: 500; }
+
+.rv-skills-wrap, .rv-lang-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 6px; }
+.rv-skill-tag { padding: 3px 10px; background: #6C63FF15; color: #6C63FF; border: 1px solid #6C63FF33; border-radius: 50px; font-size: 11px; font-weight: 500; }
+.rv-lang-tag { padding: 3px 10px; background: #43e97b15; color: #2fb86e; border: 1px solid #43e97b33; border-radius: 50px; font-size: 11px; font-weight: 500; }
+
+.rv-project { background: #f8f8ff; border-left: 3px solid #6C63FF; padding: 10px 12px; border-radius: 0 6px 6px 0; }
+.rv-project-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.rv-project-head strong { font-size: 13px; color: #1a1a2e; font-weight: 600; }
+.rv-project-head a { font-size: 11px; color: #6C63FF; text-decoration: none; }
+.rv-project p { font-size: 12px; color: #555; }
+
+.rv-list { list-style: none; }
+.rv-list li { font-size: 13px; color: #444; padding: 2px 0 2px 16px; position: relative; }
+.rv-list li::before { content: '▸'; position: absolute; left: 0; color: #6C63FF; }
+
+.rv-hobbies-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+.rv-hobbies-wrap span { padding: 3px 12px; background: #f0f0f8; color: #555; border-radius: 50px; font-size: 12px; }
+
+.linkedin-row { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #555; margin-top: 6px; }
+.linkedin-row a { color: #6C63FF; text-decoration: none; }
+
+@media (max-width: 860px) {
+    .pdf-wrapper { padding: 12px; }
+    #invoice { width: 100%; padding: 30px 20px; }
+    .top-bar { padding: 12px 16px; }
+    .note-bar { margin: 12px 16px; }
+}
