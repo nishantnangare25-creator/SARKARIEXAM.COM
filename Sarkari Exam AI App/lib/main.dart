@@ -532,7 +532,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
     return PopScope(
       // PopScope replaces deprecated WillPopScope
       canPop: false,
-      onDidChangeMetrics: null,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final canGoBack = await _controller.canGoBack();
