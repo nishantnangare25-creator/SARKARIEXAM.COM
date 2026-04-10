@@ -43,12 +43,18 @@ class WebViewScreen extends StatefulWidget {
 
 class _WebViewScreenState extends State<WebViewScreen> {
   late final WebViewController _controller;
+
+  // Loading is only shown for the first page load (cold start)
   bool _isLoading = true;
   bool _hasError = false;
-  final String _currentVersion = "1.0.8";
-  final String _homeUrl = 'https://sarkariexamai.com';
 
-  // Firebase Web API key (same as in the website)
+  // Track whether the JS bridge has been injected for this page load
+  bool _bridgeInjected = false;
+
+  // Track URL to detect actual page changes vs. SPA hash navigation
+  String _currentUrl = '';
+
+  static const String _homeUrl = 'https://sarkariexamai.com';
   static const String _fbApiKey = 'AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc';
 
   @override
@@ -61,7 +67,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
   void _initWebView() {
     _controller = WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      // Standard Chrome Mobile UA — accepted by Google OAuth
       ..setUserAgent(
           'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 '
           '(KHTML, like Gecko) Chrome/120.0.6099.144 Mobile Safari/537.36')
@@ -73,7 +78,7 @@ class _WebViewScreenState extends State<WebViewScreen> {
         onMessageReceived: (msg) => _handleDownload(msg.message),
       )
 
-      // ── JS Channel: Trigger native Google/Login sheet ─────
+      // ── JS Channel: Trigger native Login sheet ─────────────
       ..addJavaScriptChannel(
         'FlutterGoogleSignIn',
         onMessageReceived: (msg) {
@@ -82,65 +87,125 @@ class _WebViewScreenState extends State<WebViewScreen> {
         },
       )
 
+      // ── JS Channel: Page ready signal from React app ───────
+      // React app can call window.FlutterPageReady.postMessage('ready')
+      // to signal the WebView that the SPA page has rendered
+      ..addJavaScriptChannel(
+        'FlutterPageReady',
+        onMessageReceived: (_) {
+          if (mounted && _isLoading) {
+            setState(() => _isLoading = false);
+          }
+        },
+      )
+
       ..setNavigationDelegate(NavigationDelegate(
-        onPageStarted: (_) => setState(() {
-          _isLoading = true;
-          _hasError = false;
-        }),
-        onPageFinished: (_) {
-          setState(() => _isLoading = false);
-          _injectBridge(); // inject JS bridge after page loads
+        onPageStarted: (url) {
+          // Only show loading on REAL page navigations (not SPA hash routing)
+          final isRealNavigation = _isRealPageChange(url);
+          if (isRealNavigation) {
+            _bridgeInjected = false; // reset bridge for new page
+            if (mounted) {
+              setState(() {
+                _isLoading = true;
+                _hasError = false;
+              });
+            }
+          }
+          _currentUrl = url;
         },
+
+        onPageFinished: (url) {
+          // Always attempt to inject bridge (it's idempotent via __flutterBridgeInjected flag)
+          _injectBridge();
+
+          // Hide loading spinner after page finishes
+          if (mounted && _isLoading) {
+            // Give React app 500ms to hydrate. If FlutterPageReady is not
+            // called by then, we hide the spinner anyway to avoid blank screen.
+            Future.delayed(const Duration(milliseconds: 500), () {
+              if (mounted && _isLoading) {
+                setState(() => _isLoading = false);
+              }
+            });
+          }
+        },
+
         onWebResourceError: (e) {
-          debugPrint('WebView error: ${e.description}');
-          if (e.isForMainFrame == true) setState(() => _hasError = true);
+          debugPrint('WebView resource error: ${e.description} (code: ${e.errorCode})');
+          // Only show error screen on main-frame failures (not sub-resource errors)
+          if (e.isForMainFrame == true) {
+            if (mounted) setState(() => _hasError = true);
+          }
         },
+
         onNavigationRequest: (req) {
           final url = req.url;
-          
-          // 1. Allow internal website navigation
+
+          // 1. Allow all internal site navigation (including hash routes like /#/dashboard)
           if (url.startsWith(_homeUrl)) return NavigationDecision.navigate;
-          
-          // 2. Allow Google Login OAuth & Firebase Auth Redirects
-          if (url.contains('accounts.google.com') || 
-              url.contains('google.com/o/oauth2') || 
-              url.contains('firebaseapp.com')) {
+
+          // 2. Allow about:blank, blob:, data: (used by React internally)
+          if (url.startsWith('about:') ||
+              url.startsWith('blob:') ||
+              url.startsWith('data:')) {
             return NavigationDecision.navigate;
           }
 
-          // 3. Allow internal/special schemes like about:blank or blobs
-          if (url.startsWith('about:') || url.startsWith('blob:') || url.startsWith('data:')) {
+          // 3. Allow Google OAuth & Firebase auth redirects
+          if (url.contains('accounts.google.com') ||
+              url.contains('google.com/o/oauth2') ||
+              url.contains('firebaseapp.com') ||
+              url.contains('googleapis.com')) {
             return NavigationDecision.navigate;
           }
-          
-          // 4. PREVENT WHITE SCREEN CRASHES:
-          // Everything else (tel, mailto, whatsapp, external sites, intents, PDFs)
-          // must open in an external application.
-          try {
-            launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-          } catch (e) {
-            debugPrint('Failed to launch external URL: $url');
-          }
-          
+
+          // 4. Everything else → open externally to prevent blank screen
+          _launchExternal(url);
           return NavigationDecision.prevent;
         },
       ))
       ..loadRequest(Uri.parse(_homeUrl));
   }
 
+  /// Returns true only when navigating to a genuinely different base URL
+  /// (not SPA hash changes like /#/dashboard → /#/mock-test)
+  bool _isRealPageChange(String newUrl) {
+    if (_currentUrl.isEmpty) return true;
+    try {
+      final current = Uri.parse(_currentUrl);
+      final next = Uri.parse(newUrl);
+      // Same origin + path => SPA navigation, not a real page load
+      return current.host != next.host || current.path != next.path;
+    } catch (_) {
+      return true;
+    }
+  }
+
+  void _launchExternal(String url) {
+    try {
+      launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    } catch (e) {
+      debugPrint('Failed to launch external URL: $url — $e');
+    }
+  }
+
   // ── Inject JS bridge so web page knows it's inside Flutter ──
   void _injectBridge() {
+    if (_bridgeInjected) return;
+    _bridgeInjected = true;
+
     _controller.runJavaScript(r'''
       (function () {
         if (window.__flutterBridgeInjected) return;
         window.__flutterBridgeInjected = true;
 
-        // Mark as Flutter WebView
+        // 1. Mark as Flutter WebView so the website can adapt
         window.__isFlutterApp = true;
 
-        // Handle Blob URLs (like generated PDFs) to prevent white screens
+        // 2. Handle Blob URLs (generated PDFs) — send as base64 to Flutter
         function downloadBlob(blobUrl) {
-          if (!window.FlutterDownload) return false;
+          if (!window.FlutterDownload) return;
           fetch(blobUrl)
             .then(function(res) { return res.blob(); })
             .then(function(blob) {
@@ -149,43 +214,58 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   var b64 = reader.result.split(',')[1];
                   window.FlutterDownload.postMessage(JSON.stringify({
                     data: b64,
-                    fileName: "Mock_Test_Result.pdf"
+                    fileName: 'Mock_Test_Result.pdf'
                   }));
                };
                reader.readAsDataURL(blob);
+            })
+            .catch(function(err) {
+               console.error('Blob download error:', err);
             });
-          return true;
         }
 
-        // Force window.open to redirect in the same tab or download if it's a blob
+        // 3. Override window.open — THE KEY FIX for blank second page
+        //    WebView cannot open a second window, so we redirect in the same tab.
+        var _originalOpen = window.open;
         window.open = function(url, target, features) {
           if (url && typeof url === 'string') {
             if (url.startsWith('blob:')) {
-               downloadBlob(url);
+              downloadBlob(url);
+            } else if (url.startsWith('http') || url.startsWith('/') || url.startsWith('#')) {
+              // Redirect in-app instead of opening a new window
+              window.location.href = url;
             } else {
-               window.location.href = url;
+              // Let Flutter handle truly external URLs
+              window.location.href = url;
             }
           }
-          return window; // Prevent JS exceptions if site expects a window object back
+          // Return a mock window object so calling code does not crash
+          return {
+            closed: false,
+            close: function() {},
+            focus: function() {},
+            document: { write: function() {}, close: function() {} }
+          };
         };
 
-        // Intercept functions
-        function applyFixes() {
+        // 4. Intercept <a target="_blank"> links and blob links
+        function applyLinkFixes() {
           try {
             document.querySelectorAll('a').forEach(function(a) {
               if (!a || !a.href || typeof a.href !== 'string') return;
-              
-              // 1. Intercept blob links to prevent white screen navigation
+
+              // Blob links → trigger download
               if (a.href.startsWith('blob:') && !a.dataset.blobFixed) {
-                a.dataset.blobFixed = "1";
+                a.dataset.blobFixed = '1';
                 a.addEventListener('click', function(e) {
                   e.preventDefault();
+                  e.stopPropagation();
                   downloadBlob(a.href);
                 });
               }
-              // Intercept login/signup links to trigger Native Flutter Login sheet
+              // Login/signup links → trigger native login sheet
               else if (a.href.includes('/login') && !a.dataset.loginFixed) {
-                a.dataset.loginFixed = "1";
+                a.dataset.loginFixed = '1';
                 a.addEventListener('click', function(e) {
                   if (window.FlutterGoogleSignIn) {
                     e.preventDefault();
@@ -195,20 +275,32 @@ class _WebViewScreenState extends State<WebViewScreen> {
                   }
                 }, true);
               }
-              // Change target="_blank" to "_self" on normal links
+              // Any _blank link → open in same tab
               else if (a.target === '_blank') {
                 a.target = '_self';
-                a.removeAttribute('target');
+                a.removeAttribute('rel');
               }
             });
           } catch(err) {
-            console.error("Flutter bridge error:", err);
+            console.error('Flutter bridge link fix error:', err);
           }
         }
 
-        applyFixes();
-        new MutationObserver(applyFixes)
-          .observe(document.body, { childList: true, subtree: true });
+        // Run on current DOM
+        applyLinkFixes();
+
+        // Watch for dynamically added elements (React renders)
+        var _observer = new MutationObserver(function() {
+          applyLinkFixes();
+        });
+        _observer.observe(document.body, { childList: true, subtree: true });
+
+        // 5. Signal Flutter that the app page is ready
+        if (window.FlutterPageReady) {
+          window.FlutterPageReady.postMessage('ready');
+        }
+
+        console.log('[FlutterBridge] Injected successfully');
       })();
     ''');
   }
@@ -224,10 +316,12 @@ class _WebViewScreenState extends State<WebViewScreen> {
         initialIsRegister: isRegister,
         onGoogleLogin: () {
           Navigator.pop(context);
-          // Trigger the web Google Sign In flow natively
           _controller.loadRequest(Uri.parse('$_homeUrl/#/login'));
           Future.delayed(const Duration(milliseconds: 1500), () {
-            _controller.runJavaScript("if (document.querySelector('.google-btn')) document.querySelector('.google-btn').click();");
+            if (mounted) {
+              _controller.runJavaScript(
+                  "document.querySelector('.google-btn')?.click();");
+            }
           });
         },
         onSubmit: (email, pw, isReg) async {
@@ -319,6 +413,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
           }
         })();
       ''');
+
+      _showSnack('✅ Signed in successfully!');
     } catch (e) {
       _showSnack('Error: ${e.toString()}');
     }
@@ -326,12 +422,18 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   String _friendlyError(String code) {
     switch (code) {
-      case 'EMAIL_NOT_FOUND': return 'No account found with this email.';
-      case 'INVALID_PASSWORD': return 'Wrong password. Please try again.';
-      case 'EMAIL_EXISTS': return 'This email is already registered. Try logging in.';
-      case 'WEAK_PASSWORD : Password should be at least 6 characters': return 'Password must be at least 6 characters.';
-      case 'INVALID_LOGIN_CREDENTIALS': return 'Invalid email or password.';
-      default: return code.replaceAll('_', ' ');
+      case 'EMAIL_NOT_FOUND':
+        return 'No account found with this email.';
+      case 'INVALID_PASSWORD':
+        return 'Wrong password. Please try again.';
+      case 'EMAIL_EXISTS':
+        return 'This email is already registered. Try logging in.';
+      case 'WEAK_PASSWORD : Password should be at least 6 characters':
+        return 'Password must be at least 6 characters.';
+      case 'INVALID_LOGIN_CREDENTIALS':
+        return 'Invalid email or password.';
+      default:
+        return code.replaceAll('_', ' ');
     }
   }
 
@@ -346,8 +448,6 @@ class _WebViewScreenState extends State<WebViewScreen> {
       File file;
 
       if (Platform.isAndroid) {
-        // Android 10+ (API 29+): scoped storage — no permission needed
-        // Android 9-: request legacy storage permission
         final sdkInt = await _androidSdkInt();
         if (sdkInt < 29) {
           final perm = await Permission.storage.request();
@@ -357,18 +457,15 @@ class _WebViewScreenState extends State<WebViewScreen> {
           }
         }
 
-        // Primary: user's Downloads folder
-        final downloadsPath = '/storage/emulated/0/Download';
+        const downloadsPath = '/storage/emulated/0/Download';
         final downloadsDir = Directory(downloadsPath);
         if (await downloadsDir.exists()) {
           file = File('$downloadsPath/$fileName');
         } else {
-          // Fallback: app external storage
           final extDir = await getExternalStorageDirectory();
           file = File('${extDir!.path}/$fileName');
         }
       } else {
-        // iOS: Documents folder
         final dir = await getApplicationDocumentsDirectory();
         file = File('${dir.path}/$fileName');
       }
@@ -398,16 +495,8 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   Future<int> _androidSdkInt() async {
     if (!Platform.isAndroid) return 0;
-    try {
-      // Use platform channel to get real SDK int if needed
-      // returning 29 is safe — assumes Android 10+ scoped storage
-      return 29;
-    } catch (_) {
-      return 29;
-    }
+    return 29; // Assume modern Android with scoped storage
   }
-
-  // Update Check has been removed as requested by the user.
 
   // ── Snackbar helper ──────────────────────────────────────────
   void _showSnack(String msg, {bool loading = false}) {
@@ -428,39 +517,73 @@ class _WebViewScreenState extends State<WebViewScreen> {
     ));
   }
 
-  // ── Back button ──────────────────────────────────────────────
+  // ── Back button handler ───────────────────────────────────────
   Future<bool> _handleBackPress() async {
     if (await _controller.canGoBack()) {
       await _controller.goBack();
-      return false;
+      return false; // Don't exit app
     }
-    return true;
+    return true; // Exit app
   }
 
   // ── Build ─────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _handleBackPress,
+    return PopScope(
+      // PopScope replaces deprecated WillPopScope
+      canPop: false,
+      onDidChangeMetrics: null,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
+        final canGoBack = await _controller.canGoBack();
+        if (canGoBack) {
+          await _controller.goBack();
+        } else {
+          // Allow app to exit if no history
+          if (context.mounted) Navigator.of(context).pop();
+        }
+      },
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
           child: Stack(children: [
-            // ── Error state with retry button ─────────────────
+            // ── Error state ───────────────────────────────────
             if (_hasError)
               _ErrorView(onRetry: () {
-                setState(() => _hasError = false);
+                setState(() {
+                  _hasError = false;
+                  _isLoading = true;
+                  _bridgeInjected = false;
+                });
                 _controller.loadRequest(Uri.parse(_homeUrl));
               })
             else
+              // WebView is always present (prevents blank on SPA nav)
               WebViewWidget(controller: _controller),
 
-            // ── Loading spinner ───────────────────────────────
+            // ── Loading overlay — only covers screen on first load ─
             if (_isLoading && !_hasError)
-              const Center(
-                child: CircularProgressIndicator(
-                  strokeWidth: 4,
-                  color: Color(0xFFF97316),
+              Container(
+                color: Colors.white,
+                child: const Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      CircularProgressIndicator(
+                        strokeWidth: 4,
+                        color: Color(0xFFF97316),
+                      ),
+                      SizedBox(height: 20),
+                      Text(
+                        'Loading Sarkari Exam AI…',
+                        style: TextStyle(
+                          color: Color(0xFF64748B),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
           ]),
@@ -632,19 +755,24 @@ class _LoginSheetState extends State<_LoginSheet> {
         ]),
         const SizedBox(height: 12),
 
-        // ── GOOGLE LOGIN BUTTON ──
+        // Google Login button
         SizedBox(
           width: double.infinity,
           height: 50,
           child: OutlinedButton.icon(
             onPressed: widget.onGoogleLogin,
-            icon: const Icon(Icons.g_mobiledata_rounded, color: Colors.black, size: 36),
+            icon: const Icon(Icons.g_mobiledata_rounded,
+                color: Colors.black, size: 36),
             label: const Text(
               'Sign in with Google',
-              style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w600),
+              style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600),
             ),
             style: OutlinedButton.styleFrom(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14)),
               side: BorderSide(color: Colors.grey[300]!, width: 1.5),
             ),
           ),
@@ -655,13 +783,17 @@ class _LoginSheetState extends State<_LoginSheet> {
           Expanded(child: Divider(color: Colors.grey[300])),
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Text('OR', style: TextStyle(color: Colors.grey, fontSize: 12, fontWeight: FontWeight.bold)),
+            child: Text('OR',
+                style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold)),
           ),
           Expanded(child: Divider(color: Colors.grey[300])),
         ]),
         const SizedBox(height: 16),
 
-        // Error
+        // Error message
         if (_error.isNotEmpty)
           Container(
             width: double.infinity,
