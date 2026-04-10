@@ -97,17 +97,30 @@ class _WebViewScreenState extends State<WebViewScreen> {
         },
         onNavigationRequest: (req) {
           final url = req.url;
-          // Open external links and PDF files properly
-          if (url.startsWith('mailto:') || url.startsWith('tel:') || url.toLowerCase().endsWith('.pdf')) {
-            launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-            return NavigationDecision.prevent;
-          }
-          // Allow Google OAuth to proceed natively in the WebView
-          if (url.contains('accounts.google.com') ||
-              url.contains('google.com/o/oauth2')) {
+          
+          // 1. Allow internal website navigation
+          if (url.startsWith(_homeUrl)) return NavigationDecision.navigate;
+          
+          // 2. Allow Google Login OAuth
+          if (url.contains('accounts.google.com') || url.contains('google.com/o/oauth2')) {
             return NavigationDecision.navigate;
           }
-          return NavigationDecision.navigate;
+
+          // 3. Allow internal/special schemes like about:blank or blobs
+          if (url.startsWith('about:') || url.startsWith('blob:') || url.startsWith('data:')) {
+            return NavigationDecision.navigate;
+          }
+          
+          // 4. PREVENT WHITE SCREEN CRASHES:
+          // Everything else (tel, mailto, whatsapp, external sites, intents, PDFs)
+          // must open in an external application.
+          try {
+            launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+          } catch (e) {
+            debugPrint('Failed to launch external URL: $url');
+          }
+          
+          return NavigationDecision.prevent;
         },
       ))
       ..loadRequest(Uri.parse(_homeUrl));
