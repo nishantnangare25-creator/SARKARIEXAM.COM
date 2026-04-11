@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation, Link, Navigate } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
@@ -29,6 +29,16 @@ import './index.css';
 
 function AppLayout({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
+
+  useEffect(() => {
+    // Signal Flutter that SPA route change is finished and UI is ready
+    if (window.FlutterPageReady) {
+      window.FlutterPageReady.postMessage('ready');
+    }
+    // Also scroll to top on route change
+    window.scrollTo(0, 0);
+  }, [location]);
+
   const isPublicPage = ['/', '/login', '/about', '/privacy'].includes(location.pathname);
   const isImmersivePage = ['/tutor'].includes(location.pathname);
   const showSidebar = !isPublicPage && !isImmersivePage;
