@@ -7,6 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,6 +60,11 @@ class _WebViewScreenState extends State<WebViewScreen>
 
   static const String _homeUrl = 'https://sarkariexamai.com';
   static const String _fbApiKey = 'AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc';
+
+  // Native Google Sign In — works even when WebView OAuth is blocked
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    scopes: ['email', 'profile'],
+  );
 
   @override
   void initState() {
@@ -386,13 +392,7 @@ class _WebViewScreenState extends State<WebViewScreen>
         initialIsRegister: isRegister,
         onGoogleLogin: () {
           Navigator.pop(context);
-          _controller.loadRequest(Uri.parse('$_homeUrl/#/login'));
-          Future.delayed(const Duration(milliseconds: 1500), () {
-            if (mounted) {
-              _controller.runJavaScript(
-                  "document.querySelector('.google-btn')?.click();");
-            }
-          });
+          _nativeGoogleSignIn();
         },
         onSubmit: (email, pw, isReg) async {
           Navigator.pop(context);
@@ -400,6 +400,124 @@ class _WebViewScreenState extends State<WebViewScreen>
         },
       ),
     );
+  }
+
+  // ── Native Google Sign In (bypasses WebView OAuth block) ────────
+  Future<void> _nativeGoogleSignIn() async {
+    _showSnack('Opening Google Sign In…', loading: true);
+    try {
+      // Sign out first to show account picker every time
+      await _googleSignIn.signOut();
+
+      final GoogleSignInAccount? account = await _googleSignIn.signIn();
+      if (account == null) {
+        _showSnack('Google Sign In cancelled.');
+        return;
+      }
+
+      final GoogleSignInAuthentication auth = await account.authentication;
+      final String? googleIdToken = auth.idToken;
+
+      if (googleIdToken == null) {
+        _showSnack('Could not get Google token. Please try again.');
+        return;
+      }
+
+      _showSnack('Signing in with Google…', loading: true);
+
+      // Exchange Google idToken for Firebase idToken via REST API
+      final res = await http.post(
+        Uri.parse(
+            'https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=$_fbApiKey'),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({
+          'postBody': 'id_token=$googleIdToken&providerId=google.com',
+          'requestUri': 'http://localhost',
+          'returnIdpCredential': true,
+          'returnSecureToken': true,
+        }),
+      );
+
+      final data = json.decode(res.body);
+
+      if (data['error'] != null) {
+        final msg = data['error']['message'] ?? 'Google login failed';
+        _showSnack('Error: $msg');
+        return;
+      }
+
+      // Build Firebase auth user object and inject into WebView
+      final idToken = data['idToken'] ?? '';
+      final uid = data['localId'] ?? '';
+      final userEmail = data['email'] ?? account.email;
+      final displayName = data['displayName'] ?? account.displayName ?? userEmail.split('@')[0];
+      final photoUrl = data['photoUrl'] ?? account.photoUrl ?? '';
+      final refreshToken = data['refreshToken'] ?? '';
+      final expiresIn = int.tryParse(data['expiresIn']?.toString() ?? '3600') ?? 3600;
+      final expirationTime = DateTime.now()
+          .add(Duration(seconds: expiresIn))
+          .millisecondsSinceEpoch;
+
+      final userJson = json.encode({
+        "uid": uid,
+        "email": userEmail,
+        "emailVerified": true,
+        "displayName": displayName,
+        "photoURL": photoUrl,
+        "isAnonymous": false,
+        "providerData": [
+          {
+            "providerId": "google.com",
+            "uid": uid,
+            "email": userEmail,
+            "displayName": displayName,
+            "photoURL": photoUrl
+          }
+        ],
+        "stsTokenManager": {
+          "refreshToken": refreshToken,
+          "accessToken": idToken,
+          "expirationTime": expirationTime
+        },
+        "createdAt": "${DateTime.now().millisecondsSinceEpoch}",
+        "lastLoginAt": "${DateTime.now().millisecondsSinceEpoch}",
+        "apiKey": _fbApiKey,
+        "appName": "[DEFAULT]"
+      });
+
+      // Inject Firebase auth session into the WebView
+      await _controller.runJavaScript('''
+        (function() {
+          try {
+            var req = indexedDB.open('firebaseLocalStorageDb', 1);
+            req.onupgradeneeded = function(e) {
+              e.target.result.createObjectStore('firebaseLocalStorage', { keyPath: 'fbase_key' });
+            };
+            req.onsuccess = function(e) {
+              var db = e.target.result;
+              var tx = db.transaction(['firebaseLocalStorage'], 'readwrite');
+              var store = tx.objectStore('firebaseLocalStorage');
+              var authKey = 'firebase:authUser:${_fbApiKey}:[DEFAULT]';
+              store.put({ fbase_key: authKey, value: $userJson });
+              tx.oncomplete = function() {
+                window.location.href = '/#/dashboard';
+              };
+            };
+          } catch(err) {
+            localStorage.setItem(
+              'firebase:authUser:${_fbApiKey}:[DEFAULT]',
+              JSON.stringify($userJson)
+            );
+            window.location.href = '/#/dashboard';
+          }
+        })();
+      ''');
+
+      _showSnack('✅ Signed in with Google successfully!');
+    } catch (e) {
+      debugPrint('Google Sign In error: $e');
+      _showSnack('Google Sign In failed: ${e.toString()}');
+    }
   }
 
   // ── Firebase REST login → inject auth into WebView ────────────
