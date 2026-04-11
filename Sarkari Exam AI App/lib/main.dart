@@ -105,32 +105,37 @@ class _WebViewScreenState extends State<WebViewScreen>
     debugPrint('[Resume] Checking WebView health...');
 
     // Give the WebView a moment to restore itself naturally
-    await Future.delayed(const Duration(milliseconds: 800));
+    await Future.delayed(const Duration(milliseconds: 1000));
 
     if (!mounted) return;
 
     try {
-      // Run a simple JS health check — if WebView is blank/dead,
-      // document.body will be null or document.title will be empty
+      // Run a JS health check — check both body existence AND React root content
       final result = await _controller.runJavaScriptReturningResult(
-        'document.body ? (document.body.children.length > 0 ? "ok" : "empty") : "dead"',
+        '''(function() {
+          if (!document.body) return "dead";
+          var root = document.getElementById("root") || document.getElementById("app");
+          if (!root) return (document.body.children.length > 0 ? "ok" : "empty");
+          return (root.children.length > 0 ? "ok" : "empty");
+        })()''',
       );
 
       final health = result.toString().replaceAll('"', '').trim();
-      debugPrint('[Resume] WebView health: $health');
+      debugPrint('[Resume] WebView health: $health | Last URL: $_lastGoodUrl');
 
       if (health == 'empty' || health == 'dead' || health == 'null') {
-        debugPrint('[Resume] WebView is blank — reloading last known URL: $_lastGoodUrl');
+        debugPrint('[Resume] WebView is blank — reloading: $_lastGoodUrl');
         _reloadWebView(_lastGoodUrl);
       } else {
-        // WebView is alive — just re-inject bridge in case it was lost
+        // WebView is alive — force bridge re-injection
         _bridgeInjected = false;
+        await Future.delayed(const Duration(milliseconds: 200));
         _injectBridge();
         debugPrint('[Resume] WebView alive — bridge re-injected');
       }
     } catch (e) {
       // If JS evaluation itself fails, WebView renderer is dead
-      debugPrint('[Resume] JS eval failed ($e) — reloading WebView');
+      debugPrint('[Resume] JS eval failed ($e) — reloading: $_lastGoodUrl');
       _reloadWebView(_lastGoodUrl);
     }
   }
@@ -180,10 +185,31 @@ class _WebViewScreenState extends State<WebViewScreen>
         },
       )
 
+      // ── KEY FIX: JS Channel for window.open / new page navigation ──
+      // When React calls window.open(url), JS bridge catches it
+      // and posts the URL here → we load it in the SAME WebView
+      ..addJavaScriptChannel(
+        'FlutterNavigation',
+        onMessageReceived: (msg) {
+          final url = msg.message.trim();
+          if (url.isEmpty) return;
+          debugPrint('[FlutterNavigation] Opening URL in WebView: $url');
+          if (url.startsWith('blob:')) {
+            // PDF blob — handled by download channel
+            return;
+          }
+          // Load the URL in the same WebView (no new tab)
+          _controller.loadRequest(Uri.parse(
+            url.startsWith('http') ? url : '$_homeUrl$url',
+          ));
+        },
+      )
+
       ..setNavigationDelegate(NavigationDelegate(
         onPageStarted: (url) {
           final isRealNavigation = _isRealPageChange(url);
           if (isRealNavigation) {
+            // Only show loading spinner for full page navigations, not SPA hash changes
             _bridgeInjected = false;
             if (mounted) {
               setState(() {
@@ -191,29 +217,38 @@ class _WebViewScreenState extends State<WebViewScreen>
                 _hasError = false;
               });
             }
+          } else {
+            // Hash-only SPA navigation: always re-inject bridge after React re-renders
+            _bridgeInjected = false;
           }
           _currentUrl = url;
 
-          // FIX: Always track the last known REAL URL (not blob/data/about)
-          if (url.startsWith(_homeUrl)) {
+          // Always track the last known REAL URL (not blob/data/about)
+          // Preserve fragment (#/dashboard etc.) for accurate restore
+          if (url.startsWith(_homeUrl) &&
+              !url.startsWith('blob:') &&
+              !url.startsWith('data:')) {
             _lastGoodUrl = url;
           }
         },
 
         onPageFinished: (url) {
+          // Always re-inject bridge after every page finish (hash nav included)
           _injectBridge();
 
           if (mounted && _isLoading) {
-            // Give React 600ms to hydrate before hiding spinner
-            Future.delayed(const Duration(milliseconds: 600), () {
+            // Give React 800ms to hydrate before hiding spinner
+            Future.delayed(const Duration(milliseconds: 800), () {
               if (mounted && _isLoading) {
                 setState(() => _isLoading = false);
               }
             });
           }
 
-          // Update last good URL on successful finish
-          if (url.startsWith(_homeUrl)) {
+          // Update last good URL on successful finish (with fragment)
+          if (url.startsWith(_homeUrl) &&
+              !url.startsWith('blob:') &&
+              !url.startsWith('data:')) {
             _lastGoodUrl = url;
           }
         },
@@ -255,13 +290,31 @@ class _WebViewScreenState extends State<WebViewScreen>
   }
 
   /// Returns true only for genuine cross-origin/path navigations,
-  /// NOT for SPA hash changes (#/dashboard → #/mock-test)
+  /// NOT for SPA hash changes (#/dashboard → #/mock-test).
+  /// Hash-only changes (same host + same path, different fragment) = false.
   bool _isRealPageChange(String newUrl) {
     if (_currentUrl.isEmpty) return true;
     try {
       final current = Uri.parse(_currentUrl);
       final next = Uri.parse(newUrl);
-      return current.host != next.host || current.path != next.path;
+
+      // Different host or scheme = always a real navigation
+      if (current.host != next.host || current.scheme != next.scheme) {
+        return true;
+      }
+
+      // Same host but different path = real navigation
+      // Same host + same path but different fragment = SPA hash change (NOT real)
+      if (current.path != next.path) return true;
+
+      // Same path: check if it's a fresh load (from blank/about:blank)
+      if (_currentUrl == '' ||
+          _currentUrl.startsWith('about:') ||
+          _currentUrl.startsWith('data:')) {
+        return true;
+      }
+
+      return false; // Hash-only change
     } catch (_) {
       return true;
     }
@@ -308,18 +361,28 @@ class _WebViewScreenState extends State<WebViewScreen>
         }
 
         // ── window.open fix — THE main cause of blank 2nd page ──
+        // Instead of window.location.href (which can race with React router),
+        // we POST the URL to Flutter via FlutterNavigation channel.
+        // Flutter then loads it in the SAME WebView — no blank tab, no white screen.
         window.open = function(url, target, features) {
           if (url && typeof url === 'string') {
             if (url.startsWith('blob:')) {
               downloadBlob(url);
+            } else if (window.FlutterNavigation) {
+              // Send URL to Flutter → loaded in same WebView
+              window.FlutterNavigation.postMessage(url);
             } else {
+              // Fallback: direct navigate
               window.location.href = url;
             }
           }
+          // Return a fake window object so React doesn't crash
           return {
             closed: false,
             close: function() {},
             focus: function() {},
+            blur: function() {},
+            location: { href: url || '' },
             document: { write: function() {}, close: function() {} }
           };
         };
@@ -347,9 +410,19 @@ class _WebViewScreenState extends State<WebViewScreen>
                     window.FlutterGoogleSignIn.postMessage(mode);
                   }
                 }, true);
-              } else if (a.target === '_blank') {
+              } else if (a.target === '_blank' && !a.dataset.blankFixed) {
+                // KEY FIX: Don't just change target — intercept click
+                // and route through FlutterNavigation for same-WebView loading
+                a.dataset.blankFixed = '1';
                 a.target = '_self';
                 a.removeAttribute('rel');
+                a.addEventListener('click', function(e) {
+                  if (a.href && !a.href.startsWith('blob:') && window.FlutterNavigation) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    window.FlutterNavigation.postMessage(a.href);
+                  }
+                });
               }
             });
           } catch(err) {
