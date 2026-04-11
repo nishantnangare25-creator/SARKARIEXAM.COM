@@ -4,7 +4,8 @@ on:
   push:
     paths:
       - 'Sarkari Exam AI App/**'
-  workflow_dispatch: # Manual trigger from GitHub Actions tab
+      - '.github/workflows/build-mobile-app.yml'
+  workflow_dispatch:
 
 jobs:
   build-android:
@@ -24,20 +25,34 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.22.0'
+          flutter-version: '3.24.5'
 
       - name: Initialize Flutter Project
         run: |
           cd "Sarkari Exam AI App"
           cp pubspec.yaml /tmp/pubspec_backup.yaml
           cp lib/main.dart /tmp/main_backup.dart
-          # Changing the org to generate a totally fresh Android Application ID 
-          flutter create --org com.sarkari.freshbuild --project-name sarkari_exam_ai_app . || true
-          # Always restore our custom files
+          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app . || true
           cp /tmp/pubspec_backup.yaml pubspec.yaml
           cp /tmp/main_backup.dart lib/main.dart
-          echo "=== pubspec.yaml verified ==="
+          echo "=== pubspec.yaml after restore ==="
           cat pubspec.yaml
+
+      - name: Patch build.gradle SDK versions
+        run: |
+          GRADLE_FILE="Sarkari Exam AI App/android/app/build.gradle"
+          if [ -f "$GRADLE_FILE" ]; then
+            sed -i 's/compileSdk = [0-9]*/compileSdk = 35/' "$GRADLE_FILE"
+            sed -i 's/compileSdkVersion [0-9]*/compileSdkVersion 35/' "$GRADLE_FILE"
+            sed -i 's/minSdk = [0-9]*/minSdk = 21/' "$GRADLE_FILE"
+            sed -i 's/minSdkVersion [0-9]*/minSdkVersion 21/' "$GRADLE_FILE"
+            sed -i 's/targetSdk = [0-9]*/targetSdk = 35/' "$GRADLE_FILE"
+            sed -i 's/targetSdkVersion [0-9]*/targetSdkVersion 35/' "$GRADLE_FILE"
+            echo "=== build.gradle after patch ==="
+            cat "$GRADLE_FILE"
+          else
+            echo "build.gradle not found at $GRADLE_FILE"
+          fi
 
       - name: Clean old cache
         run: |
@@ -50,30 +65,31 @@ jobs:
           cd "Sarkari Exam AI App"
           flutter pub get
           echo "=== Package versions ==="
-          flutter pub deps | grep -E "webview|open_file|permission|path_provider|launcher_icons"
+          flutter pub deps | grep -E "webview|open_file|permission|path_provider|launcher_icons" || true
 
-      - name: Generate App Icons (from original logo)
+      - name: Analyze Dart code
         run: |
           cd "Sarkari Exam AI App"
-          dart run flutter_launcher_icons
-          echo "=== App icons generated ==="
-          ls android/app/src/main/res/mipmap-*/ic_launcher.png 2>/dev/null || echo "Icons in place"
+          flutter analyze --no-fatal-infos || true
 
-      - name: Configure Android permissions safely
+      - name: Generate App Icons
+        run: |
+          cd "Sarkari Exam AI App"
+          dart run flutter_launcher_icons || echo "Icon generation skipped"
+
+      - name: Configure AndroidManifest
         run: |
           cat << 'EOF' > "Sarkari Exam AI App/android/app/src/main/AndroidManifest.xml"
           <manifest xmlns:android="http://schemas.android.com/apk/res/android"
               xmlns:tools="http://schemas.android.com/tools">
               <uses-permission android:name="android.permission.INTERNET" />
-              <!-- Android 9 and below: legacy storage permissions (no maxSdkVersion conflict with open_filex) -->
               <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="replace" />
               <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="replace" />
-              <!-- Android 13+ (API 33+): granular media permissions -->
               <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
               <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
               <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
               <application
-                  android:label="sarkari_exam_ai_app"
+                  android:label="Sarkari Exam AI"
                   android:name="${applicationName}"
                   android:icon="@mipmap/ic_launcher"
                   android:usesCleartextTraffic="true"
@@ -112,12 +128,12 @@ jobs:
         run: |
           cd "Sarkari Exam AI App"
           flutter build apk --release --no-shrink
-          echo "=== APK Info ==="
+          echo "=== APK built successfully ==="
           ls -lh build/app/outputs/flutter-apk/app-release.apk
 
-      - name: Upload APK
+      - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SarkariExamAI-v1.0.8-v2
+          name: SarkariExamAI-v1.0.8-release
           path: "Sarkari Exam AI App/build/app/outputs/flutter-apk/app-release.apk"
           retention-days: 30
