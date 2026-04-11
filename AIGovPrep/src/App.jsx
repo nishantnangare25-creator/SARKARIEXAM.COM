@@ -33,6 +33,7 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
   useEffect(() => {
     // Signal Flutter that SPA route change is finished and UI is ready
     if (window.FlutterPageReady) {
+      console.log('[SPA] Route changed, signaling ready:', location.pathname);
       window.FlutterPageReady.postMessage('ready');
     }
     // Also scroll to top on route change
@@ -79,6 +80,22 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
 
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    // --- GLOBAL ERROR REPORTING FOR FLUTTER ---
+    const handleError = (error) => {
+      const msg = error.message || 'Unknown JS Error';
+      console.error('[CRASH]', msg);
+      if (window.FlutterPageError) {
+        window.FlutterPageError.postMessage(msg);
+      }
+    };
+
+    window.onerror = (msg, url, line, col, error) => handleError(error || { message: msg });
+    window.onunhandledrejection = (event) => handleError(event.reason || { message: 'Promise rejection' });
+
+    console.log('[SPA] App mounted');
+  }, []);
 
   return (
     <Router>

@@ -300,6 +300,13 @@ class _WebViewScreenState extends State<WebViewScreen>
         onMessageReceived: (msg) => _handleDownload(msg.message),
       )
       ..addJavaScriptChannel(
+        'FlutterPageError',
+        onMessageReceived: (msg) {
+          debugPrint('[JS ERROR] ${msg.message}');
+          if (mounted) setState(() => _hasError = true);
+        },
+      )
+      ..addJavaScriptChannel(
         'FlutterGoogleSignIn',
         onMessageReceived: (msg) {
           bool isReg = msg.message == 'signup';
@@ -308,14 +315,21 @@ class _WebViewScreenState extends State<WebViewScreen>
       )
       ..addJavaScriptChannel(
         'FlutterPageReady',
-        onMessageReceived: (_) {
-          if (mounted && _isLoading) {
-            setState(() => _isLoading = false);
+        onMessageReceived: (msg) {
+          if (msg.message == 'ready') {
+            if (mounted && _isLoading) {
+              setState(() => _isLoading = false);
+            }
+          } else if (msg.message == 'timeout') {
+            // Only show timeout/white screen if we're STILL loading
+            if (mounted && _isLoading) {
+              // Instead of just hiding, we could show a 'Taking long' message
+              // For now, let's at least ensure we don't stay white forever
+              setState(() => _isLoading = false);
+            }
           }
         },
       )
-      // Safety timeout: Hide loading after 5s no matter what
-      ..runJavaScript('setTimeout(() => { if(window.FlutterPageReady) window.FlutterPageReady.postMessage("timeout"); }, 5000);')
 
       // ── THE FIX: window.open → popup overlay, NOT same WebView ──
       ..addJavaScriptChannel(
@@ -342,12 +356,19 @@ class _WebViewScreenState extends State<WebViewScreen>
               });
             }
           } else {
-            // Hash change in SPA: re-inject bridge immediately
-            // so window.open and other fixes are present.
+            // Hash change: re-inject bridge immediately
             _bridgeInjected = false;
             _injectBridge(_controller);
           }
           _currentUrl = url;
+
+          // START/RESET SAFETY TIMEOUT (15s)
+          _controller.runJavaScript('''
+            if (window.__loadingTimer) clearTimeout(window.__loadingTimer);
+            window.__loadingTimer = setTimeout(() => {
+              if (window.FlutterPageReady) window.FlutterPageReady.postMessage("timeout");
+            }, 15000);
+          ''');
 
           if (url.contains('sarkariexamai.com') &&
               !url.startsWith('blob:') &&
@@ -1090,15 +1111,23 @@ class _LoadingOverlay extends StatelessWidget {
           children: [
             CircularProgressIndicator(
               strokeWidth: 4,
-              color: Color(0xFFF97316),
+              color: Color(0xFF2563EB),
             ),
             SizedBox(height: 20),
             Text(
-              'Loading Sarkari Exam AI…',
+              'Initializing Smart Exam Engine…',
               style: TextStyle(
                 color: Color(0xFF64748B),
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Building your study session',
+              style: TextStyle(
+                color: Color(0xFF94A3B8),
+                fontSize: 11,
               ),
             ),
           ],
