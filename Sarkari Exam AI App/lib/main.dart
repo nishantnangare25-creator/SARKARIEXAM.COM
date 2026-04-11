@@ -175,7 +175,8 @@ class _WebViewScreenState extends State<WebViewScreen>
   // Build a WebViewController for popup WebView
   // ─────────────────────────────────────────────────────────────
   WebViewController _buildPopupController(String url) {
-    final ctrl = WebViewController()
+    final ctrl = WebViewController();
+    ctrl
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent(
           'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 '
@@ -286,7 +287,8 @@ class _WebViewScreenState extends State<WebViewScreen>
   // Main WebView initialization
   // ─────────────────────────────────────────────────────────────
   void _initWebView() {
-    _controller = WebViewController()
+    _controller = WebViewController();
+    _controller
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setUserAgent(
           'Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 '
