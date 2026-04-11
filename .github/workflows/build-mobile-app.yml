@@ -38,16 +38,6 @@ jobs:
           echo "=== pubspec.yaml after restore ==="
           cat pubspec.yaml
 
-      - name: Write google-services.json (from GitHub Secret)
-        run: |
-          if [ -n "${{ secrets.GOOGLE_SERVICES_JSON }}" ]; then
-            echo "${{ secrets.GOOGLE_SERVICES_JSON }}" | base64 -d > "Sarkari Exam AI App/android/app/google-services.json"
-            echo "=== google-services.json written successfully ==="
-          else
-            echo "WARNING: GOOGLE_SERVICES_JSON secret not set. Google Sign In will fail."
-            echo '{"project_info":{"project_number":"868025142353","project_id":"govai-7ee5b","storage_bucket":"govai-7ee5b.firebasestorage.app"},"client":[{"client_info":{"mobilesdk_app_id":"1:868025142353:android:9612754b6ba3d79e32fc70","android_client_info":{"package_name":"com.sarkariexamai.sarkari_exam_ai_app"}},"oauth_client":[],"api_key":[{"current_key":"AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc"}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > "Sarkari Exam AI App/android/app/google-services.json"
-          fi
-
       - name: Clean old cache
         run: |
           rm -rf /home/runner/.pub-cache/hosted/pub.dev/open_file_plus* || true
@@ -103,6 +93,17 @@ jobs:
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN"/>
                           <category android:name="android.intent.category.LAUNCHER"/>
+                      </intent-filter>
+                  </activity>
+                  <!-- OAuth callback activity for flutter_web_auth_2 Google Sign In -->
+                  <activity
+                      android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
+                      android:exported="true">
+                      <intent-filter android:label="flutter_web_auth_2">
+                          <action android:name="android.intent.action.VIEW"/>
+                          <category android:name="android.intent.category.DEFAULT"/>
+                          <category android:name="android.intent.category.BROWSABLE"/>
+                          <data android:scheme="com.sarkariexamai.app"/>
                       </intent-filter>
                   </activity>
                   <meta-data

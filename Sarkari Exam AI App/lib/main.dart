@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:google_sign_in/google_sign_in.dart';
+import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,10 +61,12 @@ class _WebViewScreenState extends State<WebViewScreen>
   static const String _homeUrl = 'https://sarkariexamai.com';
   static const String _fbApiKey = 'AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc';
 
-  // Native Google Sign In — works even when WebView OAuth is blocked
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: ['email', 'profile'],
-  );
+  // Google OAuth via Chrome Custom Tabs (no google-services.json needed)
+  // Uses Firebase project's Web Client ID
+  static const String _googleClientId =
+      '868025142353-web.apps.googleusercontent.com';
+  static const String _redirectScheme = 'com.sarkariexamai.app';
+  static const String _redirectUrl = 'com.sarkariexamai.app:/oauth2redirect';
 
   @override
   void initState() {
@@ -402,36 +404,46 @@ class _WebViewScreenState extends State<WebViewScreen>
     );
   }
 
-  // ── Native Google Sign In (bypasses WebView OAuth block) ────────
+  // ── Native Google Sign In via Chrome Custom Tabs ────────────────
+  // Uses OAuth 2.0 PKCE flow — no google-services.json / SHA-1 needed!
   Future<void> _nativeGoogleSignIn() async {
     _showSnack('Opening Google Sign In…', loading: true);
     try {
-      // Sign out first to show account picker every time
-      await _googleSignIn.signOut();
+      // Build the Google OAuth URL using the web client ID
+      final googleAuthUrl = Uri.https('accounts.google.com', '/o/oauth2/v2/auth', {
+        'client_id': _googleClientId,
+        'redirect_uri': _redirectUrl,
+        'response_type': 'token',
+        'scope': 'email profile openid',
+        'prompt': 'select_account',
+      });
 
-      final GoogleSignInAccount? account = await _googleSignIn.signIn();
-      if (account == null) {
-        _showSnack('Google Sign In cancelled.');
-        return;
-      }
+      // Open in Chrome Custom Tabs (not WebView — Google allows this)
+      final result = await FlutterWebAuth2.authenticate(
+        url: googleAuthUrl.toString(),
+        callbackUrlScheme: _redirectScheme,
+      );
 
-      final GoogleSignInAuthentication auth = await account.authentication;
-      final String? googleIdToken = auth.idToken;
+      // Extract access_token from the redirect URL fragment
+      final uri = Uri.parse(result);
+      final fragment = uri.fragment;
+      final params = Uri.splitQueryString(fragment);
+      final accessToken = params['access_token'];
 
-      if (googleIdToken == null) {
-        _showSnack('Could not get Google token. Please try again.');
+      if (accessToken == null || accessToken.isEmpty) {
+        _showSnack('Google Sign In failed: no token received.');
         return;
       }
 
       _showSnack('Signing in with Google…', loading: true);
 
-      // Exchange Google idToken for Firebase idToken via REST API
+      // Exchange Google access token for Firebase token via REST
       final res = await http.post(
         Uri.parse(
             'https://identitytoolkit.googleapis.com/v1/accounts:signInWithIdp?key=$_fbApiKey'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
-          'postBody': 'id_token=$googleIdToken&providerId=google.com',
+          'postBody': 'access_token=$accessToken&providerId=google.com',
           'requestUri': 'http://localhost',
           'returnIdpCredential': true,
           'returnSecureToken': true,
@@ -446,12 +458,11 @@ class _WebViewScreenState extends State<WebViewScreen>
         return;
       }
 
-      // Build Firebase auth user object and inject into WebView
       final idToken = data['idToken'] ?? '';
       final uid = data['localId'] ?? '';
-      final userEmail = data['email'] ?? account.email;
-      final displayName = data['displayName'] ?? account.displayName ?? userEmail.split('@')[0];
-      final photoUrl = data['photoUrl'] ?? account.photoUrl ?? '';
+      final userEmail = data['email'] ?? '';
+      final displayName = data['displayName'] ?? userEmail.split('@')[0];
+      final photoUrl = data['photoUrl'] ?? '';
       final refreshToken = data['refreshToken'] ?? '';
       final expiresIn = int.tryParse(data['expiresIn']?.toString() ?? '3600') ?? 3600;
       final expirationTime = DateTime.now()
@@ -485,7 +496,7 @@ class _WebViewScreenState extends State<WebViewScreen>
         "appName": "[DEFAULT]"
       });
 
-      // Inject Firebase auth session into the WebView
+      // Inject Firebase session into WebView
       await _controller.runJavaScript('''
         (function() {
           try {
@@ -515,8 +526,13 @@ class _WebViewScreenState extends State<WebViewScreen>
 
       _showSnack('✅ Signed in with Google successfully!');
     } catch (e) {
-      debugPrint('Google Sign In error: $e');
-      _showSnack('Google Sign In failed: ${e.toString()}');
+      final errStr = e.toString();
+      if (errStr.contains('CANCELED') || errStr.contains('canceled')) {
+        _showSnack('Google Sign In cancelled.');
+      } else {
+        debugPrint('Google Sign In error: $e');
+        _showSnack('Google Sign In failed. Please try again.');
+      }
     }
   }
 
