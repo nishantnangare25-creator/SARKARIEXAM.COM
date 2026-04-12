@@ -1,15 +1,15 @@
-name: Build Mobile App (Flutter)
+name: Build Native Android APK
 
 on:
   push:
     paths:
-      - 'Sarkari Exam AI App/**'
+      - 'SarkariExamNative/**'
       - '.github/workflows/build-mobile-app.yml'
   workflow_dispatch:
 
 jobs:
   build-android:
-    name: Build Android APK
+    name: Build Native Android APK
     runs-on: ubuntu-latest
 
     steps:
@@ -20,115 +20,17 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '17'
+          cache: 'gradle'
 
-      - name: Setup Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          flutter-version: '3.24.5'
-
-      - name: Initialize Flutter Project
+      - name: Build with Gradle
         run: |
-          cd "Sarkari Exam AI App"
-          cp pubspec.yaml /tmp/pubspec_backup.yaml
-          cp lib/main.dart /tmp/main_backup.dart
-          flutter create --org com.sarkariexamai --project-name sarkari_exam_ai_app . || true
-          cp /tmp/pubspec_backup.yaml pubspec.yaml
-          cp /tmp/main_backup.dart lib/main.dart
-          echo "=== pubspec.yaml after restore ==="
-          cat pubspec.yaml
-
-      - name: Clean old cache
-        run: |
-          rm -rf /home/runner/.pub-cache/hosted/pub.dev/open_file_plus* || true
-          cd "Sarkari Exam AI App"
-          flutter clean
-
-      - name: Install Dependencies
-        run: |
-          cd "Sarkari Exam AI App"
-          flutter pub get
-          echo "=== Package versions ==="
-          flutter pub deps | grep -E "webview|open_file|permission|path_provider|launcher_icons" || true
-
-      - name: Analyze Dart code
-        run: |
-          cd "Sarkari Exam AI App"
-          flutter analyze --no-fatal-infos || true
-
-      - name: Generate App Icons
-        run: |
-          cd "Sarkari Exam AI App"
-          dart run flutter_launcher_icons || echo "Icon generation skipped"
-
-      - name: Configure AndroidManifest
-        run: |
-          cat << 'EOF' > "Sarkari Exam AI App/android/app/src/main/AndroidManifest.xml"
-          <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools">
-              <uses-permission android:name="android.permission.INTERNET" />
-              <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="replace" />
-              <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="replace" />
-              <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-              <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
-              <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-              <application
-                  android:label="Sarkari Exam AI"
-                  android:name="${applicationName}"
-                  android:icon="@mipmap/ic_launcher"
-                  android:usesCleartextTraffic="true"
-                  android:requestLegacyExternalStorage="true">
-                  <activity
-                      android:name=".MainActivity"
-                      android:exported="true"
-                      android:launchMode="singleTop"
-                      android:theme="@style/LaunchTheme"
-                      android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
-                      android:hardwareAccelerated="true"
-                      android:windowSoftInputMode="adjustResize">
-                      <meta-data
-                        android:name="io.flutter.embedding.android.NormalTheme"
-                        android:resource="@style/NormalTheme"
-                        />
-                      <intent-filter>
-                          <action android:name="android.intent.action.MAIN"/>
-                          <category android:name="android.intent.category.LAUNCHER"/>
-                      </intent-filter>
-                  </activity>
-                  <!-- OAuth callback activity for flutter_web_auth_2 Google Sign In -->
-                  <activity
-                      android:name="com.linusu.flutter_web_auth_2.CallbackActivity"
-                      android:exported="true">
-                      <intent-filter android:label="flutter_web_auth_2">
-                          <action android:name="android.intent.action.VIEW"/>
-                          <category android:name="android.intent.category.DEFAULT"/>
-                          <category android:name="android.intent.category.BROWSABLE"/>
-                          <data android:scheme="com.sarkariexamai.app"/>
-                      </intent-filter>
-                  </activity>
-                  <meta-data
-                      android:name="flutterEmbedding"
-                      android:value="2" />
-              </application>
-              <queries>
-                  <intent>
-                      <action android:name="android.intent.action.PROCESS_TEXT"/>
-                      <data android:mimeType="text/plain"/>
-                  </intent>
-              </queries>
-          </manifest>
-          EOF
-
-      - name: Build Release APK
-        run: |
-          cd "Sarkari Exam AI App"
-          flutter build apk --release --no-shrink
-          echo "=== APK built successfully ==="
-          ls -lh build/app/outputs/flutter-apk/app-release.apk
+          cd SarkariExamNative
+          chmod +x gradlew
+          ./gradlew assembleRelease
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: SarkariExamAI-v1.0.8-release
-          path: "Sarkari Exam AI App/build/app/outputs/flutter-apk/app-release.apk"
+          name: SarkariExamNative-Release
+          path: SarkariExamNative/app/build/outputs/apk/release/app-release.apk
           retention-days: 30
