@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { 
-  Bot, Sparkles, Download, Send, 
+  Bot, Sparkles, Download, Send, Zap,
   MessageSquare, User, Info, Trash2, Languages, Loader2, FileText,
   ArrowLeft
 } from 'lucide-react';
@@ -14,7 +14,9 @@ import './InteractiveTutor.css';
 
 export default function InteractiveTutor() {
   const { t, i18n } = useTranslation();
-    const trialUsed = localStorage.getItem('sarkari_trial_used') === 'true';
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const trialUsed = localStorage.getItem('sarkari_trial_used') === 'true';
   const [messages, setMessages] = useState([]);
   const [currentInput, setCurrentInput] = useState('');
   const [loading, setLoading] = useState(false);
