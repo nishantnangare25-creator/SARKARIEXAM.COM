@@ -52,12 +52,12 @@ fun ForumScreen(
         Box(modifier = Modifier.fillMaxSize().background(Color(0xFFF8FAFC)).padding(paddingValues)) {
             Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 // Category Tabs
-                com.google.accompanist.flowlayout.FlowRow(
-                    mainAxisSpacing = 8.dp,
-                    crossAxisSpacing = 8.dp,
-                    modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp)
+                androidx.compose.foundation.lazy.LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    contentPadding = PaddingValues(bottom = 16.dp),
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    categories.forEach { (id, name) ->
+                    androidx.compose.foundation.lazy.items(categories) { (id, name) ->
                         val isSelected = viewModel.activeCategory.value == id
                         Surface(
                             modifier = Modifier.clickable { viewModel.activeCategory.value = id },

@@ -21,6 +21,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sarkari.exam.domain.Constants
 
@@ -163,7 +164,7 @@ fun Step3HoursLevelSelect(viewModel: OnboardingViewModel) {
                     border = androidx.compose.foundation.BorderStroke(1.dp, if (isSelected) Color(0xFF2563EB) else Color(0xFFE2E8F0)),
                     modifier = Modifier.clickable { viewModel.setLevel(lvl) }.weight(1f)
                 ) {
-                    Text(lvl.replaceFirstChar { it.uppercase() }, modifier = Modifier.padding(symmetric = 8.dp, vertical = 12.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center, fontSize = 12.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal, color = if (isSelected) Color(0xFF1D4ED8) else Color.Gray)
+                    Text(lvl.replaceFirstChar { it.uppercase() }, modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp), textAlign = androidx.compose.ui.text.style.TextAlign.Center, fontSize = 12.sp, fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal, color = if (isSelected) Color(0xFF1D4ED8) else Color.Gray)
                 }
             }
         }

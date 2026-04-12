@@ -60,12 +60,11 @@ fun CurrentAffairsScreen(
                 ) {
                     // Category Chips
                     item {
-                        com.google.accompanist.flowlayout.FlowRow(
-                            mainAxisSpacing = 8.dp,
-                            crossAxisSpacing = 8.dp,
+                        androidx.compose.foundation.lazy.LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            viewModel.categories.forEach { cat ->
+                            androidx.compose.foundation.lazy.items(viewModel.categories) { cat ->
                                 val isSelected = viewModel.selectedCategory.value == cat
                                 Surface(
                                     shape = RoundedCornerShape(16.dp),

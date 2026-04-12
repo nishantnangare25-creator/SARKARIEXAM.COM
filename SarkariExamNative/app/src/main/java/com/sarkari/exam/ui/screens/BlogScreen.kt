@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -14,14 +15,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import coil.compose.AsyncImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -54,8 +52,8 @@ fun BlogScreen(
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
                             singleLine = true
                         )
-                        com.google.accompanist.flowlayout.FlowRow(mainAxisSpacing = 8.dp, crossAxisSpacing = 8.dp) {
-                            viewModel.allTags.forEach { tag ->
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(bottom = 12.dp)) {
+                            items(viewModel.allTags) { tag ->
                                 val isSelected = viewModel.activeTag.value == tag
                                 Surface(
                                     modifier = Modifier.clickable { viewModel.activeTag.value = tag },
@@ -78,13 +76,13 @@ fun BlogScreen(
                         items(posts) { post ->
                             Surface(shape = RoundedCornerShape(12.dp), color = Color.White, shadowElevation = 2.dp, modifier = Modifier.fillMaxWidth().clickable { /* Navigate to Article Content */ }) {
                                 Column {
-                                    // Image
-                                    AsyncImage(
-                                        model = post.featuredImage,
-                                        contentDescription = post.title,
-                                        contentScale = ContentScale.Crop,
-                                        modifier = Modifier.fillMaxWidth().height(160.dp)
-                                    )
+                                    // Color header instead of image
+                                    Box(
+                                        modifier = Modifier.fillMaxWidth().height(140.dp).background(Color(0xFF2563EB)),
+                                        contentAlignment = Alignment.Center
+                                    ) {
+                                        Text(post.tags.firstOrNull() ?: "Article", color = Color.White, fontWeight = FontWeight.Bold)
+                                    }
                                     Column(modifier = Modifier.padding(16.dp)) {
                                         Text(post.title, fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B), modifier = Modifier.padding(bottom = 8.dp))
                                         Text(post.excerpt, fontSize = 14.sp, color = Color.Gray, modifier = Modifier.padding(bottom = 16.dp))
