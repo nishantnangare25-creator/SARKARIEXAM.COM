@@ -29,9 +29,23 @@ class MockTestViewModel : ViewModel() {
     private val _isStarted = mutableStateOf(false)
     val isStarted: State<Boolean> = _isStarted
 
+    private val _isFinished = mutableStateOf(false)
+    val isFinished: State<Boolean> = _isFinished
+
+    private val _score = mutableStateOf(0)
+    val score: State<Int> = _score
+
+    private val _selectedAnswer = mutableStateOf<String?>(null)
+    val selectedAnswer: State<String?> = _selectedAnswer
+
+    private val _showExplanation = mutableStateOf(false)
+    val showExplanation: State<Boolean> = _showExplanation
+
     fun startQuiz(exam: String, subject: String) {
         _isLoading.value = true
         _error.value = null
+        _isFinished.value = false
+        _score.value = 0
         
         viewModelScope.launch {
             try {
@@ -55,6 +69,8 @@ class MockTestViewModel : ViewModel() {
                         _questions.value = parsedQuestions
                         _currentQuestionIndex.value = 0
                         _isStarted.value = true
+                        _selectedAnswer.value = null
+                        _showExplanation.value = false
                     } else {
                         _error.value = "Failed to extract valid questions from AI."
                     }
@@ -69,16 +85,43 @@ class MockTestViewModel : ViewModel() {
         }
     }
 
+    fun submitAnswer(answer: String) {
+        if (_selectedAnswer.value != null || _questions.value.isEmpty()) return
+        
+        _selectedAnswer.value = answer
+        _showExplanation.value = true
+        
+        val currentQ = _questions.value[_currentQuestionIndex.value]
+        if (answer == currentQ.correctAnswer) {
+            _score.value += 1
+        }
+    }
+
+    fun nextQuestion() {
+        if (_currentQuestionIndex.value < _questions.value.size - 1) {
+            _currentQuestionIndex.value += 1
+            _selectedAnswer.value = null
+            _showExplanation.value = false
+        } else {
+            _isFinished.value = true
+        }
+    }
+
+    fun resetQuiz() {
+        _isStarted.value = false
+        _isFinished.value = false
+        _questions.value = emptyList()
+        _currentQuestionIndex.value = 0
+        _score.value = 0
+    }
+
     private fun parseRawJsonToQuestions(text: String): List<MockQuestion> {
         val resultList = mutableListOf<MockQuestion>()
         try {
             var rawJson = text
-            if (rawJson.contains("```json")) {
-                rawJson = rawJson.substringAfter("```json").substringBefore("```")
-            }
-            if (rawJson.contains("```")) {
-                rawJson = rawJson.replace("```", "")
-            }
+            if (rawJson.contains("```json")) rawJson = rawJson.substringAfter("```json").substringBefore("```")
+            else if (rawJson.contains("```")) rawJson = rawJson.replace("```", "")
+            
             val jsonObject = JSONObject(rawJson)
             val jsonArray = jsonObject.optJSONArray("questions")
             if (jsonArray != null) {
