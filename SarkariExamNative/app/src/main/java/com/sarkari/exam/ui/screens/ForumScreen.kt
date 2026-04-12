@@ -52,12 +52,11 @@ fun ForumScreen(
         Box(modifier = Modifier.fillMaxSize().background(Color(0xFFF8FAFC)).padding(paddingValues)) {
             Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
                 // Category Tabs
-                androidx.compose.foundation.lazy.LazyRow(
+                Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    contentPadding = PaddingValues(bottom = 16.dp),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().horizontalScroll(androidx.compose.foundation.rememberScrollState()).padding(bottom = 16.dp)
                 ) {
-                    androidx.compose.foundation.lazy.items(categories) { (id, name) ->
+                    categories.forEach { (id, name) ->
                         val isSelected = viewModel.activeCategory.value == id
                         Surface(
                             modifier = Modifier.clickable { viewModel.activeCategory.value = id },

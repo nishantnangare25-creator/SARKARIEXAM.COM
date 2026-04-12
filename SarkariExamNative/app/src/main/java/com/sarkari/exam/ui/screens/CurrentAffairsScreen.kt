@@ -60,11 +60,11 @@ fun CurrentAffairsScreen(
                 ) {
                     // Category Chips
                     item {
-                        androidx.compose.foundation.lazy.LazyRow(
+                        Row(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier.horizontalScroll(androidx.compose.foundation.rememberScrollState())
                         ) {
-                            androidx.compose.foundation.lazy.items(viewModel.categories) { cat ->
+                            viewModel.categories.forEach { cat ->
                                 val isSelected = viewModel.selectedCategory.value == cat
                                 Surface(
                                     shape = RoundedCornerShape(16.dp),

@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sarkari.exam.domain.Constants
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnboardingScreen(
     onFinish: () -> Unit,
@@ -171,6 +172,7 @@ fun Step3HoursLevelSelect(viewModel: OnboardingViewModel) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Step4SubjectSelect(viewModel: OnboardingViewModel) {
     val subjects = viewModel.getSubjectsForExam()

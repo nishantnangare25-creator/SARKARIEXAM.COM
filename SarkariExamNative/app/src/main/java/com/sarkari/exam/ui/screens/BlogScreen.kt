@@ -52,8 +52,11 @@ fun BlogScreen(
                             leadingIcon = { Icon(Icons.Default.Search, contentDescription = null, tint = Color.Gray) },
                             singleLine = true
                         )
-                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp), contentPadding = PaddingValues(bottom = 12.dp)) {
-                            items(viewModel.allTags) { tag ->
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier.horizontalScroll(androidx.compose.foundation.rememberScrollState()).padding(bottom = 12.dp)
+                        ) {
+                            viewModel.allTags.forEach { tag ->
                                 val isSelected = viewModel.activeTag.value == tag
                                 Surface(
                                     modifier = Modifier.clickable { viewModel.activeTag.value = tag },
