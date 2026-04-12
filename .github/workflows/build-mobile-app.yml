@@ -30,24 +30,6 @@ jobs:
       - name: Build with Gradle
         run: |
           cd SarkariExamNative
-          cat <<EOF > app/google-services.json
-          {
-            "project_info": {
-              "project_number": "1234567890",
-              "project_id": "dummy-project-id"
-            },
-            "client": [
-              {
-                "client_info": {
-                  "mobilesdk_app_id": "1:1234567890:android:fake123",
-                  "android_client_info": { "package_name": "com.sarkari.exam" }
-                },
-                "api_key": [ { "current_key": "dummy-api-key" } ]
-              }
-            ],
-            "configuration_version": "1"
-          }
-          EOF
           gradle assembleRelease
 
       - name: Upload APK Artifact
