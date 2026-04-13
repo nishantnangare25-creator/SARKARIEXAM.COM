@@ -1,16 +1,59 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
-import ReactMarkdown from 'react-markdown';
 import { 
   Bot, Sparkles, Download, Send, Zap,
-  MessageSquare, User, Info, Trash2, Languages, Loader2, FileText,
+  Info, Trash2, Languages, Loader2, FileText,
   ArrowLeft
 } from 'lucide-react';
 import { generateTutorLesson } from '../services/ai';
 import { useAuth } from '../contexts/AuthContext';
 import { generateNotesPdf } from '../utils/pdfGenerator';
 import './InteractiveTutor.css';
+
+// Safe markdown renderer — if ReactMarkdown fails, falls back to plain text
+function SafeMarkdown({ children }) {
+  const [MarkdownComp, setMarkdownComp] = React.useState(null);
+  React.useEffect(() => {
+    import('react-markdown')
+      .then(mod => setMarkdownComp(() => mod.default))
+      .catch(() => setMarkdownComp(null));
+  }, []);
+  if (!MarkdownComp) return <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{children}</div>;
+  try {
+    return <MarkdownComp>{children || ''}</MarkdownComp>;
+  } catch {
+    return <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{children}</div>;
+  }
+}
+
+// Local ErrorBoundary specifically for this page
+class TutorErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, errorMsg: '' };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, errorMsg: error?.message || 'Unknown error' };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '80vh', gap: 16, padding: 24, textAlign: 'center' }}>
+          <Bot size={48} style={{ color: '#1A56DB', opacity: 0.4 }} />
+          <h2 style={{ color: '#111827' }}>Riya AI — Loading Error</h2>
+          <p style={{ color: '#6B7280', maxWidth: 400 }}>Something went wrong loading the tutor. Please tap below to retry.</p>
+          <p style={{ fontSize: '0.75rem', color: '#9CA3AF', maxWidth: 400 }}>{this.state.errorMsg}</p>
+          <button
+            onClick={() => { this.setState({ hasError: false }); window.location.reload(); }}
+            style={{ padding: '10px 24px', background: '#1A56DB', color: 'white', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 600 }}
+          >Retry</button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
 
 export default function InteractiveTutor() {
   const { t, i18n } = useTranslation();
@@ -26,10 +69,15 @@ export default function InteractiveTutor() {
   // Auto-scroll to bottom
   useEffect(() => {
     if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
+      try {
+        scrollRef.current.scrollTo({
+          top: scrollRef.current.scrollHeight,
+          behavior: 'smooth'
+        });
+      } catch (e) {
+        // Fallback for older browsers/webviews that don't support scrollTo options
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+      }
     }
   }, [messages, loading]);
 
@@ -147,6 +195,7 @@ export default function InteractiveTutor() {
   };
 
   return (
+    <TutorErrorBoundary>
     <main className="page-wrapper tutor-page-wrapper">
       {/* Immersive Layout */}
       <div className="page-with-sidebar riya-tutor-container">
@@ -165,7 +214,7 @@ export default function InteractiveTutor() {
               </span>
               <span className="riya-lang-badge">
                 <Languages size={10} />
-                {i18n.language.toUpperCase()}
+                {(i18n.language || 'en').toUpperCase()}
               </span>
             </div>
           </div>
@@ -249,7 +298,7 @@ export default function InteractiveTutor() {
                 <div className="chat-bubble">
                   {msg.role === 'assistant' ? (
                     <div className="text-answer-card" style={{ fontSize: 'inherit' }}>
-                      <ReactMarkdown>{msg.content || ''}</ReactMarkdown>
+                      <SafeMarkdown>{msg.content || ''}</SafeMarkdown>
                     </div>
                   ) : (
                     <div>{msg.content}</div>
@@ -332,5 +381,7 @@ export default function InteractiveTutor() {
         </div>
       </div>
     </main>
+    </TutorErrorBoundary>
   );
 }
+
