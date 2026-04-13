@@ -249,7 +249,7 @@ export default function InteractiveTutor() {
                 <div className="chat-bubble">
                   {msg.role === 'assistant' ? (
                     <div className="text-answer-card" style={{ fontSize: 'inherit' }}>
-                      <ReactMarkdown>{msg.content}</ReactMarkdown>
+                      <ReactMarkdown>{msg.content || ''}</ReactMarkdown>
                     </div>
                   ) : (
                     <div>{msg.content}</div>

@@ -156,7 +156,7 @@ export default function PastPaperAnalyzer() {
             </div>
             <section className="card" style={{ marginBottom: 24 }}>
               <div id="analysis-content" className="text-answer-card">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis || ''}</ReactMarkdown>
               </div>
             </section>
           </div>

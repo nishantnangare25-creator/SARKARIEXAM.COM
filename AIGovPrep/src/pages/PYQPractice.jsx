@@ -297,7 +297,7 @@ export default function PYQPractice() {
                 <BookOpen size={18} className="text-primary"/> AI Explanation:
               </h4>
               <div style={{ lineHeight: 1.6, color: 'var(--text-primary)', margin: 0 }}>
-                <ReactMarkdown>{currentQ.explanation}</ReactMarkdown>
+                <ReactMarkdown>{currentQ.explanation || ''}</ReactMarkdown>
               </div>
             </div>
           )}

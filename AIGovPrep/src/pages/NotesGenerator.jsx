@@ -128,7 +128,7 @@ export default function NotesGenerator() {
               </div>
             </div>
             <div id="notes-content" className="card" style={{ lineHeight: 1.8 }}>
-              <ReactMarkdown>{notes}</ReactMarkdown>
+              <ReactMarkdown>{notes || ''}</ReactMarkdown>
             </div>
           </div>
         )}

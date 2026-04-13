@@ -274,7 +274,7 @@ export default function MockTest() {
                           <Sparkles size={14} /> AI EXPLANATION
                         </div>
                         <div style={{ fontSize: '0.9rem', lineHeight: 1.6 }}>
-                          {q.explanation}
+                          <ReactMarkdown>{q.explanation || ''}</ReactMarkdown>
                         </div>
                       </div>
                     )}

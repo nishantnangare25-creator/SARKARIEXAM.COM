@@ -236,7 +236,7 @@ export default function Analytics() {
               <div className="animate-fadeInUp">
                 <section className="card" style={{ border: '2px solid var(--primary-light)' }}>
                   <div className="text-answer-card">
-                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis}</ReactMarkdown>
+                     <ReactMarkdown remarkPlugins={[remarkGfm]}>{analysis || ''}</ReactMarkdown>
                   </div>
                 </section>
               </div>

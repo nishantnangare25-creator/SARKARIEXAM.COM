@@ -294,7 +294,7 @@ export default function PYQSMockTest() {
                           <Sparkles size={14} /> AI EXPLANATION
                         </div>
                         <div className="text-answer-card" style={{ fontSize: '0.9rem' }}>
-                          <ReactMarkdown>{q.explanation}</ReactMarkdown>
+                          <ReactMarkdown>{q.explanation || ''}</ReactMarkdown>
                         </div>
                       </div>
                     )}

@@ -152,7 +152,7 @@ export default function StudyPlanner() {
             </div>
             <section className="card" style={{ marginBottom: 24 }}>
               <div id="plan-content" className="text-answer-card">
-                <ReactMarkdown remarkPlugins={[remarkGfm]}>{plan}</ReactMarkdown>
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{plan || ''}</ReactMarkdown>
               </div>
             </section>
           </div>
