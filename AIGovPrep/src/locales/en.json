@@ -321,11 +321,32 @@
     "suggestions": [
       "Explain UPSC Syllabus",
       "What are Ashok's Edicts?",
-      "2024 Current Affairs"
+      "2024 Current Affairs",
+      "Indian Constitution basics"
     ],
     "generate": "Start Lesson",
     "generating": "Preparing your lesson...",
-    "yourLesson": "Your Lesson"
+    "yourLesson": "Your Lesson",
+    "welcome": {
+      "title": "Hi! I'm Riya, your AI Tutor 👋",
+      "subtitle": "Ask me anything about your exam preparation. I can explain concepts, solve doubts, and help you study smarter!"
+    },
+    "inputPlaceholder": "Ask Riya anything about your exam...",
+    "clearChatConfirm": "Are you sure you want to clear this chat?",
+    "thinking": "Riya is thinking...",
+    "footer": "Riya AI may make mistakes. Verify important facts from official sources.",
+    "role": {
+      "assistant": "Riya AI",
+      "user": "You"
+    },
+    "actions": {
+      "downloadPdf": "Download as PDF",
+      "downloadText": "Download as Text",
+      "clearChat": "Clear Chat"
+    },
+    "error": {
+      "downloadFailed": "Download failed. Please try again."
+    }
   },
   "onboarding": {
     "title": "Let's Personalize Your Experience",
@@ -361,7 +382,9 @@
     "select": "Select",
     "history": "History",
     "geography": "Geography",
-    "polity": "Polity"
+    "polity": "Polity",
+    "online": "Online",
+    "send": "Send"
   },
   "footer": {
     "tagline": "India's Leading AI-Powered Exam Preparation Platform",
