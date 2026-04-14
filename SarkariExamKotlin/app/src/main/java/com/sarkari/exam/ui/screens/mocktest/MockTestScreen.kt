@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sarkari.exam.domain.models.Question
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MockTestScreen(navController: NavController) {
     val dummyQuestion = Question(
