@@ -1,5 +1,6 @@
 package com.sarkari.exam.ui.screens.dashboard
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -10,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.sarkari.exam.R
 import com.sarkari.exam.ui.navigation.Screen
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -52,21 +55,34 @@ fun WelcomeSection() {
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = com.sarkari.exam.ui.theme.SurfaceWhite)
     ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = "Welcome back, Student!", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = com.sarkari.exam.ui.theme.TextPrimary)
-            Text(text = "Ready to conquer your exams today?", fontSize = 14.sp, color = com.sarkari.exam.ui.theme.TextSecondary)
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Image(
+                painter = painterResource(id = R.drawable.app_logo),
+                contentDescription = "App Logo",
+                modifier = Modifier.size(50.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(text = "Welcome back!", fontSize = 20.sp, fontWeight = FontWeight.Bold, color = com.sarkari.exam.ui.theme.TextPrimary)
+                Text(text = "Ready to conquer your exams?", fontSize = 14.sp, color = com.sarkari.exam.ui.theme.TextSecondary)
+            }
         }
     }
 }
 
 @Composable
 fun ActionGrid(navController: NavController) {
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        ActionCard("Mock Tests", Modifier.weight(1f)) {
-            navController.navigate(Screen.MockTest.route)
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            ActionCard("Mock Tests", Modifier.weight(1f)) {
+                navController.navigate(Screen.MockTest.route)
+            }
+            ActionCard("AI Tutor", Modifier.weight(1f)) {
+                navController.navigate(Screen.Tutor.route)
+            }
         }
-        ActionCard("AI Tutor", Modifier.weight(1f)) {
-            navController.navigate(Screen.Tutor.route)
+        ActionCard("Study Planner", Modifier.fillMaxWidth()) {
+            navController.navigate(Screen.StudyPlanner.route)
         }
     }
 }
