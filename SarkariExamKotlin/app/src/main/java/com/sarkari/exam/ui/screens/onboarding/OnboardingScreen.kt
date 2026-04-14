@@ -159,7 +159,7 @@ fun Step3PrepDetails() {
 @Composable
 fun Step4Finish(onFinish: () -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
-        Icon(Icons.Default.CheckCircle, contentDescription = null, size = 80.dp, tint = PrimaryBlue)
+        Icon(Icons.Default.CheckCircle, contentDescription = null, modifier = Modifier.size(80.dp), tint = PrimaryBlue)
         Spacer(modifier = Modifier.height(24.dp))
         Text("You're all set!", fontSize = 24.sp, fontWeight = FontWeight.Bold)
         Text("Your personalized dashboard is ready.", color = TextSecondary, modifier = Modifier.padding(top = 8.dp))
@@ -171,4 +171,4 @@ fun Step4Finish(onFinish: () -> Unit) {
     }
 }
 
-private fun Modifier.size(size: Int): Modifier = this.then(Modifier.size(size.dp))
+

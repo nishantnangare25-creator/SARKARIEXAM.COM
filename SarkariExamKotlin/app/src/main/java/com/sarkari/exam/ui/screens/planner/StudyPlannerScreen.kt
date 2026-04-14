@@ -99,7 +99,7 @@ fun StudyPlannerScreen(navController: NavController) {
                         enabled = !loading
                     ) {
                         if (loading) {
-                            CircularProgressIndicator(size = 18.dp, color = Color.White)
+                            CircularProgressIndicator(modifier = Modifier.size(18.dp), color = Color.White)
                         } else {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
