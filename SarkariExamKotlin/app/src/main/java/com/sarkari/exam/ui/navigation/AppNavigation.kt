@@ -17,10 +17,7 @@ sealed class Screen(val route: String) {
 
 @Composable
 fun AppNavigation(navController: NavHostController) {
-    NavHost(navController = navController, startDestination = Screen.Onboarding.route) {
-        composable(Screen.Onboarding.route) {
-            com.sarkari.exam.ui.screens.onboarding.OnboardingScreen(navController)
-        }
+    NavHost(navController = navController, startDestination = Screen.Dashboard.route) {
         composable(Screen.Dashboard.route) {
              com.sarkari.exam.ui.screens.dashboard.DashboardScreen(navController)
         }
@@ -30,12 +27,14 @@ fun AppNavigation(navController: NavHostController) {
         composable(Screen.Tutor.route) {
             com.sarkari.exam.ui.screens.tutor.InteractiveTutorScreen(navController)
         }
+        composable(Screen.Analytics.route) {
+            com.sarkari.exam.ui.screens.analytics.AnalyticsScreen(navController)
+        }
         composable(Screen.Login.route) {
             com.sarkari.exam.ui.screens.auth.LoginScreen(navController)
         }
         composable(Screen.StudyPlanner.route) {
             com.sarkari.exam.ui.screens.planner.StudyPlannerScreen(navController)
         }
-        // Additional routes mapped from React SPA
     }
 }

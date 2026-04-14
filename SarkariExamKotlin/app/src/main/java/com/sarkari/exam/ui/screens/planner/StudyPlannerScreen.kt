@@ -6,9 +6,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Book
-import androidx.compose.material.icons.filled.Timer
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,138 +15,161 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.sarkari.exam.ui.theme.BackgroundLight
-import com.sarkari.exam.ui.theme.PrimaryBlue
-import com.sarkari.exam.ui.theme.SecondaryOrange
-import com.sarkari.exam.ui.theme.SurfaceWhite
-import com.sarkari.exam.ui.theme.TextPrimary
-import com.sarkari.exam.ui.theme.TextSecondary
+import com.sarkari.exam.data.models.ChatMessage
+import com.sarkari.exam.data.repository.AiRepository
+import com.sarkari.exam.ui.theme.*
+import kotlinx.coroutines.launch
+
+class StudyPlannerViewModel : ViewModel() {
+    private val repository = AiRepository()
+    
+    var selectedExam by mutableStateOf("UPSC")
+    var selectedHours by mutableStateOf("4 hrs")
+    var selectedLevel by mutableStateOf("Beginner")
+    var isLoading by mutableStateOf(false)
+    var plan by mutableStateOf<String?>(null)
+
+    fun generatePlan(apiKey: String) {
+        isLoading = true
+        androidx.lifecycle.viewModelScope.launch {
+            val prompt = "Create a detailed study plan for $selectedExam exam preparation. Study hours: $selectedHours. Level: $selectedLevel. Provide a weekly breakdown."
+            val response = repository.getAiResponse(listOf(ChatMessage("user", prompt)), apiKey)
+            isLoading = false
+            plan = response
+        }
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudyPlannerScreen(navController: NavController) {
-    var selectedExam by remember { mutableStateOf("UPSC") }
-    var selectedHours by remember { mutableStateOf("4 hrs") }
-    var selectedLevel by remember { mutableStateOf("Beginner") }
-    var loading by remember { mutableStateOf(false) }
-    var plan by remember { mutableStateOf<String?>(null) }
-
+fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerViewModel = viewModel()) {
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                title = { Text("AI Study Planner", color = Color.White) },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = PrimaryBlue)
+            TopAppBar(
+                title = { Text("AI Study Planner", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    if (viewModel.plan != null) {
+                        IconButton(onClick = { /* PDF Download */ }) {
+                            Icon(Icons.Default.Download, contentDescription = "Download")
+                        }
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
     ) { paddingValues ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .background(BackgroundBody)
                 .padding(paddingValues)
-                .background(BackgroundLight)
                 .verticalScroll(rememberScrollState())
-                .padding(16.dp)
+                .padding(20.dp)
         ) {
-            Text(
-                text = "Personalized Roadmap",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
-                color = TextPrimary
-            )
-            Text(
-                text = "Let our AI create the perfect schedule for your exam preparation.",
-                fontSize = 14.sp,
-                color = TextSecondary,
-                modifier = Modifier.padding(top = 4.dp, bottom = 24.dp)
-            )
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Surface(color = PrimaryBlue.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp)) {
+                    Icon(Icons.Default.Book, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.padding(10.dp))
+                }
+                Column {
+                    Text("Personalized Roadmap", fontSize = 20.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("AI-generated schedule just for you", fontSize = 12.sp, color = TextSecondary)
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(24.dp))
 
-            // Selection Form
+            // Form Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(12.dp),
-                colors = CardDefaults.cardColors(containerColor = SurfaceWhite)
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
             ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    // Exam Dropdown (Simplified for prototype)
-                    Text("Target Exam", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                    DropdownPlaceholder(selectedExam) { selectedExam = it }
+                Column(modifier = Modifier.padding(24.dp)) {
+                    Text("Target Exam", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = viewModel.selectedExam,
+                        onValueChange = { viewModel.selectedExam = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = BorderColor)
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Study Hours per Day", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                    DropdownPlaceholder(selectedHours) { selectedHours = it }
+                    Text("Hours per Day", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = viewModel.selectedHours,
+                        onValueChange = { viewModel.selectedHours = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = BorderColor)
+                    )
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text("Current Level", fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                    DropdownPlaceholder(selectedLevel) { selectedLevel = it }
+                    Text("Current Level", fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = viewModel.selectedLevel,
+                        onValueChange = { viewModel.selectedLevel = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = BorderColor)
+                    )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = {
-                            loading = true
-                            // Simulate AI API call
-                            plan = "Day 1: Introduction to basics...\nDay 2: Mock Test and Review..."
-                            loading = false
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(8.dp),
+                        onClick = { viewModel.generatePlan("gsk_iLUpuE3ZfMSuA3U8pC1aWGdyb3FYpUvYQYf3x64T8C1Cq8N5C1C") }, // Demo key
+                        modifier = Modifier.fillMaxWidth().height(56.dp),
+                        shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
-                        enabled = !loading
+                        enabled = !viewModel.isLoading
                     ) {
-                        if (loading) {
-                            CircularProgressIndicator(modifier = Modifier.size(18.dp), color = Color.White)
+                        if (viewModel.isLoading) {
+                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                         } else {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Generate Master Plan")
+                            Text("Generate Master Plan", fontWeight = FontWeight.Bold)
                         }
                     }
                 }
             }
 
-            if (plan != null) {
+            if (viewModel.plan != null) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(
-                    text = "Your Generated Plan",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = TextPrimary
-                )
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(Icons.Default.Sparkles, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(16.dp))
+                    Text("Your AI Study Roadmap", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
+                Spacer(modifier = Modifier.height(12.dp))
                 Card(
-                    modifier = Modifier.padding(top = 12.dp).fillMaxWidth(),
-                    shape = RoundedCornerShape(12.dp),
-                    colors = CardDefaults.cardColors(containerColor = SurfaceWhite)
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = CardDefaults.cardColors(containerColor = Color.White),
+                    border = androidx.compose.foundation.BorderStroke(1.dp, PrimaryBlue.copy(alpha = 0.2f))
                 ) {
                     Text(
-                        text = plan!!,
-                        modifier = Modifier.padding(16.dp),
-                        style = LocalTextStyle.current.copy(lineHeight = 22.sp)
+                        text = viewModel.plan!!,
+                        modifier = Modifier.padding(20.dp),
+                        fontSize = 14.sp,
+                        lineHeight = 22.sp,
+                        color = TextPrimary
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun DropdownPlaceholder(text: String, onSelect: (String) -> Unit) {
-    // In a real app, this would be a Menu/Dropdown. For now, a simple box UI.
-    Surface(
-        onClick = { /* Open Menu */ },
-        modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-        shape = RoundedCornerShape(8.dp),
-        color = BackgroundLight,
-        border = androidx.compose.foundation.BorderStroke(1.dp, Color.LightGray)
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(text, modifier = Modifier.weight(1f))
-            Icon(androidx.compose.material.icons.Icons.Default.Timer, contentDescription = null, modifier = Modifier.size(16.dp))
         }
     }
 }

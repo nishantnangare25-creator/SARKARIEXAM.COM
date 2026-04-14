@@ -39,7 +39,21 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun SarkariExamTheme(content: @Composable () -> Unit) {
+    val colorScheme = lightColorScheme(
+        primary = PrimaryBlue,
+        secondary = AccentSaffron,
+        tertiary = AccentGreen,
+        background = BackgroundBody,
+        surface = SurfaceCard,
+        onPrimary = Color.White,
+        onSecondary = Color.White,
+        onTertiary = Color.White,
+        onBackground = TextPrimary,
+        onSurface = TextPrimary,
+    )
+
     MaterialTheme(
+        colorScheme = colorScheme,
         content = content
     )
 }

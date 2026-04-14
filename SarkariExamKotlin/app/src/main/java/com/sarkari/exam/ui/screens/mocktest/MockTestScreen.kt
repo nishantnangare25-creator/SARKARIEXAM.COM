@@ -1,94 +1,359 @@
 package com.sarkari.exam.ui.screens.mocktest
 
+import androidx.compose.animation.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.sarkari.exam.domain.models.Question
+import com.sarkari.exam.data.models.Question
+import com.sarkari.exam.data.repository.AiRepository
+import com.sarkari.exam.ui.theme.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+enum class QuizState { SETUP, ACTIVE, RESULT }
+
+class MockTestViewModel : ViewModel() {
+    private val repository = AiRepository()
+    
+    var state by mutableStateOf(QuizState.SETUP)
+    var questions = mutableStateListOf<Question>()
+    var currentIndex by mutableStateOf(0)
+    var answers = mutableStateMapOf<Int, String>()
+    var isLoading by mutableStateOf(false)
+    var timerSeconds by mutableStateOf(600)
+    
+    // Quiz Setup Params
+    var selectedExam by mutableStateOf("")
+    var selectedSubject by mutableStateOf("")
+
+    fun startQuiz(apiKey: String) {
+        isLoading = true
+        androidx.lifecycle.viewModelScope.launch {
+            // Mock prompt matching web logic
+            val prompt = "Generate 5 MCQ questions for $selectedExam exam, subject $selectedSubject. Format: Q: Question A) Opt B) Opt C) Opt D) Opt Answer: Letter Explanation: Text"
+            val response = repository.getAiResponse(listOf(com.sarkari.exam.data.models.ChatMessage("user", prompt)), apiKey)
+            
+            if (response != null) {
+                val parsed = repository.parseQuestions(response)
+                if (parsed.isNotEmpty()) {
+                    questions.clear()
+                    questions.addAll(parsed)
+                    state = QuizState.ACTIVE
+                    startTimer()
+                }
+            }
+            isLoading = false
+        }
+    }
+
+    private fun startTimer() {
+        androidx.lifecycle.viewModelScope.launch {
+            while (timerSeconds > 0 && state == QuizState.ACTIVE) {
+                delay(1000)
+                timerSeconds--
+            }
+            if (timerSeconds == 0) state = QuizState.RESULT
+        }
+    }
+
+    fun getScore(): Int {
+        var score = 0
+        questions.forEach { q ->
+            if (answers[q.id] == q.correctAnswer) score++
+        }
+        return score
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MockTestScreen(navController: NavController) {
-    val dummyQuestion = Question(
-        id = 1,
-        question = "Which layer of the atmosphere contains the ozone layer?",
-        options = listOf("Troposphere", "Stratosphere", "Mesosphere", "Exosphere"),
-        correctAnswer = "Stratosphere",
-        explanation = "The stratosphere contains the ozone layer, which absorbs most of the sun's harmful ultraviolet radiation."
-    )
-
-    var selectedOption by remember { mutableStateOf<String?>(null) }
-    var isSubmitted by remember { mutableStateOf(false) }
-
+fun MockTestScreen(navController: NavController, viewModel: MockTestViewModel = viewModel()) {
     Scaffold(
         topBar = {
-            SmallTopAppBar(
-                title = { Text("Mock Test engine", color = Color.White) },
-                colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = com.sarkari.exam.ui.theme.PrimaryBlue)
+            TopAppBar(
+                title = { Text("Mock Test", fontWeight = FontWeight.Bold) },
+                navigationIcon = {
+                    IconButton(onClick = { 
+                        if (viewModel.state == QuizState.ACTIVE) {
+                            // Show confirmation dialog logic here
+                        }
+                        navController.popBackStack() 
+                    }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.White)
             )
         }
     ) { paddingValues ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(com.sarkari.exam.ui.theme.BackgroundLight)
-                .padding(16.dp)
+        Box(modifier = Modifier.padding(paddingValues).fillMaxSize().background(BackgroundBody)) {
+            when (viewModel.state) {
+                QuizState.SETUP -> QuizSetupView(viewModel)
+                QuizState.ACTIVE -> QuizActiveView(viewModel)
+                QuizState.RESULT -> QuizResultView(viewModel)
+            }
+        }
+    }
+}
+
+@Composable
+fun QuizSetupView(viewModel: MockTestViewModel) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Surface(
+            modifier = Modifier.size(80.dp),
+            color = PrimaryBlue.copy(alpha = 0.1f),
+            shape = RoundedCornerShape(20.dp)
         ) {
-            Text(text = "Question 1 of 10", color = com.sarkari.exam.ui.theme.TextSecondary, fontSize = 12.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = dummyQuestion.question, fontWeight = FontWeight.Bold, fontSize = 18.sp, color = com.sarkari.exam.ui.theme.TextPrimary)
-            Spacer(modifier = Modifier.height(16.dp))
+            Box(contentAlignment = Alignment.Center) {
+                Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(40.dp))
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("AI Mock Test", fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
+        Text("Generate a personalized test in seconds", fontSize = 14.sp, color = TextSecondary)
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        // Simple Dropdown placeholders for demo
+        OutlinedTextField(
+            value = viewModel.selectedExam,
+            onValueChange = { viewModel.selectedExam = it },
+            label = { Text("Select Exam (e.g. UPSC)") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        OutlinedTextField(
+            value = viewModel.selectedSubject,
+            onValueChange = { viewModel.selectedSubject = it },
+            label = { Text("Select Subject (e.g. History)") },
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp)
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Button(
+            onClick = { viewModel.startQuiz("gsk_iLUpuE3ZfMSuA3U8pC1aWGdyb3FYpUvYQYf3x64T8C1Cq8N5C1C") },
+            modifier = Modifier.fillMaxWidth().height(56.dp),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+            enabled = !viewModel.isLoading
+        ) {
+            if (viewModel.isLoading) {
+                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+                Spacer(modifier = Modifier.width(12.dp))
+                Text("Generating Questions...")
+            } else {
+                Text("Start Mock Test", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+            }
+        }
+    }
+}
 
-            dummyQuestion.options.forEach { option ->
-                val isSelected = selectedOption == option
-                val backgroundColor = when {
-                    !isSubmitted && isSelected -> com.sarkari.exam.ui.theme.PrimaryBlue.copy(alpha = 0.2f)
-                    isSubmitted && option == dummyQuestion.correctAnswer -> com.sarkari.exam.ui.theme.GreenSuccess.copy(alpha = 0.2f)
-                    isSubmitted && isSelected && option != dummyQuestion.correctAnswer -> com.sarkari.exam.ui.theme.RedError.copy(alpha = 0.2f)
-                    else -> Color.White
-                }
+@Composable
+fun QuizActiveView(viewModel: MockTestViewModel) {
+    val q = viewModel.questions.getOrNull(viewModel.currentIndex) ?: return
+    
+    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+        // Headers (Timer, Progress)
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+            Text("Question ${viewModel.currentIndex + 1}/${viewModel.questions.size}", fontSize = 12.sp, color = TextMuted)
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Icon(Icons.Default.Timer, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(16.dp))
+                Text(
+                    text = String.format("%02d:%02d", viewModel.timerSeconds / 60, viewModel.timerSeconds % 60),
+                    fontWeight = FontWeight.Bold,
+                    color = if (viewModel.timerSeconds < 60) AccentRed else AccentOrange
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        LinearProgressIndicator(
+            progress = (viewModel.currentIndex + 1).toFloat() / viewModel.questions.size,
+            modifier = Modifier.fillMaxWidth().height(8.dp).clip(CircleShape),
+            color = PrimaryBlue,
+            trackColor = BorderColor
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(text = q.question, fontSize = 18.sp, fontWeight = FontWeight.Bold, lineHeight = 28.sp)
+                Spacer(modifier = Modifier.height(24.dp))
                 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                    shape = RoundedCornerShape(8.dp),
-                    colors = CardDefaults.cardColors(containerColor = backgroundColor),
-                    onClick = { if (!isSubmitted) selectedOption = option }
-                ) {
-                    Text(text = option, modifier = Modifier.padding(16.dp), color = com.sarkari.exam.ui.theme.TextPrimary)
+                q.options.forEach { option ->
+                    val isSelected = viewModel.answers[q.id] == option
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 6.dp)
+                            .clip(RoundedCornerShape(12.dp))
+                            .clickable { viewModel.answers[q.id] = option },
+                        color = if (isSelected) PrimaryBlue.copy(alpha = 0.1f) else BackgroundBody,
+                        border = androidx.compose.foundation.BorderStroke(1.dp, if (isSelected) PrimaryBlue else BorderColor),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                            RadioButton(selected = isSelected, onClick = null, colors = RadioButtonDefaults.colors(selectedColor = PrimaryBlue))
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(text = option, fontSize = 14.sp, color = if (isSelected) PrimaryBlue else TextPrimary)
+                        }
+                    }
                 }
             }
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            Button(
-                onClick = { isSubmitted = true },
-                enabled = selectedOption != null && !isSubmitted,
-                modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.buttonColors(containerColor = com.sarkari.exam.ui.theme.PrimaryBlue)
+        }
+        
+        Spacer(modifier = Modifier.weight(1f))
+        
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            OutlinedButton(
+                onClick = { if (viewModel.currentIndex > 0) viewModel.currentIndex-- },
+                modifier = Modifier.weight(1f).height(50.dp),
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("Submit Answer")
+                Text("Previous")
             }
+            Button(
+                onClick = { 
+                    if (viewModel.currentIndex < viewModel.questions.size - 1) {
+                        viewModel.currentIndex++
+                    } else {
+                        viewModel.state = QuizState.RESULT
+                    }
+                },
+                modifier = Modifier.weight(1f).height(50.dp),
+                shape = RoundedCornerShape(12.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
+            ) {
+                Text(if (viewModel.currentIndex == viewModel.questions.size - 1) "Finish" else "Next")
+            }
+        }
+    }
+}
 
-            if (isSubmitted) {
-                Spacer(modifier = Modifier.height(8.dp))
-                Surface(
-                    color = com.sarkari.exam.ui.theme.GreenSuccess.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(8.dp),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text("Explanation:", fontWeight = FontWeight.Bold, color = com.sarkari.exam.ui.theme.GreenSuccess)
-                        Text(dummyQuestion.explanation, fontSize = 14.sp)
+@Composable
+fun QuizResultView(viewModel: MockTestViewModel) {
+    val score = viewModel.getScore()
+    val percent = (score.toFloat() / viewModel.questions.size * 100).toInt()
+    
+    LazyColumn(modifier = Modifier.fillMaxSize(), contentPadding = PaddingValues(16.dp)) {
+        item {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(24.dp),
+                colors = CardDefaults.cardColors(containerColor = SurfaceCard),
+                elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+            ) {
+                Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("Quiz Result", fontSize = 14.sp, color = TextMuted, fontWeight = FontWeight.Bold)
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.size(120.dp)) {
+                        CircularProgressIndicator(
+                            progress = percent / 100f,
+                            modifier = Modifier.fillMaxSize(),
+                            strokeWidth = 10.dp,
+                            color = if (percent >= 70) AccentGreen else if (percent >= 40) AccentSaffron else AccentRed,
+                            trackColor = BorderColor
+                        )
+                        Text("$percent%", fontSize = 24.sp, fontWeight = FontWeight.Black)
+                    }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("You scored $score out of ${viewModel.questions.size}", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(
+                        text = if (percent >= 70) "Excellent Job!" else "Keep Practicing!",
+                        color = if (percent >= 70) AccentGreen else TextSecondary
+                    )
+                    
+                    Spacer(modifier = Modifier.height(24.dp))
+                    Button(
+                        onClick = { viewModel.state = QuizState.SETUP; viewModel.timerSeconds = 600; viewModel.currentIndex = 0; viewModel.answers.clear() },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(12.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue)
+                    ) {
+                        Text("Retake Test")
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Text("Review Details", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(bottom = 16.dp))
+        }
+
+        itemsIndexed(viewModel.questions) { index, q ->
+            val userAnswer = viewModel.answers[q.id]
+            val isCorrect = userAnswer == q.correctAnswer
+            
+            Card(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                border = androidx.compose.foundation.BorderStroke(1.dp, if (isCorrect) AccentGreen.copy(alpha = 0.3f) else AccentRed.copy(alpha = 0.3f))
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                        Text("Question ${index + 1}", fontSize = 11.sp, color = TextMuted)
+                        Icon(
+                            if (isCorrect) Icons.Default.CheckCircle else Icons.Default.Cancel,
+                            contentDescription = null,
+                            tint = if (isCorrect) AccentGreen else AccentRed,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(text = q.question, fontWeight = FontWeight.Bold, fontSize = 14.sp)
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    Text("Your Answer: ${userAnswer ?: "Skipped"}", fontSize = 13.sp, color = if (isCorrect) AccentGreen else AccentRed)
+                    if (!isCorrect) {
+                        Text("Correct Answer: ${q.correctAnswer}", fontSize = 13.sp, color = AccentGreen, fontWeight = FontWeight.Bold)
+                    }
+                    
+                    if (q.explanation != null) {
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Surface(color = BackgroundBody, shape = RoundedCornerShape(8.dp)) {
+                            Column(modifier = Modifier.padding(12.dp)) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    Icon(Icons.Default.AutoAwesome, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(12.dp))
+                                    Text("EXPLANATION", fontSize = 9.sp, fontWeight = FontWeight.Bold, color = PrimaryBlue)
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(text = q.explanation!!, fontSize = 12.sp, color = TextSecondary)
+                            }
+                        }
                     }
                 }
             }
