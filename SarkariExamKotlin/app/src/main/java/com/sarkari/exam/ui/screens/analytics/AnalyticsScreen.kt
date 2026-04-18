@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.sarkari.exam.data.models.ChatMessage
@@ -52,7 +53,7 @@ class AnalyticsViewModel : ViewModel() {
 
     fun fetchAiAnalysis(apiKey: String) {
         isLoading = true
-        androidx.lifecycle.viewModelScope.launch {
+        viewModelScope.launch {
             val prompt = "Analyze my exam performance. Accuracy: $accuracy%, Consistency: $consistency%. Strongest: Current Affairs. Weakest: Economy. Provide tips."
             val response = repository.getAiResponse(listOf(ChatMessage("user", prompt)), apiKey)
             isLoading = false
@@ -152,7 +153,7 @@ fun AnalyticsScreen(navController: NavController, viewModel: AnalyticsViewModel 
                         )
                         Spacer(modifier = Modifier.height(20.dp))
                         Button(
-                            onClick = { viewModel.fetchAiAnalysis("gsk_iLUpuE3ZfMSuA3U8pC1aWGdyb3FYpUvYQYf3x64T8C1Cq8N5C1C") },
+                            onClick = { viewModel.fetchAiAnalysis("YOUR_API_KEY") },
                             modifier = Modifier.fillMaxWidth().height(48.dp),
                             shape = RoundedCornerShape(12.dp),
                             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
@@ -244,3 +245,4 @@ fun SubjectProgressBar(subject: SubjectStat) {
         )
     }
 }
+

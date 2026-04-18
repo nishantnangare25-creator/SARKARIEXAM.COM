@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.sarkari.exam.data.models.ChatMessage
@@ -44,7 +45,7 @@ class TutorViewModel : ViewModel() {
         isLoading = true
         
         // Use coroutine to fetch AI response
-        androidx.lifecycle.viewModelScope.launch {
+        viewModelScope.launch {
             val response = repository.getAiResponse(messages, apiKey, "groq")
                 ?: repository.getAiResponse(messages, "YOUR_FALLBACK_KEY", "gemini") // Need a real key strategy here
             
@@ -159,7 +160,7 @@ fun InteractiveTutorScreen(navController: NavController, tutorViewModel: TutorVi
                     )
                     
                     FloatingActionButton(
-                        onClick = { tutorViewModel.sendMessage("gsk_iLUpuE3ZfMSuA3U8pC1aWGdyb3FYpUvYQYf3x64T8C1Cq8N5C1C") }, // Demo key
+                        onClick = { tutorViewModel.sendMessage("YOUR_API_KEY") }, // Demo key
                         modifier = Modifier.size(48.dp),
                         containerColor = PrimaryBlue,
                         contentColor = Color.White,
@@ -233,3 +234,4 @@ fun ThinkingBubble() {
         }
     }
 }
+

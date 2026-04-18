@@ -18,11 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.sarkari.exam.ui.navigation.Screen
-import com.sarkari.exam.ui.theme.BackgroundLight
 import com.sarkari.exam.ui.theme.PrimaryBlue
 import com.sarkari.exam.ui.theme.SurfaceWhite
 import com.sarkari.exam.ui.theme.TextPrimary
 import com.sarkari.exam.ui.theme.TextSecondary
+import com.sarkari.exam.ui.theme.BackgroundBody
 
 @Composable
 fun OnboardingScreen(navController: NavController) {
@@ -33,7 +33,7 @@ fun OnboardingScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(BackgroundLight)
+            .background(BackgroundBody)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -170,5 +170,6 @@ fun Step4Finish(onFinish: () -> Unit) {
         }
     }
 }
+
 
 

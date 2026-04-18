@@ -64,7 +64,7 @@ class AiRepository {
 
                 lines.forEach { line ->
                     val trimmed = line.trim()
-                    val optionMatch = Regex("^[\(]?([A-E])[\).:]\\s*(.+)").find(trimmed)
+                    val optionMatch = Regex("""^[(]?([A-E])[).:]\s*(.+)""").find(trimmed)
                     
                     if (optionMatch != null) {
                         mode = "O"
@@ -106,3 +106,4 @@ class AiRepository {
         return questions
     }
 }
+

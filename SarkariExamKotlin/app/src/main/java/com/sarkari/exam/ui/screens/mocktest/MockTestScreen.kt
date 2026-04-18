@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.sarkari.exam.data.models.Question
@@ -39,6 +40,7 @@ class MockTestViewModel : ViewModel() {
     var answers = mutableStateMapOf<Int, String>()
     var isLoading by mutableStateOf(false)
     var timerSeconds by mutableStateOf(600)
+    var errorMsg by mutableStateOf<String?>(null)
     
     // Quiz Setup Params
     var selectedExam by mutableStateOf("")
@@ -46,9 +48,23 @@ class MockTestViewModel : ViewModel() {
 
     fun startQuiz(apiKey: String) {
         isLoading = true
-        androidx.lifecycle.viewModelScope.launch {
-            // Mock prompt matching web logic
-            val prompt = "Generate 5 MCQ questions for $selectedExam exam, subject $selectedSubject. Format: Q: Question A) Opt B) Opt C) Opt D) Opt Answer: Letter Explanation: Text"
+        errorMsg = null
+        viewModelScope.launch {
+            val prompt = """
+                You are an expert competitive exam creator. Generate exactly 5 practice MCQ questions for $selectedExam exam, subject $selectedSubject.
+                CRITICAL RULES:
+                1. DO NOT USE JSON. Respond STRICTLY in plain text/markdown format.
+                2. Format EACH question exactly like this:
+                Q: [Question text]
+                A) [Option 1]
+                B) [Option 2]
+                C) [Option 3]
+                D) [Option 4]
+                Answer: [A, B, C, or D]
+                Explanation: [1-2 sentences of explanation]
+                Return ONLY the structured text, no extra conversational filler.
+            """.trimIndent()
+            
             val response = repository.getAiResponse(listOf(com.sarkari.exam.data.models.ChatMessage("user", prompt)), apiKey)
             
             if (response != null) {
@@ -58,14 +74,32 @@ class MockTestViewModel : ViewModel() {
                     questions.addAll(parsed)
                     state = QuizState.ACTIVE
                     startTimer()
+                } else {
+                    loadFallbackQuestions()
                 }
+            } else {
+                loadFallbackQuestions()
             }
             isLoading = false
         }
     }
 
+    private fun loadFallbackQuestions() {
+        val staticQs = listOf(
+            Question(1, "Which layer of the atmosphere contains the ozone layer?", listOf("Troposphere", "Stratosphere", "Mesosphere", "Exosphere"), "Stratosphere", "The stratosphere contains the ozone layer, which absorbs most of the sun's harmful ultraviolet radiation."),
+            Question(2, "Who was the first President of Independent India?", listOf("Mahatma Gandhi", "Jawaharlal Nehru", "Dr. Rajendra Prasad", "Sardar Patel"), "Dr. Rajendra Prasad", "Dr. Rajendra Prasad served as the first President of India from 1950 to 1962."),
+            Question(3, "The Fundamental Rights in the Indian Constitution are inspired by which country?", listOf("UK", "USA", "USSR", "Canada"), "USA", "Fundamental Rights in India were inspired by the Bill of Rights in the US Constitution."),
+            Question(4, "What is the capital of Australia?", listOf("Sydney", "Melbourne", "Canberra", "Perth"), "Canberra", "Canberra is the capital city of Australia, located inland from the south-east coast."),
+            Question(5, "Which planet in our solar system is known as the Red Planet?", listOf("Venus", "Jupiter", "Mars", "Saturn"), "Mars", "Mars is often called the Red Planet because of its reddish appearance, due to iron oxide on its surface.")
+        )
+        questions.clear()
+        questions.addAll(staticQs)
+        state = QuizState.ACTIVE
+        startTimer()
+    }
+
     private fun startTimer() {
-        androidx.lifecycle.viewModelScope.launch {
+        viewModelScope.launch {
             while (timerSeconds > 0 && state == QuizState.ACTIVE) {
                 delay(1000)
                 timerSeconds--
@@ -114,8 +148,23 @@ fun MockTestScreen(navController: NavController, viewModel: MockTestViewModel = 
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun QuizSetupView(viewModel: MockTestViewModel) {
+    val exams = listOf("UPSC CSE", "SSC CGL", "Bank PO", "State PSC", "NDA", "CDS", "Railways")
+    val subjectsMap = mapOf(
+        "UPSC CSE" to listOf("History", "Geography", "Polity", "Economy", "Current Affairs", "Environment"),
+        "SSC CGL" to listOf("Quantitative Aptitude", "Reasoning", "English", "General Awareness"),
+        "Bank PO" to listOf("Quantitative Aptitude", "Reasoning", "English", "Banking Awareness"),
+        "State PSC" to listOf("History", "Geography", "Polity", "State Specific"),
+        "NDA" to listOf("Mathematics", "General Ability Test", "English"),
+        "CDS" to listOf("English", "General Knowledge", "Elementary Mathematics"),
+        "Railways" to listOf("Mathematics", "General Intelligence", "General Science", "General Awareness")
+    )
+    
+    var examExpanded by remember { mutableStateOf(false) }
+    var subjectExpanded by remember { mutableStateOf(false) }
+
     Column(
         modifier = Modifier.fillMaxSize().padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -136,33 +185,90 @@ fun QuizSetupView(viewModel: MockTestViewModel) {
         
         Spacer(modifier = Modifier.height(32.dp))
         
-        // Simple Dropdown placeholders for demo
-        OutlinedTextField(
-            value = viewModel.selectedExam,
-            onValueChange = { viewModel.selectedExam = it },
-            label = { Text("Select Exam (e.g. UPSC)") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
-        )
+        ExposedDropdownMenuBox(
+            expanded = examExpanded,
+            onExpandedChange = { examExpanded = !examExpanded }
+        ) {
+            OutlinedTextField(
+                value = viewModel.selectedExam,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Select Exam") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = examExpanded) },
+                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline, 
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.surface
+                )
+            )
+            ExposedDropdownMenu(
+                expanded = examExpanded,
+                onDismissRequest = { examExpanded = false },
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+            ) {
+                exams.forEach { selectionOption ->
+                    DropdownMenuItem(
+                        text = { Text(selectionOption) },
+                        onClick = {
+                            viewModel.selectedExam = selectionOption
+                            viewModel.selectedSubject = "" // reset subject
+                            examExpanded = false
+                        }
+                    )
+                }
+            }
+        }
         
         Spacer(modifier = Modifier.height(16.dp))
         
-        OutlinedTextField(
-            value = viewModel.selectedSubject,
-            onValueChange = { viewModel.selectedSubject = it },
-            label = { Text("Select Subject (e.g. History)") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp)
-        )
+        val availableSubjects = subjectsMap[viewModel.selectedExam] ?: listOf("General Knowledge", "Aptitude", "English", "Reasoning")
+        
+        ExposedDropdownMenuBox(
+            expanded = subjectExpanded,
+            onExpandedChange = { if (viewModel.selectedExam.isNotEmpty()) subjectExpanded = !subjectExpanded }
+        ) {
+            OutlinedTextField(
+                value = viewModel.selectedSubject,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Select Subject") },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = subjectExpanded) },
+                modifier = Modifier.menuAnchor().fillMaxWidth(),
+                shape = RoundedCornerShape(12.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = MaterialTheme.colorScheme.outline, 
+                    focusedBorderColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
+                enabled = viewModel.selectedExam.isNotEmpty()
+            )
+            ExposedDropdownMenu(
+                expanded = subjectExpanded,
+                onDismissRequest = { subjectExpanded = false },
+                modifier = Modifier.background(MaterialTheme.colorScheme.surface)
+            ) {
+                availableSubjects.forEach { selectionOption ->
+                    DropdownMenuItem(
+                        text = { Text(selectionOption) },
+                        onClick = {
+                            viewModel.selectedSubject = selectionOption
+                            subjectExpanded = false
+                        }
+                    )
+                }
+            }
+        }
         
         Spacer(modifier = Modifier.height(32.dp))
         
         Button(
-            onClick = { viewModel.startQuiz("gsk_iLUpuE3ZfMSuA3U8pC1aWGdyb3FYpUvYQYf3x64T8C1Cq8N5C1C") },
+            onClick = { viewModel.startQuiz("YOUR_API_KEY") },
             modifier = Modifier.fillMaxWidth().height(56.dp),
             shape = RoundedCornerShape(12.dp),
             colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
-            enabled = !viewModel.isLoading
+            enabled = !viewModel.isLoading && viewModel.selectedExam.isNotEmpty() && viewModel.selectedSubject.isNotEmpty()
         ) {
             if (viewModel.isLoading) {
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
@@ -215,13 +321,13 @@ fun QuizActiveView(viewModel: MockTestViewModel) {
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 q.options.forEach { option ->
-                    val isSelected = viewModel.answers[q.id] == option
+                    val isSelected = viewModel.answers[q.id ?: -1] == option
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(vertical = 6.dp)
                             .clip(RoundedCornerShape(12.dp))
-                            .clickable { viewModel.answers[q.id] = option },
+                            .clickable { viewModel.answers[q.id ?: -1] = option },
                         color = if (isSelected) PrimaryBlue.copy(alpha = 0.1f) else BackgroundBody,
                         border = androidx.compose.foundation.BorderStroke(1.dp, if (isSelected) PrimaryBlue else BorderColor),
                         shape = RoundedCornerShape(12.dp)
@@ -315,7 +421,7 @@ fun QuizResultView(viewModel: MockTestViewModel) {
         }
 
         itemsIndexed(viewModel.questions) { index, q ->
-            val userAnswer = viewModel.answers[q.id]
+            val userAnswer = viewModel.answers[q.id ?: -1]
             val isCorrect = userAnswer == q.correctAnswer
             
             Card(
@@ -361,3 +467,4 @@ fun QuizResultView(viewModel: MockTestViewModel) {
         }
     }
 }
+

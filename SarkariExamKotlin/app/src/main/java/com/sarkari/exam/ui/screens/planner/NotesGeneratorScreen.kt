@@ -24,42 +24,44 @@ import com.sarkari.exam.data.repository.AiRepository
 import com.sarkari.exam.ui.theme.*
 import kotlinx.coroutines.launch
 
-class StudyPlannerViewModel : ViewModel() {
+class NotesGeneratorViewModel : ViewModel() {
     private val repository = AiRepository()
     
     var selectedExam by mutableStateOf("")
-    var selectedHours by mutableStateOf("4 hrs")
-    var selectedLevel by mutableStateOf("Beginner")
+    var selectedSubject by mutableStateOf("")
+    var customTopics by mutableStateOf("")
     var isLoading by mutableStateOf(false)
-    var plan by mutableStateOf<String?>(null)
+    var generatedNotes by mutableStateOf<String?>(null)
 
-    fun generatePlan(apiKey: String = "YOUR_API_KEY") {
+    fun generateNotes(apiKey: String = "YOUR_API_KEY") {
         isLoading = true
         viewModelScope.launch {
-            val prompt = "Create a detailed study plan for $selectedExam exam preparation. Study hours: $selectedHours. Level: $selectedLevel. Provide a weekly breakdown without using markdown asterisks if possible, or standard clean plaintext."
+            val topicHint = if(customTopics.isNotEmpty()) "specifically covering: $customTopics" else ""
+            val prompt = "Generate comprehensive, structured, and highly readable exam study notes for $selectedExam - $selectedSubject $topicHint. Use highly readable text (bulleted lists, subheadings)."
             val response = repository.getAiResponse(listOf(ChatMessage("user", prompt)), apiKey)
             isLoading = false
-            plan = response ?: "Failed to generate plan. Please try again."
+            generatedNotes = response ?: "Failed to generate notes. Please try again."
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerViewModel = viewModel()) {
+fun NotesGeneratorScreen(navController: NavController, viewModel: NotesGeneratorViewModel = viewModel()) {
     
-    val exams = listOf("UPSC Civil Services", "MPSC", "SSC CGL/CHSL", "Banking (IBPS/SBI)", "Railway (RRB)", "NDA", "State PSC")
-    val hoursList = (1..12).map { "$it hrs" }
-    val levelsList = listOf("Beginner", "Intermediate", "Advanced")
+    val exams = listOf("UPSC Civil Services", "MPSC", "SSC CGL/CHSL", "Banking", "Railway", "NDA", "State PSC")
+    val subjectsMap = mapOf(
+        "UPSC Civil Services" to listOf("History", "Geography", "Polity", "Economy", "Science"),
+        "SSC CGL/CHSL" to listOf("Quantitative Aptitude", "English", "General Intelligence", "General Awareness")
+    )
     
     var examExpanded by remember { mutableStateOf(false) }
-    var hoursExpanded by remember { mutableStateOf(false) }
-    var levelExpanded by remember { mutableStateOf(false) }
+    var subjectExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Study Planner", fontWeight = FontWeight.Bold) },
+                title = { Text("Notes Generator", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -77,14 +79,14 @@ fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerView
                 .verticalScroll(rememberScrollState())
                 .padding(20.dp)
         ) {
-            // Header identical to web
+            // Header
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Surface(color = AccentGreen.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp)) {
-                    Icon(Icons.Default.MenuBook, contentDescription = null, tint = AccentGreen, modifier = Modifier.padding(10.dp).size(24.dp))
+                Surface(color = PrimaryBlue.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp)) {
+                    Icon(Icons.Default.School, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.padding(10.dp).size(28.dp))
                 }
                 Column {
-                    Text("AI Study Planner", fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("Generate an optimized custom roadmap", fontSize = 13.sp, color = TextSecondary)
+                    Text("Instant Cheat Sheets", fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("Deep dive AI-generated study notes", fontSize = 13.sp, color = TextSecondary)
                 }
             }
             
@@ -99,102 +101,92 @@ fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerView
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     
-                    // Selected Exam Dropdown
-                    Text("Target Exam", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
-                    ExposedDropdownMenuBox(expanded = examExpanded, onExpandedChange = { examExpanded = !examExpanded }) {
-                        OutlinedTextField(
-                            value = viewModel.selectedExam,
-                            onValueChange = {},
-                            readOnly = true,
-                            placeholder = { Text("Select Exam") },
-                            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = examExpanded) },
-                            modifier = Modifier.fillMaxWidth().menuAnchor(),
-                            shape = RoundedCornerShape(8.dp)
-                        )
-                        ExposedDropdownMenu(expanded = examExpanded, onDismissRequest = { examExpanded = false }) {
-                            exams.forEach { e ->
-                                DropdownMenuItem(text = { Text(e) }, onClick = { viewModel.selectedExam = e; examExpanded = false })
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        // Daily Hours
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                        // Exam Dropdown
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Daily Hours", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
-                            ExposedDropdownMenuBox(expanded = hoursExpanded, onExpandedChange = { hoursExpanded = !hoursExpanded }) {
+                            Text("Exam", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
+                            ExposedDropdownMenuBox(expanded = examExpanded, onExpandedChange = { examExpanded = !examExpanded }) {
                                 OutlinedTextField(
-                                    value = viewModel.selectedHours,
+                                    value = viewModel.selectedExam,
                                     onValueChange = {},
                                     readOnly = true,
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = hoursExpanded) },
+                                    placeholder = { Text("Select") },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = examExpanded) },
                                     modifier = Modifier.fillMaxWidth().menuAnchor(),
                                     shape = RoundedCornerShape(8.dp)
                                 )
-                                ExposedDropdownMenu(expanded = hoursExpanded, onDismissRequest = { hoursExpanded = false }) {
-                                    hoursList.forEach { h ->
-                                        DropdownMenuItem(text = { Text(h) }, onClick = { viewModel.selectedHours = h; hoursExpanded = false })
+                                ExposedDropdownMenu(expanded = examExpanded, onDismissRequest = { examExpanded = false }) {
+                                    exams.forEach { e ->
+                                        DropdownMenuItem(text = { Text(e) }, onClick = { viewModel.selectedExam = e; viewModel.selectedSubject = ""; examExpanded = false })
                                     }
                                 }
                             }
                         }
                         
-                        // Level
+                        // Subject Dropdown
                         Column(modifier = Modifier.weight(1f)) {
-                            Text("Prep Level", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
-                            ExposedDropdownMenuBox(expanded = levelExpanded, onExpandedChange = { levelExpanded = !levelExpanded }) {
+                            Text("Subject", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
+                            val availableSubjects = subjectsMap[viewModel.selectedExam] ?: listOf("General Knowledge", "Reasoning", "Maths", "English")
+                            ExposedDropdownMenuBox(expanded = subjectExpanded, onExpandedChange = { subjectExpanded = !subjectExpanded }) {
                                 OutlinedTextField(
-                                    value = viewModel.selectedLevel,
+                                    value = viewModel.selectedSubject,
                                     onValueChange = {},
                                     readOnly = true,
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = levelExpanded) },
+                                    placeholder = { Text("Select") },
+                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = subjectExpanded) },
                                     modifier = Modifier.fillMaxWidth().menuAnchor(),
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = RoundedCornerShape(8.dp),
+                                    enabled = viewModel.selectedExam.isNotEmpty()
                                 )
-                                ExposedDropdownMenu(expanded = levelExpanded, onDismissRequest = { levelExpanded = false }) {
-                                    levelsList.forEach { l ->
-                                        DropdownMenuItem(text = { Text(l) }, onClick = { viewModel.selectedLevel = l; levelExpanded = false })
+                                ExposedDropdownMenu(expanded = subjectExpanded, onDismissRequest = { subjectExpanded = false }) {
+                                    availableSubjects.forEach { s ->
+                                        DropdownMenuItem(text = { Text(s) }, onClick = { viewModel.selectedSubject = s; subjectExpanded = false })
                                     }
                                 }
                             }
                         }
                     }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text("Specific Topics (Optional)", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
+                    OutlinedTextField(
+                        value = viewModel.customTopics,
+                        onValueChange = { viewModel.customTopics = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        placeholder = { Text("e.g. Fundamental Rights, Optics") },
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = { viewModel.generatePlan() },
+                        onClick = { viewModel.generateNotes() },
                         modifier = Modifier.fillMaxWidth().height(52.dp),
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
-                        enabled = !viewModel.isLoading && viewModel.selectedExam.isNotEmpty()
+                        enabled = !viewModel.isLoading && viewModel.selectedExam.isNotEmpty() && viewModel.selectedSubject.isNotEmpty()
                     ) {
                         if (viewModel.isLoading) {
                             CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                             Spacer(modifier = Modifier.width(12.dp))
-                            Text("Generating Plan...", fontWeight = FontWeight.Bold)
+                            Text("Writing Notes...", fontWeight = FontWeight.Bold)
                         } else {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Generate Master Plan", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text("Generate Notes", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         }
                     }
                 }
             }
 
-            if (viewModel.plan != null && !viewModel.isLoading) {
+            if (viewModel.generatedNotes != null && !viewModel.isLoading) {
                 Spacer(modifier = Modifier.height(32.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                    Text("Your Action Plan", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
+                    Text("Your Notes", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
                     Row {
-                        IconButton(onClick = { /* PDF Download simulated */ }) {
-                            Icon(Icons.Default.PictureAsPdf, contentDescription = "PDF", tint = AccentSaffron)
-                        }
-                        IconButton(onClick = { /* TXT Download simulated */ }) {
-                            Icon(Icons.Default.Download, contentDescription = "Download Text", tint = PrimaryBlue)
-                        }
+                        IconButton(onClick = {  }) { Icon(Icons.Default.PictureAsPdf, contentDescription = "PDF", tint = AccentRed) }
+                        IconButton(onClick = {  }) { Icon(Icons.Default.Download, contentDescription = "MD/Text", tint = PrimaryBlue) }
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
@@ -205,9 +197,9 @@ fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerView
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Text(
-                        text = viewModel.plan!!,
+                        text = viewModel.generatedNotes!!,
                         modifier = Modifier.padding(24.dp),
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         lineHeight = 24.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )

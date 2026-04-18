@@ -2,6 +2,7 @@ package com.sarkari.exam.ui.components
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -23,22 +24,19 @@ fun SarkariHeader() {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(SarkariRed)
-            .padding(vertical = 12.dp),
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-            text = "Sarkari Exam",
-            fontSize = 28.sp,
-            fontWeight = FontWeight.Black,
-            color = Color.White,
-            letterSpacing = 1.sp
+            text = "Sarkari Exam AI",
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.White
         )
         Text(
-            text = "अपडेट सबसे पहले",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium,
-            color = Color.White,
+            text = "Government Exam Prep",
+            style = MaterialTheme.typography.bodyMedium,
+            color = Color.White.copy(alpha = 0.8f),
             fontStyle = FontStyle.Italic
         )
     }
@@ -46,32 +44,26 @@ fun SarkariHeader() {
 
 @Composable
 fun NewsTicker(text: String) {
-    var tickerPosition by remember { mutableStateOf(0f) }
-    val infiniteTransition = rememberInfiniteTransition(label = "ticker")
-    
-    // Simplistic static ticker for now as real scrolling requires more complex state
-    // But we'll style it to look like the website's high-priority bar
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(SarkariRed)
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .background(MaterialTheme.colorScheme.secondary)
+            .padding(horizontal = 16.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "NEW",
-            color = SarkariRed,
-            fontSize = 10.sp,
-            fontWeight = FontWeight.Bold,
+            text = "LATEST",
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.labelLarge,
             modifier = Modifier
-                .background(Color.White, RoundedCornerShape(2.dp))
-                .padding(horizontal = 4.dp, vertical = 1.dp)
+                .background(Color.White, RoundedCornerShape(4.dp))
+                .padding(horizontal = 6.dp, vertical = 2.dp)
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(12.dp))
         Text(
             text = text,
             color = Color.White,
-            fontSize = 14.sp,
+            style = MaterialTheme.typography.bodyMedium,
             fontWeight = FontWeight.Bold,
             maxLines = 1
         )
@@ -88,45 +80,45 @@ fun SarkariSection(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 16.dp),
-        shape = RoundedCornerShape(4.dp),
-        border = androidx.compose.foundation.BorderStroke(1.dp, DividerGray),
-        colors = CardDefaults.cardColors(containerColor = SurfaceWhite)
+            .padding(bottom = 24.dp),
+        shape = RoundedCornerShape(12.dp),
+        border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Column {
             // Section Header
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(HeaderDark)
-                    .padding(vertical = 8.dp),
-                contentAlignment = Alignment.Center
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.05f))
+                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.5f))
+                    .padding(vertical = 12.dp, horizontal = 16.dp),
+                contentAlignment = Alignment.CenterStart
             ) {
                 Text(
                     text = title,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 16.sp
+                    color = MaterialTheme.colorScheme.primary,
+                    style = MaterialTheme.typography.titleMedium
                 )
             }
             
             // Link Items
             items.forEach { link ->
                 SarkariLinkItem(link = link) { onItemClick(link) }
-                Divider(color = DividerGray, thickness = 0.5.dp)
+                Divider(color = MaterialTheme.colorScheme.outline, thickness = 0.5.dp)
             }
             
             // View All Button
             Text(
                 text = "View All »",
-                color = SarkariRed,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge,
                 textAlign = TextAlign.Center,
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { onViewAllClick() }
-                    .padding(vertical = 10.dp)
+                    .padding(vertical = 12.dp)
             )
         }
     }
@@ -138,30 +130,29 @@ fun SarkariLinkItem(link: SarkariLink, onClick: () -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .clickable { onClick() }
-            .padding(horizontal = 12.dp, vertical = 10.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
             text = "•",
-            color = TextGray,
-            modifier = Modifier.padding(end = 8.dp)
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(end = 12.dp)
         )
         Text(
             text = link.title,
-            color = LinkBlue,
-            fontSize = 14.sp,
-            lineHeight = 18.sp,
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.weight(1f)
         )
         if (link.isNew) {
             Text(
-                text = "New",
+                text = "NEW",
                 color = Color.White,
-                fontSize = 9.sp,
+                fontSize = 10.sp,
                 fontWeight = FontWeight.Bold,
                 modifier = Modifier
-                    .background(SarkariRed, RoundedCornerShape(2.dp))
-                    .padding(horizontal = 4.dp, vertical = 1.dp)
+                    .background(MaterialTheme.colorScheme.error, RoundedCornerShape(4.dp))
+                    .padding(horizontal = 6.dp, vertical = 2.dp)
             )
         }
     }
@@ -172,3 +163,4 @@ data class SarkariLink(
     val url: String,
     val isNew: Boolean = false
 )
+

@@ -43,3 +43,4 @@ interface GeminiApiService {
         @Body request: GeminiRequest
     ): Response<GeminiResponse>
 }
+

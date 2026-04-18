@@ -45,3 +45,4 @@ data class TestResult(
     val total: Int,
     val timestamp: Long = System.currentTimeMillis()
 )
+

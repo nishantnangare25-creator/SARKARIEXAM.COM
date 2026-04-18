@@ -34,7 +34,7 @@ fun LoginScreen(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .background(MaterialTheme.colorScheme.background)
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -42,11 +42,11 @@ fun LoginScreen(navController: NavController) {
         // Hero Section mirroring web design
         Surface(
             modifier = Modifier.size(80.dp),
-            color = PrimaryBlue.copy(alpha = 0.1f),
+            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
             shape = CircleShape
         ) {
             Box(contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.Face, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(40.dp))
+                Icon(Icons.Default.Face, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(40.dp))
             }
         }
         
@@ -54,15 +54,15 @@ fun LoginScreen(navController: NavController) {
         
         Text(
             text = if (isRegister) "Create your account" else "Welcome back",
-            fontSize = 26.sp,
-            fontWeight = FontWeight.ExtraBold,
-            color = TextPrimary
+            style = MaterialTheme.typography.displayLarge,
+            fontSize = 28.sp,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = "Join 1,00,000+ students preparing for excellence",
-            fontSize = 14.sp,
-            color = TextSecondary,
-            modifier = Modifier.padding(top = 4.dp, bottom = 40.dp)
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(top = 8.dp, bottom = 40.dp)
         )
 
         // Fields
@@ -71,8 +71,12 @@ fun LoginScreen(navController: NavController) {
             onValueChange = { email = it },
             label = { Text("Email Address") },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = BorderColor, focusedBorderColor = PrimaryBlue),
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline, 
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true
         )
@@ -86,13 +90,17 @@ fun LoginScreen(navController: NavController) {
             trailingIcon = {
                 val icon = if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility
                 IconButton(onClick = { showPassword = !showPassword }) {
-                    Icon(icon, contentDescription = null, tint = TextMuted)
+                    Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             },
             visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(unfocusedBorderColor = BorderColor, focusedBorderColor = PrimaryBlue),
+            shape = RoundedCornerShape(12.dp),
+            colors = TextFieldDefaults.outlinedTextFieldColors(
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline, 
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                containerColor = MaterialTheme.colorScheme.surface
+            ),
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
             singleLine = true
         )
@@ -102,20 +110,24 @@ fun LoginScreen(navController: NavController) {
         Button(
             onClick = {
                 loading = true
-                // Simulate Login and navigate
                 navController.navigate(Screen.Dashboard.route) {
                     popUpTo(Screen.Login.route) { inclusive = true }
                 }
             },
             modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
+            shape = RoundedCornerShape(12.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
+            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 0.dp),
             enabled = !loading
         ) {
             if (loading) {
                 CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
             } else {
-                Text(if (isRegister) "Sign Up Free" else "Secure Login", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                Text(
+                    text = if (isRegister) "Sign Up Free" else "Secure Login", 
+                    style = MaterialTheme.typography.labelLarge,
+                    fontSize = 16.sp
+                )
             }
         }
 
@@ -124,10 +136,10 @@ fun LoginScreen(navController: NavController) {
         TextButton(onClick = { isRegister = !isRegister }) {
             Text(
                 text = if (isRegister) "Already using Sarkari AI? Log In" else "Don't have an account? Sign Up Free",
-                color = PrimaryBlue,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp
+                color = MaterialTheme.colorScheme.primary,
+                style = MaterialTheme.typography.labelLarge
             )
         }
     }
 }
+

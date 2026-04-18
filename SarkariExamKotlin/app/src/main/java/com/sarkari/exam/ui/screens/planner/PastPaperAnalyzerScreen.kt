@@ -1,6 +1,7 @@
 package com.sarkari.exam.ui.screens.planner
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,42 +25,38 @@ import com.sarkari.exam.data.repository.AiRepository
 import com.sarkari.exam.ui.theme.*
 import kotlinx.coroutines.launch
 
-class StudyPlannerViewModel : ViewModel() {
+class PastPaperAnalyzerViewModel : ViewModel() {
     private val repository = AiRepository()
     
     var selectedExam by mutableStateOf("")
-    var selectedHours by mutableStateOf("4 hrs")
-    var selectedLevel by mutableStateOf("Beginner")
+    var pdfTextContent by mutableStateOf("")
+    var fileName by mutableStateOf("")
+    
     var isLoading by mutableStateOf(false)
-    var plan by mutableStateOf<String?>(null)
+    var analysisResult by mutableStateOf<String?>(null)
 
-    fun generatePlan(apiKey: String = "YOUR_API_KEY") {
+    fun startAnalysis(apiKey: String = "YOUR_API_KEY") {
         isLoading = true
         viewModelScope.launch {
-            val prompt = "Create a detailed study plan for $selectedExam exam preparation. Study hours: $selectedHours. Level: $selectedLevel. Provide a weekly breakdown without using markdown asterisks if possible, or standard clean plaintext."
+            val prompt = "Analyze this past paper text for $selectedExam. Extract the weightage of different topics, identify the pattern of questions, predict important areas for the next exam, and give a difficulty rating. Text: $pdfTextContent"
             val response = repository.getAiResponse(listOf(ChatMessage("user", prompt)), apiKey)
             isLoading = false
-            plan = response ?: "Failed to generate plan. Please try again."
+            analysisResult = response ?: "Analysis failed. Ensure text is valid."
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerViewModel = viewModel()) {
+fun PastPaperAnalyzerScreen(navController: NavController, viewModel: PastPaperAnalyzerViewModel = viewModel()) {
     
-    val exams = listOf("UPSC Civil Services", "MPSC", "SSC CGL/CHSL", "Banking (IBPS/SBI)", "Railway (RRB)", "NDA", "State PSC")
-    val hoursList = (1..12).map { "$it hrs" }
-    val levelsList = listOf("Beginner", "Intermediate", "Advanced")
-    
+    val exams = listOf("UPSC Civil Services", "MPSC", "SSC CGL/CHSL", "Banking", "Railway", "NDA", "State PSC")
     var examExpanded by remember { mutableStateOf(false) }
-    var hoursExpanded by remember { mutableStateOf(false) }
-    var levelExpanded by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Study Planner", fontWeight = FontWeight.Bold) },
+                title = { Text("Past Paper Analyzer", fontWeight = FontWeight.Bold) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -77,14 +74,14 @@ fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerView
                 .verticalScroll(rememberScrollState())
                 .padding(20.dp)
         ) {
-            // Header identical to web
+            // Header
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Surface(color = AccentGreen.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp)) {
-                    Icon(Icons.Default.MenuBook, contentDescription = null, tint = AccentGreen, modifier = Modifier.padding(10.dp).size(24.dp))
+                Surface(color = AccentSaffron.copy(alpha = 0.1f), shape = RoundedCornerShape(12.dp)) {
+                    Icon(Icons.Default.Analytics, contentDescription = null, tint = AccentSaffron, modifier = Modifier.padding(10.dp).size(28.dp))
                 }
                 Column {
-                    Text("AI Study Planner", fontSize = 24.sp, fontWeight = FontWeight.ExtraBold)
-                    Text("Generate an optimized custom roadmap", fontSize = 13.sp, color = TextSecondary)
+                    Text("Exam Trend Analysis", fontSize = 22.sp, fontWeight = FontWeight.ExtraBold)
+                    Text("Discover what truly matters.", fontSize = 13.sp, color = TextSecondary)
                 }
             }
             
@@ -99,14 +96,13 @@ fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerView
             ) {
                 Column(modifier = Modifier.padding(20.dp)) {
                     
-                    // Selected Exam Dropdown
-                    Text("Target Exam", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
+                    Text("Select Exam", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
                     ExposedDropdownMenuBox(expanded = examExpanded, onExpandedChange = { examExpanded = !examExpanded }) {
                         OutlinedTextField(
                             value = viewModel.selectedExam,
                             onValueChange = {},
                             readOnly = true,
-                            placeholder = { Text("Select Exam") },
+                            placeholder = { Text("Choose an exam") },
                             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = examExpanded) },
                             modifier = Modifier.fillMaxWidth().menuAnchor(),
                             shape = RoundedCornerShape(8.dp)
@@ -117,85 +113,67 @@ fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerView
                             }
                         }
                     }
-
+                    
                     Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        // Daily Hours
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Daily Hours", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
-                            ExposedDropdownMenuBox(expanded = hoursExpanded, onExpandedChange = { hoursExpanded = !hoursExpanded }) {
-                                OutlinedTextField(
-                                    value = viewModel.selectedHours,
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = hoursExpanded) },
-                                    modifier = Modifier.fillMaxWidth().menuAnchor(),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                ExposedDropdownMenu(expanded = hoursExpanded, onDismissRequest = { hoursExpanded = false }) {
-                                    hoursList.forEach { h ->
-                                        DropdownMenuItem(text = { Text(h) }, onClick = { viewModel.selectedHours = h; hoursExpanded = false })
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Level
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text("Prep Level", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
-                            ExposedDropdownMenuBox(expanded = levelExpanded, onExpandedChange = { levelExpanded = !levelExpanded }) {
-                                OutlinedTextField(
-                                    value = viewModel.selectedLevel,
-                                    onValueChange = {},
-                                    readOnly = true,
-                                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = levelExpanded) },
-                                    modifier = Modifier.fillMaxWidth().menuAnchor(),
-                                    shape = RoundedCornerShape(8.dp)
-                                )
-                                ExposedDropdownMenu(expanded = levelExpanded, onDismissRequest = { levelExpanded = false }) {
-                                    levelsList.forEach { l ->
-                                        DropdownMenuItem(text = { Text(l) }, onClick = { viewModel.selectedLevel = l; levelExpanded = false })
-                                    }
-                                }
+                    
+                    // Dropzone simulator
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colorScheme.background, RoundedCornerShape(12.dp))
+                            .clickable { viewModel.fileName = "mock_paper_2023.txt"; viewModel.pdfTextContent = "Q1. Who was the first PM? Q2. What is GDP? Q3. Define Fundamental Rights." }
+                            .padding(24.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Icon(Icons.Default.CloudUpload, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(36.dp))
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text("Tap to simulate file upload", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.onSurface)
+                            if (viewModel.fileName.isNotEmpty()) {
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text("📄 ${viewModel.fileName}", fontSize = 12.sp, color = AccentGreen)
                             }
                         }
                     }
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    Text("Or paste paper text manually", fontWeight = FontWeight.SemiBold, fontSize = 14.sp, modifier = Modifier.padding(bottom = 6.dp))
+                    OutlinedTextField(
+                        value = viewModel.pdfTextContent,
+                        onValueChange = { viewModel.pdfTextContent = it; viewModel.fileName = "" },
+                        modifier = Modifier.fillMaxWidth().height(120.dp),
+                        placeholder = { Text("Paste text here...") },
+                        shape = RoundedCornerShape(8.dp)
+                    )
 
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Button(
-                        onClick = { viewModel.generatePlan() },
+                        onClick = { viewModel.startAnalysis() },
                         modifier = Modifier.fillMaxWidth().height(52.dp),
                         shape = RoundedCornerShape(8.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
-                        enabled = !viewModel.isLoading && viewModel.selectedExam.isNotEmpty()
+                        enabled = !viewModel.isLoading && viewModel.pdfTextContent.isNotEmpty()
                     ) {
                         if (viewModel.isLoading) {
                             CircularProgressIndicator(color = Color.White, modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                             Spacer(modifier = Modifier.width(12.dp))
-                            Text("Generating Plan...", fontWeight = FontWeight.Bold)
+                            Text("Analyzing Structure...", fontWeight = FontWeight.Bold)
                         } else {
                             Icon(Icons.Default.AutoAwesome, contentDescription = null, modifier = Modifier.size(18.dp))
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Generate Master Plan", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                            Text("Analyze Patterns", fontWeight = FontWeight.Bold, fontSize = 16.sp)
                         }
                     }
                 }
             }
 
-            if (viewModel.plan != null && !viewModel.isLoading) {
+            if (viewModel.analysisResult != null && !viewModel.isLoading) {
                 Spacer(modifier = Modifier.height(32.dp))
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                    Text("Your Action Plan", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
-                    Row {
-                        IconButton(onClick = { /* PDF Download simulated */ }) {
-                            Icon(Icons.Default.PictureAsPdf, contentDescription = "PDF", tint = AccentSaffron)
-                        }
-                        IconButton(onClick = { /* TXT Download simulated */ }) {
-                            Icon(Icons.Default.Download, contentDescription = "Download Text", tint = PrimaryBlue)
-                        }
-                    }
+                    Text("Analysis Breakdown", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp)
+                    IconButton(onClick = {  }) { Icon(Icons.Default.Download, contentDescription = "Download Report", tint = PrimaryBlue) }
                 }
                 Spacer(modifier = Modifier.height(16.dp))
                 Card(
@@ -205,9 +183,9 @@ fun StudyPlannerScreen(navController: NavController, viewModel: StudyPlannerView
                     border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
                 ) {
                     Text(
-                        text = viewModel.plan!!,
+                        text = viewModel.analysisResult!!,
                         modifier = Modifier.padding(24.dp),
-                        fontSize = 14.sp,
+                        fontSize = 15.sp,
                         lineHeight = 24.sp,
                         color = MaterialTheme.colorScheme.onSurface
                     )

@@ -39,3 +39,4 @@ class UserViewModel : ViewModel() {
         _userProfile.value = _userProfile.value.copy(isOnboarded = onboarded)
     }
 }
+

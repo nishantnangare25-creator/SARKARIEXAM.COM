@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.sarkari.exam.ui.theme.SarkariExamTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -37,23 +38,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
     )
 }
 
+@Preview(showBackground = true)
 @Composable
-fun SarkariExamTheme(content: @Composable () -> Unit) {
-    val colorScheme = lightColorScheme(
-        primary = PrimaryBlue,
-        secondary = AccentSaffron,
-        tertiary = AccentGreen,
-        background = BackgroundBody,
-        surface = SurfaceCard,
-        onPrimary = Color.White,
-        onSecondary = Color.White,
-        onTertiary = Color.White,
-        onBackground = TextPrimary,
-        onSurface = TextPrimary,
-    )
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        content = content
-    )
+fun GreetingPreview() {
+    SarkariExamTheme {
+        Greeting("Android")
+    }
 }
+
