@@ -287,51 +287,21 @@ export default function InteractiveTutor() {
               </section>
             </div>
           ) : messages.length === 0 ? (
-            <div style={{ 
-              margin: 'auto', 
-              textAlign: 'center', 
-              maxWidth: 460, 
-              padding: '24px 16px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: 20
-            }} className="animate-fadeIn">
-              {/* Welcome Header — hardcoded, no translation keys */}
-              <div style={{
-                width: 64,
-                height: 64,
-                background: 'var(--primary-bg)',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                border: '2px solid var(--border-blue)'
-              }}>
-                <Bot size={30} style={{ color: 'var(--primary)' }} />
-              </div>
-              <div>
-                <h3 style={{ color: 'var(--text-primary)', marginBottom: 8, fontSize: '1.1rem' }}>
-                  Hi! I'm Riya, your AI Tutor 👋
-                </h3>
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', lineHeight: 1.6 }}>
-                  Ask me anything about your exam preparation. I can explain concepts, solve doubts, and help you study smarter!
-                </p>
-              </div>
-              <div className="tutor-suggestions-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, width: '100%' }}>
-                {[
+            <div style={{ margin: 'auto', textAlign: 'center', maxWidth: 450 }} className="animate-fadeIn">
+              <div className="tutor-suggestions-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {(Array.isArray(t('tutor.suggestions', { returnObjects: true })) ? t('tutor.suggestions', { returnObjects: true }) : [
                   "Explain UPSC Syllabus",
                   "What are Ashok's Edicts?",
                   "2024 Current Affairs",
                   "Indian Constitution basics"
-                ].map(suggest => (
+                ]).map(suggest => (
                   <button 
                     key={suggest} 
                     className="chip" 
                     onClick={() => setCurrentInput(suggest)}
-                    style={{ padding: '12px', height: 'auto', whiteSpace: 'normal', textAlign: 'center', cursor: 'pointer' }}
+                    style={{ padding: '12px', height: 'auto', whiteSpace: 'normal', textAlign: 'center' }}
                   >
-                    {suggest}
+                    "{suggest}"
                   </button>
                 ))}
               </div>

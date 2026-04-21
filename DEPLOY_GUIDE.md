@@ -25,13 +25,13 @@ cd cloudflare-worker
 ### Step 5: API Keys secret ke roop mein add karo
 ```bash
 wrangler secret put GROQ_API_KEY
-# Paste: YOUR_GROQ_API_KEY_HERE
+# Paste: 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
 
 wrangler secret put GEMINI_API_KEY
-# Paste: YOUR_GEMINI_API_KEY_HERE
+# Paste: (apni Gemini key yahan paste karo)
 
 wrangler secret put OPENROUTER_API_KEY
-# Paste: YOUR_OPENROUTER_API_KEY_HERE
+# Paste: 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
 ```
 
 ### Step 6: Worker deploy karo

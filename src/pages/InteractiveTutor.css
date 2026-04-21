@@ -111,8 +111,6 @@
   gap: 28px;
   background: #F8FAFC;
   scroll-behavior: smooth;
-  min-height: 0;
-  justify-content: flex-end;
 }
 
 /* Chat Bubbles */

@@ -48,32 +48,29 @@ export default function Login() {
 
   const handleGoogle = async () => {
     setError('');
-    setLoading(true);
     try {
-      // Only use redirect for actual Flutter WebViews (has FlutterDownload bridge)
-      const isFlutterWebView = window.FlutterDownload !== undefined;
-      if (isFlutterWebView) {
-        await loginWithGoogleRedirect();
+      // Detect if running inside a Flutter WebView — popups are blocked there
+      const isWebView = window.FlutterDownload !== undefined || /wv/.test(navigator.userAgent) || /Version\/[\d.]+.*Mobile\/\S+ Safari/.test(navigator.userAgent) === false && /Mobile/.test(navigator.userAgent);
+      if (isWebView) {
+        // Use redirect-based sign-in for WebView compatibility
+        if (loginWithGoogleRedirect) {
+          await loginWithGoogleRedirect();
+        } else {
+          setError('Google login is not supported in this browser. Please use Email/Password to login.');
+        }
         return;
       }
-      // Use popup for all normal browsers (desktop & mobile)
       await loginWithGoogle();
-      setSuccess(t('auth.successGoogle') || 'Google se login ho gaya! Redirect ho raha hai...');
+      setSuccess(t('auth.successGoogle') || 'Signed in with Google! Redirecting...');
       setTimeout(() => navigate('/dashboard'), 1000);
     } catch (err) {
-      let msg = err.message;
-      if (err.code === 'auth/popup-blocked') {
-        msg = 'Browser ne popup block kiya. Chrome settings mein popup allow karein ya Email/Password se login karein.';
-      } else if (err.code === 'auth/popup-closed-by-user') {
-        msg = 'Google sign-in cancel hua. Phir se try karein.';
-      } else if (err.code === 'auth/unauthorized-domain') {
-        msg = 'Yeh domain Firebase mein authorized nahi hai. Firebase Console > Authentication > Settings > Authorized domains mein "localhost" add karein.';
-      } else if (err.code === 'auth/operation-not-allowed') {
-        msg = 'Google Sign-In enable nahi hai. Firebase Console > Authentication > Sign-in methods mein Google enable karein.';
-      }
+      // Friendly error messages instead of Firebase codes
+      const msg = err.code === 'auth/popup-blocked'
+        ? 'Popup was blocked. Please use Email/Password login or allow popups in your browser.'
+        : err.code === 'auth/popup-closed-by-user'
+        ? 'Google sign-in was cancelled. Please try again.'
+        : err.message;
       setError(msg);
-    } finally {
-      setLoading(false);
     }
   };
 

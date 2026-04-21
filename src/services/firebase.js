@@ -30,15 +30,15 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
-// Firebase config — using environment variables from .env
+// Firebase config — replace with your project credentials
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY || "AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc",
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || "govai-7ee5b.firebaseapp.com",
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "govai-7ee5b",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "govai-7ee5b.firebasestorage.app",
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "868025142353",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:868025142353:web:d7687cdd6c8bd19c32fc70",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-H4LJTCNN2V",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:868025142353:web:9612754b6ba3d79e32fc70",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-ZGL8CVET08",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -49,7 +49,6 @@ export const db = getFirestore(app);
 export const storage = getStorage(app);
 
 const googleProvider = new GoogleAuthProvider();
-googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 // ===== AUTH =====
 export const loginWithEmail = (email, password) =>
