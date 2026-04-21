@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SarkariExamAI - Clone Prototype</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafd; scroll-behavior: smooth;}
+        h1, h2, h3, .font-heading { font-family: 'Outfit', sans-serif; }
+        .text-gradient { background: linear-gradient(135deg, #6366f1, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .bg-gradient-ai { background: linear-gradient(135deg, #6366f1, #a855f7); }
+        .bg-grid { background-image: radial-gradient(#e5e7eb 1px, transparent 1px); background-size: 24px 24px; }
+        .card-shadow { box-shadow: 0 10px 40px -10px rgba(0,0,0,0.06); }
+    </style>
+</head>
+<body class="text-[#111827]">
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full bg-white/85 backdrop-blur-md border-b border-gray-100 z-50 h-[72px] flex items-center">
+        <div class="container mx-auto px-6 lg:px-12 flex justify-between items-center">
+            <div class="text-2xl font-heading font-bold text-[#111827]">Sarkari<span class="text-[#1a56db]">ExamAI</span></div>
+            <!-- Desktop Nav -->
+            <nav class="hidden md:flex gap-8 text-[#475569] font-medium text-sm">
+                <a href="#" class="hover:text-[#1a56db] transition">Explore Features</a>
+                <a href="#" class="hover:text-[#1a56db] transition">Exams We Cover</a>
+            </nav>
+            <div class="hidden md:flex items-center gap-6">
+                <a href="#" class="font-medium text-[#111827] text-sm flex items-center gap-1">🌐 EN</a>
+                <a href="#" class="font-medium text-[#1a56db] text-sm hover:underline">Login</a>
+                <a href="#" class="bg-[#1a56db] text-white px-6 py-2 rounded-full font-medium text-sm hover:bg-blue-700 transition shadow-lg shadow-blue-500/20">Sign Up</a>
+            </div>
+            <!-- Mobile Menu Icon -->
+            <div class="md:hidden text-2xl cursor-pointer">☰</div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 lg:pt-40 lg:pb-32 bg-grid overflow-hidden">
+        <div class="container mx-auto px-6 text-center relative z-10 w-full flex flex-col items-center">
+            
+            <!-- Badges -->
+            <div class="inline-block bg-orange-100/80 text-orange-600 px-4 py-1.5 rounded-full text-xs font-bold tracking-wide mb-6 border border-orange-200">
+                ✨ AI-POWERED EXAM SUCCESS
+            </div>
+            
+            <!-- Additional Floating UI Pills (Simulated below heading for mobile, sides for desktop) -->
+            <div class="hidden lg:flex absolute left-[10%] top-[40%] bg-white px-4 py-2 rounded-full shadow-lg border border-gray-100 text-sm font-medium items-center gap-2">
+                <span class="text-purple-500">⚜️</span> AI Analyzing weak topics...
+            </div>
+            <div class="hidden lg:flex absolute right-[10%] bottom-[25%] bg-white px-4 py-2 rounded-full shadow-lg border border-gray-100 text-sm font-medium items-center gap-2">
+                 <span class="text-orange-500">🎯</span> Focus Area: Indian Polity
+            </div>
+
+            <h1 class="text-4xl md:text-5xl lg:text-7xl font-heading font-extrabold tracking-tight mb-6 mt-4 max-w-4xl leading-tight">
+                Your <span class="text-gradient">AI-Powered</span> Exam Preparation Partner
+            </h1>
+            
+            <p class="text-lg md:text-xl text-[#475569] max-w-2xl mx-auto mb-10 leading-relaxed">
+                Stop Guessing. Start Mastering. Get data-driven insights and personalized AI coaching to crack India's toughest exams.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-4 w-full sm:w-auto">
+                <button class="w-full sm:w-auto bg-[#1a56db] text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-blue-700 transition shadow-xl shadow-blue-500/30">
+                    Start Learning Free
+                </button>
+                <button class="w-full sm:w-auto bg-white text-[#111827] px-8 py-4 rounded-full font-semibold text-lg hover:bg-gray-50 transition border border-gray-200 card-shadow">
+                    Explore Features
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="container mx-auto px-6 -mt-10 relative z-20 pb-20">
+        <div class="bg-white rounded-[24px] p-6 lg:p-10 flex flex-col md:flex-row justify-around items-center gap-8 card-shadow border border-gray-100">
+            <div class="text-center w-full md:w-auto">
+                <div class="text-blue-500 mb-2 flex justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg></div>
+                <div class="text-3xl font-heading font-bold text-[#111827]">50K+</div>
+                <div class="text-xs text-[#475569] mt-1 font-bold tracking-widest uppercase">Active Students</div>
+            </div>
+            <div class="hidden md:block w-px h-16 bg-gray-100"></div>
+            <div class="w-full md:hidden h-px bg-gray-100"></div>
+            <div class="text-center w-full md:w-auto">
+                 <div class="text-blue-500 mb-2 flex justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg></div>
+                <div class="text-3xl font-heading font-bold text-[#111827]">1M+</div>
+                <div class="text-xs text-[#475569] mt-1 font-bold tracking-widest uppercase">AI Questions</div>
+            </div>
+            <div class="hidden md:block w-px h-16 bg-gray-100"></div>
+             <div class="w-full md:hidden h-px bg-gray-100"></div>
+            <div class="text-center w-full md:w-auto">
+                <div class="text-blue-500 mb-2 flex justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg></div>
+                <div class="text-3xl font-heading font-bold text-[#111827]">7+</div>
+                <div class="text-xs text-[#475569] mt-1 font-bold tracking-widest uppercase">Exams Covered</div>
+            </div>
+             <div class="hidden md:block w-px h-16 bg-gray-100"></div>
+             <div class="w-full md:hidden h-px bg-gray-100"></div>
+             <div class="text-center w-full md:w-auto">
+                <div class="text-blue-500 mb-2 flex justify-center"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129"></path></svg></div>
+                <div class="text-3xl font-heading font-bold text-[#111827]">5+</div>
+                <div class="text-xs text-[#475569] mt-1 font-bold tracking-widest uppercase">Languages</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="py-20 bg-[#f8fafd]">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-heading font-extrabold mb-4">Master Every Subject with Precision AI</h2>
+                <p class="text-[#475569] text-lg max-w-2xl mx-auto">Don't just study—study smart with tools designed by AI experts for Indian aspirants.</p>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center text-purple-600 mb-6 text-xl">📚</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">AI Study Planner</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">Get a personalized study plan based on your goals and schedule.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center text-green-600 mb-6 text-xl">✨</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">Smart Mock Tests</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">10-minute daily adaptive quizzes with instant explanations.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                 <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center text-orange-600 mb-6 text-xl">📄</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">Past Paper Analysis</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">AI analyzes past papers to predict important topics.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                <!-- Card 4 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mb-6 text-xl">🎓</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">AI Notes Generator</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">Concise, exam-focused study notes downloadable as PDF.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                <!-- Card 5 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center text-pink-600 mb-6 text-xl">📈</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">Performance Analytics</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">Track your strengths, weaknesses, and exam readiness.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                <!-- Card 6 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 mb-6 text-xl">👥</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">Study Partners</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">Find peers with similar goals for collaborative learning.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                <!-- Card 7 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center text-yellow-600 mb-6 text-xl">⚡</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">AI Riya Tutor</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">Get instant personalized lessons on any topic in your own language.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                <!-- Card 8 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 mb-6 text-xl">🎯</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">PYQs Practice</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">Practice previous year questions from real government papers.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+                <!-- Card 9 -->
+                <div class="bg-white p-8 rounded-[20px] border border-gray-100 flex flex-col hover:-translate-y-1 hover:border-blue-200 transition duration-300 card-shadow">
+                    <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center text-cyan-600 mb-6 text-xl">🛡️</div>
+                    <h3 class="text-xl font-extrabold font-heading mb-3">PYQs Mock Test</h3>
+                    <p class="text-[#475569] mb-8 flex-grow leading-relaxed">Take full-length mock tests based on real PYQ patterns.</p>
+                    <a href="#" class="text-[#1a56db] font-semibold flex items-center gap-2 mt-auto text-sm">➔ Explore</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Exams Section -->
+    <section class="py-24 bg-white relative z-10">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-3xl md:text-4xl font-heading font-extrabold mb-4">Exams We Cover</h2>
+            <p class="text-[#475569] text-lg max-w-xl mx-auto mb-16">Tailored AI optimization for 15+ major Indian competitive exams.</p>
+            
+            <div class="flex flex-wrap justify-center gap-5">
+                <div class="bg-white border border-gray-200 py-6 px-4 rounded-[16px] flex flex-col items-center w-[160px] card-shadow cursor-pointer hover:border-[#1a56db] transition hover:-translate-y-1">
+                    <div class="text-3xl mb-3">🏛️</div>
+                    <div class="font-bold text-[#111827] text-sm">UPSC Civil Services</div>
+                </div>
+                <div class="bg-white border border-gray-200 py-6 px-4 rounded-[16px] flex flex-col items-center w-[160px] card-shadow cursor-pointer hover:border-[#1a56db] transition hover:-translate-y-1">
+                    <div class="text-3xl mb-3">📋</div>
+                    <div class="font-bold text-[#111827] text-sm">MPSC</div>
+                </div>
+                <div class="bg-white border border-gray-200 py-6 px-4 rounded-[16px] flex flex-col items-center w-[160px] card-shadow cursor-pointer hover:border-[#1a56db] transition hover:-translate-y-1">
+                    <div class="text-3xl mb-3">📊</div>
+                    <div class="font-bold text-[#111827] text-sm">SSC CGL/CHSL</div>
+                </div>
+                <div class="bg-white border border-gray-200 py-6 px-4 rounded-[16px] flex flex-col items-center w-[160px] card-shadow cursor-pointer hover:border-[#1a56db] transition hover:-translate-y-1">
+                    <div class="text-3xl mb-3">🏦</div>
+                    <div class="font-bold text-[#111827] text-sm">Banking (IBPS/SBI)</div>
+                </div>
+                <div class="bg-white border border-gray-200 py-6 px-4 rounded-[16px] flex flex-col items-center w-[160px] card-shadow cursor-pointer hover:border-[#1a56db] transition hover:-translate-y-1">
+                    <div class="text-3xl mb-3">🚂</div>
+                    <div class="font-bold text-[#111827] text-sm">Railway (RRB)</div>
+                </div>
+                <div class="bg-white border border-gray-200 py-6 px-4 rounded-[16px] flex flex-col items-center w-[160px] card-shadow cursor-pointer hover:border-[#1a56db] transition hover:-translate-y-1">
+                    <div class="text-3xl mb-3">🎖️</div>
+                    <div class="font-bold text-[#111827] text-sm">NDA</div>
+                </div>
+                <div class="bg-white border border-gray-200 py-6 px-4 rounded-[16px] flex flex-col items-center w-[160px] card-shadow cursor-pointer hover:border-[#1a56db] transition hover:-translate-y-1">
+                    <div class="text-3xl mb-3">🏢</div>
+                    <div class="font-bold text-[#111827] text-sm">State PSC</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bottom CTA -->
+    <section class="bg-gradient-to-r from-[#1a56db] to-[#3b82f6] py-24 text-center">
+        <div class="container mx-auto px-6">
+            <h2 class="text-3xl md:text-5xl font-heading font-extrabold text-white mb-6">Ready to Outperform the Competition?</h2>
+            <p class="text-blue-100 text-lg md:text-xl max-w-2xl mx-auto mb-10">Join 50,000+ successful aspirants who use AI to stay ahead of the curve.</p>
+            <button class="bg-white text-[#1a56db] px-10 py-4 rounded-full font-bold text-lg hover:shadow-xl hover:scale-105 transition duration-300">
+                Join Now for Free
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-[#0b1120] text-gray-400 py-16">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+            <div>
+                 <div class="text-2xl font-heading font-bold text-white mb-4">Sarkari<span class="text-[#3b82f6]">ExamAI</span></div>
+                 <p class="text-sm leading-relaxed text-slate-400">India's Leading AI-Powered Exam Preparation Platform. Study smarter, not harder.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold tracking-widest uppercase text-sm mb-6">Platform</h4>
+                <ul class="space-y-4 text-sm text-slate-400 flex flex-col">
+                    <a href="#" class="hover:text-white transition w-fit">Study Planner</a>
+                    <a href="#" class="hover:text-white transition w-fit">Mock Test</a>
+                    <a href="#" class="hover:text-white transition w-fit">Notes Generator</a>
+                    <a href="#" class="hover:text-white transition w-fit">Analytics</a>
+                </ul>
+            </div>
+             <div>
+                <h4 class="text-white font-bold tracking-widest uppercase text-sm mb-6">Exams</h4>
+                <ul class="space-y-4 text-sm text-slate-400 flex flex-col">
+                    <a href="#" class="hover:text-white transition w-fit">UPSC Civil Services</a>
+                    <a href="#" class="hover:text-white transition w-fit">MPSC</a>
+                    <a href="#" class="hover:text-white transition w-fit">SSC CGL/CHSL</a>
+                    <a href="#" class="hover:text-white transition w-fit">Banking IBPS/SBI</a>
+                </ul>
+            </div>
+             <div>
+                <h4 class="text-white font-bold tracking-widest uppercase text-sm mb-6">Company</h4>
+                <ul class="space-y-4 text-sm text-slate-400 flex flex-col">
+                    <a href="#" class="hover:text-white transition w-fit">About Us</a>
+                    <a href="#" class="hover:text-white transition w-fit">Contact</a>
+                    <a href="#" class="hover:text-white transition w-fit">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition w-fit">Terms of Service</a>
+                </ul>
+            </div>
+        </div>
+        <div class="container mx-auto px-6 mt-16 pt-8 border-t border-[#1e293b] flex flex-col md:flex-row justify-between items-center text-sm text-slate-500">
+            <p>© 2026 Sarkari AI. All rights reserved.</p>
+            <p class="mt-4 md:mt-0">Built with ❤️ for Bharat's Future Leaders.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,86 @@
+<resources>
+    <string name="app_name">सरकारी परीक्षा AI</string>
+
+    <!-- Navigation & Bottom Bar -->
+    <string name="nav_home">मुख्यपृष्ठ</string>
+    <string name="nav_menu">मेनू</string>
+
+    <!-- Drawer Sections -->
+    <string name="section_main">मुख्य</string>
+    <string name="section_tests">परीक्षा</string>
+    <string name="section_study">अभ्यास साधने</string>
+    <string name="section_ai">AI शिक्षक</string>
+    <string name="section_social">समुदाय</string>
+    <string name="section_account">खाते</string>
+
+    <!-- Drawer Items -->
+    <string name="menu_current_affairs">चालू घडामोडी</string>
+    <string name="menu_blog">ब्लॉग</string>
+    <string name="menu_mock_test">सराव परीक्षा</string>
+    <string name="menu_pyq_practice">PYQ सराव परीक्षा</string>
+    <string name="menu_pyq_library">PYQ लायब्ररी</string>
+    <string name="menu_study_planner">अभ्यास नियोजक</string>
+    <string name="menu_notes_generator">नोट्स जनरेटर</string>
+    <string name="menu_past_paper">मागील पेपर विश्लेषक</string>
+    <string name="menu_analytics">विश्लेषण</string>
+    <string name="menu_community">समुदाय</string>
+    <string name="menu_study_partner">अभ्यास भागीदार</string>
+    <string name="menu_riya_tutor">रिया AI शिक्षक</string>
+    <string name="menu_pdfs">PYQ PDFs</string>
+    <string name="menu_settings">सेटिंग्ज</string>
+
+    <!-- Dashboard -->
+    <string name="greeting_morning">सुप्रभात</string>
+    <string name="greeting_afternoon">नमस्कार</string>
+    <string name="greeting_evening">शुभ संध्याकाळ</string>
+    <string name="dashboard_subtitle">आजची तयारी सुरू ठेवायला तयार आहात?</string>
+    <string name="home_overview">मुख्यपृष्ठ आढावा</string>
+    <string name="performance_analytics">कामगिरी विश्लेषण</string>
+    <string name="view_details">तपशील पहा</string>
+    <string name="smart_suggestions">स्मार्ट सूचना</string>
+    <string name="current_affairs">चालू घडामोडी</string>
+    <string name="daily_challenge">दैनंदिन आव्हान</string>
+    <string name="challenge_now">आत्ता आव्हान घ्या</string>
+    <string name="view_all_affairs">सर्व बातम्या पहा ›</string>
+    <string name="ai_engine_title">AI हाय-कॅपेसिटी इंजिन</string>
+    <string name="go_now">आत्ता जा →</string>
+
+    <!-- Feature Cards -->
+    <string name="feat_mock_test">सराव परीक्षा सुरू करा</string>
+    <string name="feat_mock_subtitle">संपूर्ण लांबीची परीक्षा</string>
+    <string name="feat_pyq_library">PYQ लायब्ररी</string>
+    <string name="feat_pyq_subtitle">जुने पेपर आणि अपलोड</string>
+    <string name="feat_pyq_practice">PYQs सराव</string>
+    <string name="feat_pyq_practice_subtitle">10 मिनिटे 10 प्रश्न</string>
+    <string name="feat_ai_tutor">AI अभ्यास शिक्षक</string>
+    <string name="feat_ai_tutor_subtitle">रियाला काहीही विचारा</string>
+
+    <!-- Settings -->
+    <string name="settings_preferences">ॲप प्राधान्ये</string>
+    <string name="settings_exam_target">परीक्षा लक्ष्य</string>
+    <string name="settings_language">ॲप भाषा</string>
+    <string name="settings_api_key_title">सानुकूल API की (BYOK)</string>
+    <string name="settings_api_key_subtitle">दर मर्यादा टाळण्यासाठी स्वतःची Gemini API की वापरा।</string>
+    <string name="settings_save_key">की जतन करा</string>
+    <string name="settings_saved">जतन केले!</string>
+    <string name="settings_get_key">मोफत की मिळवा</string>
+    <string name="settings_logout">लॉग आउट</string>
+    <string name="settings_information">माहिती</string>
+    <string name="settings_about">आमच्याबद्दल</string>
+    <string name="settings_privacy">गोपनीयता धोरण</string>
+
+    <!-- Titles -->
+    <string name="title_dashboard">सरकारी परीक्षा AI</string>
+    <string name="title_mock_test">सराव परीक्षा</string>
+    <string name="title_tutor">रिया AI शिक्षक</string>
+    <string name="title_analytics">विश्लेषण</string>
+    <string name="title_study_planner">अभ्यास नियोजक</string>
+    <string name="title_pyq_library">PYQ लायब्ररी</string>
+    <string name="title_notes_generator">नोट्स जनरेटर</string>
+    <string name="title_current_affairs">चालू घडामोडी</string>
+    <string name="title_settings">सेटिंग्ज</string>
+    <string name="title_blog">ब्लॉग</string>
+    <string name="title_past_paper">मागील पेपर विश्लेषक</string>
+    <string name="title_pdf_library">PDF लायब्ररी</string>
+    <string name="title_community">समुदाय</string>
+</resources>

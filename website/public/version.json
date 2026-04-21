@@ -1,0 +1,6 @@
+{
+  "version": "1.0.8",
+  "build_number": 9,
+  "download_url": "https://sarkariexamai.com",
+  "release_notes": "Version 1.0.8: Fixed login redirection issue inside the WebView app."
+}

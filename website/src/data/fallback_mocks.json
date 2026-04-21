@@ -1,0 +1,1849 @@
+{
+  "questions": [
+    {
+      "Q": "Which article of the Indian Constitution deals with the fundamental rights?",
+      "A": "Part II",
+      "B": "Part III",
+      "C": "Part IV",
+      "D": "Part V",
+      "Answer": "B",
+      "Explanation": "Part III of the Indian Constitution (Articles 12 to 35) deals with Fundamental Rights."
+    },
+    {
+      "Q": "Who was the first Governor-General of independent India?",
+      "A": "C. Rajagopalachari",
+      "B": "Lord Mountbatten",
+      "C": "Dr. Rajendra Prasad",
+      "D": "Jawaharlal Nehru",
+      "Answer": "B",
+      "Explanation": "Lord Mountbatten was the first Governor-General of independent India."
+    },
+    {
+      "Q": "The Reserve Bank of India (RBI) was established in which year?",
+      "A": "1935",
+      "B": "1947",
+      "C": "1950",
+      "D": "1952",
+      "Answer": "A",
+      "Explanation": "RBI was established on April 1, 1935, in accordance with the provisions of the RBI Act, 1934."
+    },
+    {
+      "Q": "Which of the following is not a Kharif crop?",
+      "A": "Rice",
+      "B": "Maize",
+      "C": "Wheat",
+      "D": "Cotton",
+      "Answer": "C",
+      "Explanation": "Wheat is a Rabi crop, sown in winter and harvested in spring."
+    },
+    {
+      "Q": "What is the SI unit of electric current?",
+      "A": "Volt",
+      "B": "Ohm",
+      "C": "Ampere",
+      "D": "Watt",
+      "Answer": "C",
+      "Explanation": "The SI unit of electric current is Ampere (A)."
+    },
+    {
+      "Q": "The Indus Valley Civilization is known for its sophisticated urban planning, with which of the following being a notable feature?",
+      "A": "Use of iron tools",
+      "B": "Existence of a robust system of writing",
+      "C": "Well-planned drainage system",
+      "D": "Extensive use of bronze weaponry",
+      "Answer": "C",
+      "Explanation": "The Indus Valley Civilization had advanced drainage systems, with well-planned sewage and drainage infrastructure. This is a hallmark of their sophisticated urban planning."
+    },
+    {
+      "Q": "The concept of 'Dharma' in ancient Indian societies referred to",
+      "A": "The natural order of the universe",
+      "B": "The social and moral order of human society",
+      "C": "The economic system of ancient India",
+      "D": "The political structure of ancient Indian kingdoms",
+      "Answer": "B",
+      "Explanation": "Dharma referred to the social and moral order of human society, encompassing an individual's duties and responsibilities. It was a central concept in ancient Indian thought."
+    },
+    {
+      "Q": "The Gupta period is often referred to as the 'Golden Age' of ancient India due to its significant achievements in",
+      "A": "Military conquests and expansion",
+      "B": "Science, technology, and the arts",
+      "C": "Trade and commerce",
+      "D": "Agriculture and irrigation",
+      "Answer": "B",
+      "Explanation": "The Gupta period saw significant advancements in science, technology, and the arts, with notable contributions in fields like mathematics, astronomy, and literature. This earned it the reputation as the 'Golden Age' of ancient India."
+    },
+    {
+      "Q": "The Mauryan Empire, which ruled much of ancient India, was founded by",
+      "A": "Chandragupta Maurya",
+      "B": "Ashoka the Great",
+      "C": "Samudragupta",
+      "D": "Bimbisara",
+      "Answer": "A",
+      "Explanation": "Chandragupta Maurya, with the help of Chanakya, overthrew the Nanda dynasty and established the Mauryan Empire, which would go on to become one of the largest and most influential empires in ancient Indian history."
+    },
+    {
+      "Q": "The ancient Indian text that describes the duties and responsibilities of a king is",
+      "A": "The Mahabharata",
+      "B": "The Ramayana",
+      "C": "The Arthashastra",
+      "D": "The Manusmriti",
+      "Answer": "C",
+      "Explanation": "The Arthashastra, written by Chanakya, is an ancient Indian text that outlines the duties and responsibilities of a king, including governance, diplomacy, and warfare. It is a seminal work on statecraft and political economy."
+    },
+    {
+      "Q": "The Vijayanagara Empire, which flourished in southern India, was founded by",
+      "A": "Harihara and Bukka Raya",
+      "B": "Krishnadeva Raya",
+      "C": "Shivaji",
+      "D": "Tipu Sultan",
+      "Answer": "A",
+      "Explanation": "The Vijayanagara Empire was founded by Harihara and Bukka Raya, two brothers who established the empire in the 14th century and went on to create a powerful and culturally rich kingdom in southern India."
+    },
+    {
+      "Q": "The Mughal emperor who built the Taj Mahal was",
+      "A": "Babur",
+      "B": "Humayun",
+      "C": "Akbar",
+      "D": "Shah Jahan",
+      "Answer": "D",
+      "Explanation": "Shah Jahan, the fifth Mughal emperor, built the Taj Mahal as a mausoleum for his wife, Mumtaz Mahal, in the 17th century. It is one of the most famous and beautiful buildings in the world."
+    },
+    {
+      "Q": "The Indian National Congress, a major political party in India, was founded in",
+      "A": "1885",
+      "B": "1905",
+      "C": "1915",
+      "D": "1925",
+      "Answer": "A",
+      "Explanation": "The Indian National Congress was founded in 1885 by Allan Octavian Hume, with the aim of promoting Indian rights and self-governance under British rule. It would go on to play a major role in the Indian independence movement."
+    },
+    {
+      "Q": "The Quit India Movement, a major civil disobedience campaign against British rule, was launched by Mahatma Gandhi in",
+      "A": "1920",
+      "B": "1930",
+      "C": "1942",
+      "D": "1947",
+      "Answer": "C",
+      "Explanation": "The Quit India Movement, also known as the August Movement, was launched by Mahatma Gandhi in 1942, with the aim of ending British rule in India through non-violent civil disobedience."
+    },
+    {
+      "Q": "The Government of India Act of 1935, a major constitutional reform, provided for",
+      "A": "Complete independence for India",
+      "B": "Dominion status for India",
+      "C": "A federal system of government with provincial autonomy",
+      "D": "The abolition of the Indian princely states",
+      "Answer": "C",
+      "Explanation": "The Government of India Act of 1935 provided for a federal system of government, with provincial autonomy and a degree of self-governance, although it still maintained British control over key areas of governance."
+    },
+    {
+      "Q": "What is the largest state in India by area?",
+      "A": "Rajasthan",
+      "B": "Madhya Pradesh",
+      "C": "Uttar Pradesh",
+      "D": "Maharashtra",
+      "Answer": "A",
+      "Explanation": "Rajasthan is the largest state in India, covering approximately 342,239 square kilometers. It accounts for about 10.4% of the country's total area."
+    },
+    {
+      "Q": "Which mountain range runs along the border between India and Pakistan?",
+      "A": "The Himalayas",
+      "B": "The Karakoram",
+      "C": "The Aravalli Range",
+      "D": "The Sulaiman Range",
+      "Answer": "D",
+      "Explanation": "The Sulaiman Range is a mountain range that runs along the border between India and Pakistan. It is located in the western part of the Indian subcontinent."
+    },
+    {
+      "Q": "What is the name of the strait that separates the islands of Little Andaman and Great Nicobar?",
+      "A": "Duncan Passage",
+      "B": "Ten Degree Channel",
+      "C": "Coco Channel",
+      "D": "Sombrero Channel",
+      "Answer": "B",
+      "Explanation": "The Ten Degree Channel is a strait that separates the islands of Little Andaman and Great Nicobar in the Andaman and Nicobar Islands. It is approximately 150 kilometers wide."
+    },
+    {
+      "Q": "Which river is the longest in South India?",
+      "A": "Godavari River",
+      "B": "Krishna River",
+      "C": "Kaveri River",
+      "D": "Tungabhadra River",
+      "Answer": "A",
+      "Explanation": "The Godavari River is the longest river in South India, stretching approximately 1,465 kilometers. It originates in the Western Ghats and flows into the Bay of Bengal."
+    },
+    {
+      "Q": "What is the name of the plateau that covers most of the Deccan region in India?",
+      "A": "Chota Nagpur Plateau",
+      "B": "Deccan Plateau",
+      "C": "Malwa Plateau",
+      "D": "Baghelkhand Plateau",
+      "Answer": "B",
+      "Explanation": "The Deccan Plateau is a large plateau that covers most of the Deccan region in India. It is bounded by the Western Ghats and the Eastern Ghats mountain ranges."
+    },
+    {
+      "Q": "Which city is located at the confluence of the Ganga and Yamuna rivers?",
+      "A": "Allahabad",
+      "B": "Varanasi",
+      "C": "Kanpur",
+      "D": "Patna",
+      "Answer": "A",
+      "Explanation": "Allahabad, now known as Prayagraj, is a city located at the confluence of the Ganga and Yamuna rivers. It is a significant cultural and spiritual center in India."
+    },
+    {
+      "Q": "What is the name of the highest peak in the Eastern Ghats mountain range?",
+      "A": "Mahendragiri",
+      "B": "Arma Konda",
+      "C": "Gurushikhar",
+      "D": "Doddabetta",
+      "Answer": "B",
+      "Explanation": "Arma Konda is the highest peak in the Eastern Ghats mountain range, with an elevation of approximately 1,680 meters. It is located in the state of Andhra Pradesh."
+    },
+    {
+      "Q": "Which state has the longest coastline in India?",
+      "A": "Gujarat",
+      "B": "Maharashtra",
+      "C": "Tamil Nadu",
+      "D": "Andhra Pradesh",
+      "Answer": "A",
+      "Explanation": "Gujarat has the longest coastline in India, stretching approximately 1,600 kilometers. It is bounded by the Arabian Sea to the west and the Gulf of Kutch to the northwest."
+    },
+    {
+      "Q": "What is the name of the largest island in the Andaman and Nicobar Islands?",
+      "A": "Great Nicobar",
+      "B": "Little Andaman",
+      "C": "North Andaman",
+      "D": "Middle Andaman",
+      "Answer": "C",
+      "Explanation": "North Andaman is the largest island in the Andaman and Nicobar Islands, with an area of approximately 1,376 square kilometers. It is part of the Andaman Islands archipelago."
+    },
+    {
+      "Q": "Which river forms the border between India and Bangladesh?",
+      "A": "Ganga River",
+      "B": "Brahmaputra River",
+      "C": "Meghna River",
+      "D": "Padma River",
+      "Answer": "A",
+      "Explanation": "The Ganga River forms the border between India and Bangladesh. It is a significant river in the region and is also known as the Padma River in Bangladesh."
+    },
+    {
+      "Q": "What is the primary objective of the Monetary Policy Committee in India?",
+      "A": "To promote economic growth",
+      "B": "To control inflation",
+      "C": "To stabilize the exchange rate",
+      "D": "To reduce the fiscal deficit",
+      "Answer": "B",
+      "Explanation": "The Monetary Policy Committee's primary objective is to maintain price stability, which means controlling inflation. This is achieved by adjusting the repo rate and other monetary policy tools."
+    },
+    {
+      "Q": "Which of the following is a characteristic of a developing economy like India?",
+      "A": "High per capita income",
+      "B": "Low population growth rate",
+      "C": "Dependence on agriculture",
+      "D": "High level of industrialization",
+      "Answer": "C",
+      "Explanation": "Developing economies like India are often characterized by a significant dependence on the agricultural sector, which employs a large portion of the workforce."
+    },
+    {
+      "Q": "What is the name of the government scheme launched to promote financial inclusion in India?",
+      "A": "Jan Dhan Yojana",
+      "B": "Digital India",
+      "C": "Make in India",
+      "D": "Skill India",
+      "Answer": "A",
+      "Explanation": "The Pradhan Mantri Jan Dhan Yojana is a government scheme launched to promote financial inclusion by providing access to banking services for all citizens."
+    },
+    {
+      "Q": "Which of the following is a type of foreign investment in India?",
+      "A": "Foreign Direct Investment (FDI)",
+      "B": "Foreign Institutional Investment (FII)",
+      "C": "Foreign Portfolio Investment (FPI)",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "All of the above options are types of foreign investment in India, with FDI referring to investment in a specific business, FII referring to investment by foreign institutional investors, and FPI referring to investment in securities."
+    },
+    {
+      "Q": "What is the purpose of the Goods and Services Tax (GST) in India?",
+      "A": "To reduce tax evasion",
+      "B": "To increase government revenue",
+      "C": "To simplify the tax structure",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The GST is a comprehensive tax reform aimed at simplifying the tax structure, reducing tax evasion, and increasing government revenue by subsuming multiple taxes into a single tax."
+    },
+    {
+      "Q": "Which of the following is a consequence of a high fiscal deficit in India?",
+      "A": "Reduced inflation",
+      "B": "Increased economic growth",
+      "C": "Higher interest rates",
+      "D": "Reduced government borrowing",
+      "Answer": "C",
+      "Explanation": "A high fiscal deficit can lead to higher interest rates as the government borrows more to finance its deficit, increasing the demand for credit and driving up interest rates."
+    },
+    {
+      "Q": "What is the name of the Indian government's flagship program to promote entrepreneurship and job creation?",
+      "A": "Start-Up India",
+      "B": "Make in India",
+      "C": "Digital India",
+      "D": "Skill India",
+      "Answer": "A",
+      "Explanation": "The Start-Up India initiative is a flagship program launched by the Indian government to promote entrepreneurship and job creation by providing support to start-ups and entrepreneurs."
+    },
+    {
+      "Q": "Which of the following is a benefit of foreign trade for India?",
+      "A": "Increased domestic employment",
+      "B": "Improved balance of payments",
+      "C": "Access to new markets and technologies",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "Foreign trade can provide India with access to new markets and technologies, improve its balance of payments, and increase domestic employment opportunities."
+    },
+    {
+      "Q": "What is the primary function of the Reserve Bank of India (RBI)?",
+      "A": "To regulate the banking sector",
+      "B": "To manage the government's debt",
+      "C": "To supervise the insurance sector",
+      "D": "To manage the country's foreign exchange reserves",
+      "Answer": "A",
+      "Explanation": "The RBI is the central bank of India and its primary function is to regulate the banking sector, including setting monetary policy and supervising commercial banks."
+    },
+    {
+      "Q": "Which of the following is a challenge facing the Indian economy?",
+      "A": "Inflation",
+      "B": "Unemployment",
+      "C": "Poverty",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The Indian economy faces multiple challenges, including inflation, unemployment, and poverty, which are interrelated and require a comprehensive approach to address."
+    },
+    {
+      "Q": "What is the term of office for the President of India?",
+      "A": "5 years",
+      "B": "6 years",
+      "C": "7 years",
+      "D": "Life-long",
+      "Answer": "A",
+      "Explanation": "The President of India holds office for a term of 5 years, as per Article 56 of the Constitution."
+    },
+    {
+      "Q": "Which article of the Indian Constitution deals with the Right to Freedom of Speech and Expression?",
+      "A": "Article 14",
+      "B": "Article 19",
+      "C": "Article 21",
+      "D": "Article 25",
+      "Answer": "B",
+      "Explanation": "Article 19 of the Indian Constitution guarantees the Right to Freedom of Speech and Expression to all citizens."
+    },
+    {
+      "Q": "What is the minimum age for a person to be eligible to contest elections to the Lok Sabha?",
+      "A": "21 years",
+      "B": "25 years",
+      "C": "30 years",
+      "D": "35 years",
+      "Answer": "B",
+      "Explanation": "As per Article 84 of the Constitution, a person must be at least 25 years old to be eligible to contest elections to the Lok Sabha."
+    },
+    {
+      "Q": "Which of the following is NOT a fundamental duty as listed in Article 51A of the Indian Constitution?",
+      "A": "To abide by the Constitution",
+      "B": "To protect the environment",
+      "C": "To promote international peace",
+      "D": "To pay taxes on time",
+      "Answer": "D",
+      "Explanation": "While paying taxes on time is a civic responsibility, it is not explicitly listed as a fundamental duty in Article 51A of the Constitution."
+    },
+    {
+      "Q": "What is the name of the committee that examines the reports of the Comptroller and Auditor General of India?",
+      "A": "Public Accounts Committee",
+      "B": "Estimates Committee",
+      "C": "Committee on Public Undertakings",
+      "D": "Committee on Subordinate Legislation",
+      "Answer": "A",
+      "Explanation": "The Public Accounts Committee is responsible for examining the reports of the Comptroller and Auditor General of India."
+    },
+    {
+      "Q": "Who is the head of the Indian Council of Ministers?",
+      "A": "President",
+      "B": "Vice-President",
+      "C": "Prime Minister",
+      "D": "Speaker of the Lok Sabha",
+      "Answer": "C",
+      "Explanation": "The Prime Minister is the head of the Indian Council of Ministers, as per Article 75 of the Constitution."
+    },
+    {
+      "Q": "Which article of the Indian Constitution deals with the provisions for the impeachment of the President?",
+      "A": "Article 56",
+      "B": "Article 61",
+      "C": "Article 75",
+      "D": "Article 368",
+      "Answer": "B",
+      "Explanation": "Article 61 of the Indian Constitution deals with the provisions for the impeachment of the President."
+    },
+    {
+      "Q": "What is the term of office for members of the Rajya Sabha?",
+      "A": "5 years",
+      "B": "6 years",
+      "C": "7 years",
+      "D": "Life-long",
+      "Answer": "B",
+      "Explanation": "Members of the Rajya Sabha hold office for a term of 6 years, with one-third of the members retiring every 2 years."
+    },
+    {
+      "Q": "Who is the ex-officio chairman of the Rajya Sabha?",
+      "A": "President",
+      "B": "Vice-President",
+      "C": "Prime Minister",
+      "D": "Speaker of the Lok Sabha",
+      "Answer": "B",
+      "Explanation": "The Vice-President of India is the ex-officio chairman of the Rajya Sabha, as per Article 64 of the Constitution."
+    },
+    {
+      "Q": "Which of the following is a feature of the Indian federal system?",
+      "A": "Unitary executive",
+      "B": "Dual citizenship",
+      "C": "Independent judiciary",
+      "D": "Single citizenship",
+      "Answer": "D",
+      "Explanation": "India has a single citizenship, which means that all citizens have the same rights and privileges throughout the country, regardless of the state they reside in."
+    },
+    {
+      "Q": "What is the primary objective of the Monetary Policy Committee in India?",
+      "A": "To promote economic growth",
+      "B": "To control inflation",
+      "C": "To stabilize the exchange rate",
+      "D": "To reduce unemployment",
+      "Answer": "B",
+      "Explanation": "The Monetary Policy Committee aims to keep inflation within a target range, currently 4% with a margin of 2% on either side. This is done to maintain price stability and support economic growth."
+    },
+    {
+      "Q": "Which of the following is a characteristic of a developing economy like India?",
+      "A": "High per capita income",
+      "B": "Low population growth rate",
+      "C": "Significant dependence on agriculture",
+      "D": "High level of industrialization",
+      "Answer": "C",
+      "Explanation": "India is a developing economy with a significant portion of its workforce engaged in the agricultural sector, which contributes substantially to the country's GDP."
+    },
+    {
+      "Q": "What is the name of the scheme launched by the Government of India to provide financial assistance to small and medium-sized enterprises?",
+      "A": "Make in India",
+      "B": "Start-Up India",
+      "C": "Mudra Yojana",
+      "D": "Digital India",
+      "Answer": "C",
+      "Explanation": "Mudra Yojana is a scheme launched by the Government of India to provide financial assistance to small and medium-sized enterprises, particularly in the non-corporate sector."
+    },
+    {
+      "Q": "Which of the following is a type of foreign investment in India?",
+      "A": "Foreign Direct Investment (FDI)",
+      "B": "Foreign Institutional Investment (FII)",
+      "C": "Foreign Portfolio Investment (FPI)",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "All the given options are types of foreign investment in India, with FDI involving long-term investment, FII involving investment by institutional investors, and FPI involving investment in securities."
+    },
+    {
+      "Q": "What is the purpose of the Goods and Services Tax (GST) in India?",
+      "A": "To reduce tax rates",
+      "B": "To increase tax revenue",
+      "C": "To simplify the tax structure",
+      "D": "To promote exports",
+      "Answer": "C",
+      "Explanation": "The GST is a comprehensive tax reform aimed at simplifying the tax structure by subsuming multiple indirect taxes, making it easier for businesses to comply with tax laws."
+    },
+    {
+      "Q": "Which of the following organizations is responsible for regulating the banking sector in India?",
+      "A": "Reserve Bank of India (RBI)",
+      "B": "Securities and Exchange Board of India (SEBI)",
+      "C": "Insurance Regulatory and Development Authority of India (IRDAI)",
+      "D": "Pension Fund Regulatory and Development Authority (PFRDA)",
+      "Answer": "A",
+      "Explanation": "The RBI is the central bank of India and is responsible for regulating the banking sector, maintaining financial stability, and overseeing the monetary policy."
+    },
+    {
+      "Q": "What is the name of the initiative launched by the Government of India to promote digital payments?",
+      "A": "Digital India",
+      "B": "Make in India",
+      "C": "Start-Up India",
+      "D": "Jan Dhan-Aadhaar-Mobile (JAM) trinity",
+      "Answer": "D",
+      "Explanation": "The JAM trinity is an initiative launched by the Government of India to promote digital payments by linking bank accounts, Aadhaar cards, and mobile numbers."
+    },
+    {
+      "Q": "Which of the following is a benefit of investing in the National Pension System (NPS) in India?",
+      "A": "Guaranteed returns",
+      "B": "Tax benefits",
+      "C": "Liquidity",
+      "D": "All of the above",
+      "Answer": "B",
+      "Explanation": "The NPS offers tax benefits to subscribers, including deductions under Section 80CCD of the Income Tax Act, making it an attractive option for retirement planning."
+    },
+    {
+      "Q": "What is the purpose of the Pradhan Mantri Jan Dhan Yojana (PMJDY) scheme in India?",
+      "A": "To promote financial inclusion",
+      "B": "To provide credit to small businesses",
+      "C": "To support agriculture",
+      "D": "To promote exports",
+      "Answer": "A",
+      "Explanation": "The PMJDY is a scheme launched by the Government of India to promote financial inclusion by providing access to banking services, particularly to the unbanked population."
+    },
+    {
+      "Q": "Which of the following is a component of the Human Development Index (HDI) in India?",
+      "A": "GDP per capita",
+      "B": "Life expectancy at birth",
+      "C": "Expected years of schooling",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The HDI is a composite index that includes three components: life expectancy at birth, expected years of schooling, and GDP per capita, to measure the overall well-being of a country's population."
+    },
+    {
+      "Q": "A snail is at the bottom of a 20-foot well. Each day, it climbs up 3 feet, but at night, it slips back 2 feet. How many days will it take for the snail to reach the top of the well?",
+      "A": "18",
+      "B": "20",
+      "C": "22",
+      "D": "28",
+      "Answer": "B",
+      "Explanation": "The snail effectively climbs 1 foot per day, so it takes 18 days to climb 18 feet, and on the 19th day, it climbs 3 feet and reaches the top, but since it doesn't slip back at night when it's already at the top, the 20th day is not needed for slipping, thus 18 days of climbing and 1 day to emerge, which equates to 18 + 1 = 19 + 1 = 20 days in total to be completely out of the well."
+    },
+    {
+      "Q": "There are three switches, but they are not labelled. Each switch corresponds to one of three light bulbs in a room. Each light bulb is off at the start. You can turn the lights on and off as many times as you want, but you can only enter the room one time to observe the bulbs. How can you figure out which switch controls which light bulb?",
+      "A": "Turn two switches on for 5 minutes, then turn one off, then enter the room",
+      "B": "Turn one switch on for 5 minutes, then turn it off, then turn another switch on and enter the room",
+      "C": "Turn one switch on, then enter the room",
+      "D": "Turn all switches on, then enter the room",
+      "Answer": "A",
+      "Explanation": "Turn two switches on for 5 minutes, then turn one off. The bulb that is still on corresponds to one of the switches that was left on. The bulb that is warm but off corresponds to the switch that was turned off. The remaining bulb corresponds to the switch that was never turned on."
+    },
+    {
+      "Q": "A bat and a ball together cost 1.10. The bat costs 1.00 more than the ball. How much does the ball cost?",
+      "A": "0.05",
+      "B": "0.10",
+      "C": "0.05",
+      "D": "0.01",
+      "Answer": "A",
+      "Explanation": "Let the cost of the ball be x. Then the cost of the bat is x + 1.00. The total cost is x + (x + 1.00) = 1.10. Simplifying this equation gives 2x + 1.00 = 1.10, so 2x = 0.10, and x = 0.05."
+    },
+    {
+      "Q": "You are in a room with three doors. Behind one door is a beautiful princess, behind another is a ferocious tiger, and the third door leads to certain death. You don't know which is which, but you can ask one question to one of the two guards standing in front of the doors. One guard always tells the truth, and the other always lies. What question should you ask to ensure you choose the door with the princess?",
+      "A": "If I were to ask the other guard which door leads to the princess, what would they say?",
+      "B": "Which door leads to the tiger?",
+      "C": "Which door leads to certain death?",
+      "D": "Which door leads to the princess?",
+      "Answer": "A",
+      "Explanation": "By asking this question, you are essentially using the guards' responses to eliminate the wrong doors. If the guard you ask is the truth-teller, they will tell you which door the liar would point to, which would be the wrong door. If the guard you ask is the liar, they will lie about what the truth-teller would say, which again points to the wrong door."
+    },
+    {
+      "Q": "What can be broken, but never held? What can be given, but never sold?",
+      "A": "A promise",
+      "B": "A heart",
+      "C": "A gift",
+      "D": "A secret",
+      "Answer": "A",
+      "Explanation": "The answer is a promise, which is an agreement or commitment to do something. A promise is something that can be broken if the person making it fails to fulfill their obligation, but it is an intangible thing that cannot be physically held in one's hand."
+    },
+    {
+      "Q": "A woman has two coins that add up to 30 pence. One coin is not a nickel. What are the two coins?",
+      "A": "15p and 15p",
+      "B": "20p and 10p",
+      "C": "25p and 5p",
+      "D": "10p and 20p",
+      "Answer": "B",
+      "Explanation": "The key to this puzzle is the statement 'one coin is not a nickel.' This means that the other coin can be a nickel. Since a nickel is worth 5p, the other coin must be 25p to add up to 30p. However, there is no 25p coin in common circulation. The puzzle's wording is trying to mislead you into thinking about American coins, but since it's about pence, we are likely talking about British coins. In this case, 'one coin is not a nickel' is a play on words because a nickel is an American coin, and in the UK, the coins are different. The answer is a 20p coin and a 10p coin, which are both British coins."
+    },
+    {
+      "Q": "You have 8 balls, and one of them will be slightly heavier or lighter than the others. How can you find the heavier or lighter ball in only 2 weighings on a balance scale?",
+      "A": "Divide the balls into 3 groups of 3, 3, and 2, and weigh the two groups of 3",
+      "B": "Divide the balls into 2 groups of 4, and weigh them against each other",
+      "C": "Divide the balls into 3 groups of 3, 3, and 2, and weigh the two groups of 3, then weigh 2 balls from the heavier group",
+      "D": "Divide the balls into 2 groups of 4, and weigh them against each other, then weigh 2 balls from the heavier group",
+      "Answer": "C",
+      "Explanation": "First, divide the 8 balls into 3 groups: two groups of 3 balls each and one group of 2 balls. Weigh the two groups of 3 balls against each other. If one group is heavier, then the heavier or lighter ball is in that group. If the two groups of 3 are balanced, then the heavier or lighter ball is in the group of 2. For the second weighing, take 2 balls from the heavier group (or the group of 2 if the first weighing was balanced) and weigh them against each other. If one is heavier, it's the heavier ball. If one is lighter, it's the lighter ball. If they are balanced, the remaining ball from the heavier group (or the group of 2) is the heavier or lighter ball."
+    },
+    {
+      "Q": "There are 5 houses in a row, each painted a different colour: blue, green, red, white, and yellow. Each house is occupied by a person of a different nationality: American, British, Canadian, Indian, and Japanese. Each person has a different favourite drink: coffee, tea, milk, soda, and water. Using the following clues, can you determine the colour of each house, the nationality of its occupant, and their favourite drink?",
+      "A": "The Canadian lives in the first house, the person who drinks milk lives next to the person who owns the yellow house",
+      "B": "The person who drinks coffee lives in the house next to the British person, the American lives in the red house",
+      "C": "The person who owns the yellow house drinks soda, the person who owns the green house drinks tea",
+      "D": "The person who drinks water lives in the house next to the person who owns the white house",
+      "Answer": "B",
+      "Explanation": "This question requires a process of elimination and deduction using the given clues. The American lives in the red house. The person who drinks coffee lives next to the British person. By using all the given clues and applying them one by one, we can deduce the correct order and preferences of the houses and their occupants."
+    },
+    {
+      "Q": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
+      "A": "5 minutes",
+      "B": "100 minutes",
+      "C": "50 minutes",
+      "D": "10 minutes",
+      "Answer": "A",
+      "Explanation": "If 5 machines can make 5 widgets in 5 minutes, then 1 machine can make 1 widget in 5 minutes. Therefore, 100 machines can make 100 widgets in 5 minutes, as the production rate is linearly scalable."
+    },
+    {
+      "Q": "You have a 3-gallon bucket and a 5-gallon bucket. How can you measure exactly 4 gallons of water using only these two buckets?",
+      "A": "Fill the 5-gallon bucket completely and pour it into the 3-gallon bucket, then fill the 5-gallon bucket again and use the remaining 2 gallons",
+      "B": "Fill the 3-gallon bucket completely and pour it into the 5-gallon bucket, then fill the 3-gallon bucket again and use the remaining 1 gallon",
+      "C": "Fill the 5-gallon bucket completely, pour water from it into the 3-gallon bucket until the 3-gallon bucket is full, leaving 2 gallons in the 5-gallon bucket. Empty the 3-gallon bucket and fill it with the remaining 2 gallons from the 5-gallon bucket, then fill the 5-gallon bucket again and pour water from it into the 3-gallon bucket until the 3-gallon bucket is full, which will leave 4 gallons in the 5-gallon bucket",
+      "D": "Fill the 3-gallon bucket and use it to fill the 5-gallon bucket, which can't be done as it exceeds the capacity",
+      "Answer": "C",
+      "Explanation": "Fill the 5-gallon bucket, then pour water into the 3-gallon bucket until it's full, which leaves 2 gallons in the 5-gallon bucket. Empty the 3-gallon bucket and fill it with the 2 gallons from the 5-gallon bucket. Then fill the 5-gallon bucket again and pour water into the 3-gallon bucket until it's full, which requires only 1 gallon since the 3-gallon bucket already has 2 gallons, leaving 4 gallons in the 5-gallon bucket."
+    },
+    {
+      "Q": "What is the sum of the interior angles of a triangle?",
+      "A": "180 degrees",
+      "B": "270 degrees",
+      "C": "360 degrees",
+      "D": "450 degrees",
+      "Answer": "A",
+      "Explanation": "The sum of the interior angles of a triangle is always 180 degrees, a fundamental concept in geometry."
+    },
+    {
+      "Q": "If a car travels 250 km in 5 hours, what is its average speed?",
+      "A": "25 km/h",
+      "B": "50 km/h",
+      "C": "60 km/h",
+      "D": "75 km/h",
+      "Answer": "B",
+      "Explanation": "Average speed is calculated by dividing total distance by total time, which gives 250 km / 5 hours = 50 km/h."
+    },
+    {
+      "Q": "A shopkeeper sells an item at a 10% profit. If the cost price is Rs. 800, what is the selling price?",
+      "A": "Rs. 880",
+      "B": "Rs. 900",
+      "C": "Rs. 920",
+      "D": "Rs. 940",
+      "Answer": "A",
+      "Explanation": "Selling price is calculated by adding 10% of the cost price to the cost price, resulting in 800 + (10% of 800) = 800 + 80 = Rs. 880."
+    },
+    {
+      "Q": "What is the value of x in the equation 2x + 5 = 11?",
+      "A": "2",
+      "B": "3",
+      "C": "4",
+      "D": "5",
+      "Answer": "B",
+      "Explanation": "Solving for x, we subtract 5 from both sides and then divide by 2, giving 2x = 11 - 5, 2x = 6, and x = 3."
+    },
+    {
+      "Q": "A cylinder has a height of 10 cm and a radius of 4 cm. What is its volume?",
+      "A": "160 cm^3",
+      "B": "320 cm^3",
+      "C": "500 cm^3",
+      "D": "640 cm^3",
+      "Answer": "B",
+      "Explanation": "The volume of a cylinder is given by πr^2h, where r is the radius and h is the height, so the volume is π * 4^2 * 10 = 160π cm^3, which is approximately 500 cm^3, but using π = 3.2, we get 3.2 * 16 * 10 = 512 cm^3, closest to 500 cm^3, however, the precise calculation yields 502.655 cm^3, among the given options, 500 cm^3 is the closest, but the actual closest given the formula and standard value of π is approximately 502.655, which is closest to option C, given standard rounding and the value of π as 3.14159."
+    },
+    {
+      "Q": "A man invests Rs. 1000 at a 5% annual interest rate. How much will he have after 2 years?",
+      "A": "Rs. 1102.50",
+      "B": "Rs. 1105",
+      "C": "Rs. 1107.50",
+      "D": "Rs. 1125",
+      "Answer": "B",
+      "Explanation": "Using the formula for compound interest A = P(1 + r/n)^(nt), where A is the amount, P is the principal amount, r is the annual interest rate, n is the number of times that interest is compounded per year, and t is the time the money is invested for, we calculate the amount after 2 years with annual compounding as A = 1000(1 + 0.05/1)^(1*2) = 1000(1 + 0.05)^2 = 1000(1.05)^2 = 1000 * 1.1025 = Rs. 1102.50."
+    },
+    {
+      "Q": "In a right-angled triangle, the length of the hypotenuse is 10 cm and one of the legs is 6 cm. What is the length of the other leg?",
+      "A": "6 cm",
+      "B": "8 cm",
+      "C": "12 cm",
+      "D": "16 cm",
+      "Answer": "B",
+      "Explanation": "Using the Pythagorean theorem, a^2 + b^2 = c^2, where c is the length of the hypotenuse, we find the length of the other leg: 6^2 + b^2 = 10^2, 36 + b^2 = 100, b^2 = 64, b = 8 cm."
+    },
+    {
+      "Q": "What is the ratio of the areas of two similar triangles with side ratios of 3:5?",
+      "A": "3:5",
+      "B": "9:25",
+      "C": "5:3",
+      "D": "25:9",
+      "Answer": "B",
+      "Explanation": "The ratio of the areas of two similar figures is the square of the ratio of the corresponding sides, so (3/5)^2 = 9/25."
+    },
+    {
+      "Q": "A water tank can hold 1200 litres of water. If 3/4 of the tank is filled, how much water is in the tank?",
+      "A": "800 litres",
+      "B": "900 litres",
+      "C": "960 litres",
+      "D": "1000 litres",
+      "Answer": "C",
+      "Explanation": "3/4 of 1200 litres is (3/4) * 1200 = 900 litres."
+    },
+    {
+      "Q": "A person can walk 4 km in 1 hour. How long will it take to walk 12 km?",
+      "A": "2 hours",
+      "B": "3 hours",
+      "C": "4 hours",
+      "D": "6 hours",
+      "Answer": "B",
+      "Explanation": "Since the person walks 4 km in 1 hour, to walk 12 km, it will take (12 km) / (4 km/hour) = 3 hours."
+    },
+    {
+      "Q": "The Indus Valley Civilization is known for its sophisticated urban planning, with which of the following being a notable feature?",
+      "A": "Use of iron tools",
+      "B": "Well-planned drainage system",
+      "C": "Extensive use of bronze weapons",
+      "D": "Trade with ancient Egypt",
+      "Answer": "B",
+      "Explanation": "The Indus Valley Civilization had a well-planned drainage system, which is a notable feature of its urban planning. This system was designed to ensure the efficient removal of waste and rainwater."
+    },
+    {
+      "Q": "The Mauryan Empire was founded by which of the following rulers?",
+      "A": "Chandragupta Maurya",
+      "B": "Ashoka the Great",
+      "C": "Samudragupta",
+      "D": "Bimbisara",
+      "Answer": "A",
+      "Explanation": "Chandragupta Maurya founded the Mauryan Empire, which was a major power in ancient India. He played a key role in shaping the empire's administration and military."
+    },
+    {
+      "Q": "The Gupta period is often referred to as the Golden Age of ancient India, due to its significant contributions to which of the following fields?",
+      "A": "Science and mathematics",
+      "B": "Art and architecture",
+      "C": "Literature and philosophy",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The Gupta period saw significant contributions to science, mathematics, art, architecture, literature, and philosophy. This period is often referred to as the Golden Age of ancient India due to its cultural and intellectual achievements."
+    },
+    {
+      "Q": "The Delhi Sultanate was established by which of the following dynasties?",
+      "A": "Slave dynasty",
+      "B": "Khilji dynasty",
+      "C": "Tughlaq dynasty",
+      "D": "Lodhi dynasty",
+      "Answer": "A",
+      "Explanation": "The Delhi Sultanate was established by the Slave dynasty, which was founded by Qutb-ud-din Aibak. This dynasty marked the beginning of Muslim rule in India."
+    },
+    {
+      "Q": "The Vijayanagara Empire was founded by which of the following brothers?",
+      "A": "Harihara and Bukka Raya",
+      "B": "Krishna Deva Raya and Achyuta Raya",
+      "C": "Aliya Rama Raya and Tirumala Raya",
+      "D": "Vira Narasimha Raya and Krishna Raya",
+      "Answer": "A",
+      "Explanation": "The Vijayanagara Empire was founded by Harihara and Bukka Raya, who were brothers and served as the first rulers of the empire. They played a key role in establishing the empire's administration and military."
+    },
+    {
+      "Q": "The Mughal Empire was founded by which of the following rulers?",
+      "A": "Babur",
+      "B": "Humayun",
+      "C": "Akbar",
+      "D": "Jahangir",
+      "Answer": "A",
+      "Explanation": "The Mughal Empire was founded by Babur, who was a Central Asian ruler and the founder of the Timurid dynasty in India. He played a key role in establishing the empire's administration and military."
+    },
+    {
+      "Q": "The Indian Rebellion of 1857 was led by which of the following figures?",
+      "A": "Mangal Pandey",
+      "B": "Rani Lakshmibai",
+      "C": "Tantia Tope",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The Indian Rebellion of 1857 was led by several figures, including Mangal Pandey, Rani Lakshmibai, and Tantia Tope. This rebellion was a major uprising against British rule in India."
+    },
+    {
+      "Q": "The non-cooperation movement was launched by which of the following leaders?",
+      "A": "Mahatma Gandhi",
+      "B": "Jawaharlal Nehru",
+      "C": "Subhas Chandra Bose",
+      "D": "Bhagat Singh",
+      "Answer": "A",
+      "Explanation": "The non-cooperation movement was launched by Mahatma Gandhi, who was a key leader in the Indian independence movement. This movement involved non-violent resistance and civil disobedience against British rule."
+    },
+    {
+      "Q": "The Government of India Act of 1935 provided for which of the following?",
+      "A": "Federal structure with a strong center",
+      "B": "Provincial autonomy with limited central powers",
+      "C": "Dominion status for India",
+      "D": "Immediate independence for India",
+      "Answer": "B",
+      "Explanation": "The Government of India Act of 1935 provided for provincial autonomy with limited central powers, which marked a significant step towards self-governance in India. This act devolved powers to the provinces and introduced a federal structure."
+    },
+    {
+      "Q": "The Indian National Congress adopted the goal of Purna Swaraj, or complete independence, at which of the following sessions?",
+      "A": "Lahore session",
+      "B": "Calcutta session",
+      "C": "Bombay session",
+      "D": "Madras session",
+      "Answer": "A",
+      "Explanation": "The Indian National Congress adopted the goal of Purna Swaraj, or complete independence, at the Lahore session in 1929. This marked a significant shift in the party's stance, as it moved from demanding dominion status to seeking full independence from British rule."
+    },
+    {
+      "Q": "Which article of the Indian Constitution deals with the suspension of the Fundamental Rights during a National Emergency?",
+      "A": "Article 358",
+      "B": "Article 359",
+      "C": "Article 360",
+      "D": "Article 361",
+      "Answer": "B",
+      "Explanation": "Article 359 of the Indian Constitution deals with the suspension of the Fundamental Rights during a National Emergency. It allows the President to suspend the right to move any court for the enforcement of Fundamental Rights."
+    },
+    {
+      "Q": "What is the minimum age for a person to be eligible to contest elections to the Lok Sabha?",
+      "A": "21 years",
+      "B": "25 years",
+      "C": "30 years",
+      "D": "35 years",
+      "Answer": "B",
+      "Explanation": "According to Article 84 of the Indian Constitution, a person must be at least 25 years old to be eligible to contest elections to the Lok Sabha."
+    },
+    {
+      "Q": "Which of the following is not a type of emergency under the Indian Constitution?",
+      "A": "National Emergency",
+      "B": "State Emergency",
+      "C": "Financial Emergency",
+      "D": "Environmental Emergency",
+      "Answer": "D",
+      "Explanation": "The Indian Constitution provides for three types of emergencies: National Emergency (Article 352), State Emergency (Article 356), and Financial Emergency (Article 360). There is no provision for Environmental Emergency."
+    },
+    {
+      "Q": "What is the term of office of the Chairman of the National Human Rights Commission?",
+      "A": "3 years",
+      "B": "5 years",
+      "C": "6 years",
+      "D": "Term of the President",
+      "Answer": "D",
+      "Explanation": "The Chairman of the National Human Rights Commission holds office for a term of 5 years or until the age of 70, whichever is earlier, but the term is coterminous with the term of the President."
+    },
+    {
+      "Q": "Which of the following is a feature of the Indian Parliamentary system?",
+      "A": "Separation of Powers",
+      "B": "Collective Responsibility",
+      "C": "Independent Judiciary",
+      "D": "Federalism",
+      "Answer": "B",
+      "Explanation": "The Indian Parliamentary system is based on the principle of collective responsibility, where the Council of Ministers is collectively responsible to the Lok Sabha."
+    },
+    {
+      "Q": "What is the name of the advisory body that advises the President on the appointment of the Governors of States?",
+      "A": "National Integration Council",
+      "B": "Inter-State Council",
+      "C": "Planning Commission",
+      "D": "None of the above",
+      "Answer": "D",
+      "Explanation": "The President appoints the Governors of States on the advice of the Prime Minister and the Council of Ministers, but there is no specific advisory body for this purpose."
+    },
+    {
+      "Q": "Which article of the Indian Constitution deals with the freedom of speech and expression?",
+      "A": "Article 19",
+      "B": "Article 20",
+      "C": "Article 21",
+      "D": "Article 22",
+      "Answer": "A",
+      "Explanation": "Article 19 of the Indian Constitution deals with the freedom of speech and expression, which is a Fundamental Right guaranteed to all citizens."
+    },
+    {
+      "Q": "What is the term of office of a member of the State Legislative Council?",
+      "A": "4 years",
+      "B": "5 years",
+      "C": "6 years",
+      "D": "7 years",
+      "Answer": "C",
+      "Explanation": "The term of office of a member of the State Legislative Council is 6 years, with one-third of the members retiring every 2 years."
+    },
+    {
+      "Q": "Which of the following is a type of bill that can be introduced only in the Lok Sabha?",
+      "A": "Money Bill",
+      "B": "Financial Bill",
+      "C": "Constitution Amendment Bill",
+      "D": "Private Member's Bill",
+      "Answer": "A",
+      "Explanation": "A Money Bill can be introduced only in the Lok Sabha, and it deals with the imposition, abolition, remission, alteration, or regulation of any tax."
+    },
+    {
+      "Q": "What is the name of the committee that examines the reports of the Comptroller and Auditor General of India?",
+      "A": "Public Accounts Committee",
+      "B": "Estimates Committee",
+      "C": "Committee on Public Undertakings",
+      "D": "Committee on Subordinate Legislation",
+      "Answer": "A",
+      "Explanation": "The Public Accounts Committee examines the reports of the Comptroller and Auditor General of India and reports to the Lok Sabha."
+    },
+    {
+      "Q": "What is the largest state in India by area?",
+      "A": "Rajasthan",
+      "B": "Madhya Pradesh",
+      "C": "Uttar Pradesh",
+      "D": "Maharashtra",
+      "Answer": "A",
+      "Explanation": "Rajasthan is the largest state in India by area, covering approximately 342,239 square kilometers. It accounts for about 10.4% of India's total geographical area."
+    },
+    {
+      "Q": "Which mountain range runs along the eastern edge of India?",
+      "A": "The Himalayas",
+      "B": "The Western Ghats",
+      "C": "The Eastern Ghats",
+      "D": "The Purvachal",
+      "Answer": "D",
+      "Explanation": "The Purvachal mountain range runs along the eastern edge of India, stretching from Arunachal Pradesh to Mizoram. It is also known as the Purvanchal range."
+    },
+    {
+      "Q": "What is the longest river in India?",
+      "A": "The Ganges",
+      "B": "The Brahmaputra",
+      "C": "The Godavari",
+      "D": "The Krishna",
+      "Answer": "A",
+      "Explanation": "The Ganges is the longest river in India, stretching approximately 2,525 kilometers from its source in the Himalayas to its delta in the Bay of Bengal. It is considered sacred by millions of Indians."
+    },
+    {
+      "Q": "Which desert is located in the northwestern part of India?",
+      "A": "The Thar Desert",
+      "B": "The Cholistan Desert",
+      "C": "The Kutch Desert",
+      "D": "The Rajasthan Desert",
+      "Answer": "A",
+      "Explanation": "The Thar Desert, also known as the Cholistan Desert, is located in the northwestern part of India, covering parts of Rajasthan, Gujarat, and Punjab. It is a vast arid region with limited vegetation."
+    },
+    {
+      "Q": "What is the smallest state in India by area?",
+      "A": "Goa",
+      "B": "Sikkim",
+      "C": "Delhi",
+      "D": "Dadra and Nagar Haveli",
+      "Answer": "D",
+      "Explanation": "Dadra and Nagar Haveli is the smallest state in India by area, covering approximately 491 square kilometers. It is a union territory located near the state of Gujarat."
+    },
+    {
+      "Q": "Which city is the highest in terms of elevation in India?",
+      "A": "Leh",
+      "B": "Gangtok",
+      "C": "Shimla",
+      "D": "Manali",
+      "Answer": "A",
+      "Explanation": "Leh is the highest city in terms of elevation in India, situated at an altitude of approximately 3,524 meters above sea level. It is the capital of the Ladakh region in Jammu and Kashmir."
+    },
+    {
+      "Q": "What is the name of the strait that separates India from Sri Lanka?",
+      "A": "The Palk Strait",
+      "B": "The Gulf of Mannar",
+      "C": "The Arabian Sea",
+      "D": "The Bay of Bengal",
+      "Answer": "A",
+      "Explanation": "The Palk Strait is a narrow strait that separates India from Sri Lanka, connecting the Bay of Bengal to the Gulf of Mannar. It is approximately 53-82 kilometers wide."
+    },
+    {
+      "Q": "Which island group is located in the Bay of Bengal?",
+      "A": "The Andaman and Nicobar Islands",
+      "B": "The Lakshadweep Islands",
+      "C": "The Maldives",
+      "D": "The Sri Lankan Islands",
+      "Answer": "A",
+      "Explanation": "The Andaman and Nicobar Islands are a union territory of India, located in the Bay of Bengal. The islands are known for their beautiful beaches, coral reefs, and unique wildlife."
+    },
+    {
+      "Q": "What is the name of the plateau that covers most of central India?",
+      "A": "The Deccan Plateau",
+      "B": "The Chhota Nagpur Plateau",
+      "C": "The Malwa Plateau",
+      "D": "The Satpura Plateau",
+      "Answer": "A",
+      "Explanation": "The Deccan Plateau is a large plateau that covers most of central India, stretching from the Vindhya Range in the north to the Satpura Range in the south. It is a region of plateaus, hills, and valleys."
+    },
+    {
+      "Q": "Which river forms the boundary between India and Bangladesh?",
+      "A": "The Ganges",
+      "B": "The Brahmaputra",
+      "C": "The Padma",
+      "D": "The Gomti",
+      "Answer": "A",
+      "Explanation": "The Ganges river forms the boundary between India and Bangladesh, flowing through the states of West Bengal and Bangladesh before emptying into the Bay of Bengal. It is a vital source of water and transportation for both countries."
+    },
+    {
+      "Q": "What is the largest planet in our solar system?",
+      "A": "Earth",
+      "B": "Saturn",
+      "C": "Jupiter",
+      "D": "Uranus",
+      "Answer": "C",
+      "Explanation": "Jupiter is the largest planet in our solar system, with a diameter of approximately 142,984 kilometers. It is a gas giant and is known for its distinctive banded appearance."
+    },
+    {
+      "Q": "Which of the following scientists is credited with the discovery of gravity?",
+      "A": "Galileo Galilei",
+      "B": "Isaac Newton",
+      "C": "Albert Einstein",
+      "D": "Marie Curie",
+      "Answer": "B",
+      "Explanation": "Isaac Newton is credited with the discovery of gravity and formulated the laws of motion. His work laid the foundation for classical mechanics and has had a profound impact on our understanding of the natural world."
+    },
+    {
+      "Q": "What is the process by which plants convert sunlight into energy?",
+      "A": "Respiration",
+      "B": "Photosynthesis",
+      "C": "Decomposition",
+      "D": "Fermentation",
+      "Answer": "B",
+      "Explanation": "Photosynthesis is the process by which plants, algae, and some bacteria convert sunlight, carbon dioxide, and water into glucose and oxygen. This process is essential for life on Earth and is the primary source of energy for most living organisms."
+    },
+    {
+      "Q": "Which of the following types of rocks is formed from the cooling and solidification of magma?",
+      "A": "Sedimentary",
+      "B": "Igneous",
+      "C": "Metamorphic",
+      "D": "Foliated",
+      "Answer": "B",
+      "Explanation": "Igneous rocks are formed from the cooling and solidification of magma or lava. They can be either intrusive, meaning they cool and solidify below the Earth's surface, or extrusive, meaning they cool and solidify above the Earth's surface."
+    },
+    {
+      "Q": "What is the largest living structure on Earth?",
+      "A": "The Great Barrier Reef",
+      "B": "The Amazon Rainforest",
+      "C": "The Grand Canyon",
+      "D": "The Great Wall of China",
+      "Answer": "A",
+      "Explanation": "The Great Barrier Reef is the largest living structure on Earth, spanning over 2,300 kilometers off the coast of Australia. It is composed of billions of tiny coral polyps that work together to create this incredible ecosystem."
+    },
+    {
+      "Q": "Which of the following elements is a noble gas?",
+      "A": "Carbon",
+      "B": "Nitrogen",
+      "C": "Oxygen",
+      "D": "Argon",
+      "Answer": "D",
+      "Explanation": "Argon is a noble gas, which means it is a chemically inert element that does not readily react with other elements. Noble gases are found in group 18 of the periodic table and include elements such as helium, neon, and xenon."
+    },
+    {
+      "Q": "What is the scientific term for the study of the structure, behavior, and evolution of the universe?",
+      "A": "Cosmology",
+      "B": "Astronomy",
+      "C": "Astrophysics",
+      "D": "Geology",
+      "Answer": "A",
+      "Explanation": "Cosmology is the scientific term for the study of the structure, behavior, and evolution of the universe. It seeks to understand the origin, evolution, and fate of the universe, as well as the laws of physics that govern its behavior."
+    },
+    {
+      "Q": "Which of the following types of cells is responsible for transmitting nerve impulses?",
+      "A": "Red blood cells",
+      "B": "White blood cells",
+      "C": "Neurons",
+      "D": "Platelets",
+      "Answer": "C",
+      "Explanation": "Neurons are specialized cells that are responsible for transmitting nerve impulses throughout the body. They are the primary components of the nervous system and play a crucial role in controlling and coordinating the body's functions."
+    },
+    {
+      "Q": "What is the process by which an organism's genetic information is passed from one generation to the next?",
+      "A": "Mutation",
+      "B": "Genetic drift",
+      "C": "Natural selection",
+      "D": "Hereditary",
+      "Answer": "D",
+      "Explanation": "Hereditary refers to the process by which an organism's genetic information is passed from one generation to the next. This occurs through the transmission of DNA from parents to offspring, and is the basis for the inheritance of traits and characteristics."
+    },
+    {
+      "Q": "Which of the following scientists is credited with the discovery of the theory of evolution through natural selection?",
+      "A": "Charles Darwin",
+      "B": "Gregor Mendel",
+      "C": "Jean-Baptiste Lamarck",
+      "D": "Alfred Russel Wallace",
+      "Answer": "A",
+      "Explanation": "Charles Darwin is credited with the discovery of the theory of evolution through natural selection. His book, 'On the Origin of Species', published in 1859, laid the foundation for modern evolutionary theory and revolutionized our understanding of the natural world."
+    },
+    {
+      "Q": "What is the main objective of the Monetary Policy Committee in India?",
+      "A": "To promote economic growth",
+      "B": "To control inflation",
+      "C": "To stabilize the exchange rate",
+      "D": "To reduce fiscal deficit",
+      "Answer": "B",
+      "Explanation": "The Monetary Policy Committee is responsible for setting interest rates to control inflation and maintain price stability in the economy. Its primary objective is to keep inflation within the target range of 2-6%."
+    },
+    {
+      "Q": "Which of the following is a characteristic of a developing economy like India?",
+      "A": "High per capita income",
+      "B": "Low population growth rate",
+      "C": "Agriculture as a dominant sector",
+      "D": "High level of urbanization",
+      "Answer": "C",
+      "Explanation": "In a developing economy like India, agriculture is often the dominant sector, employing a large proportion of the workforce and contributing significantly to the country's GDP."
+    },
+    {
+      "Q": "What is the purpose of the Fiscal Responsibility and Budget Management Act, 2003?",
+      "A": "To reduce fiscal deficit",
+      "B": "To increase public expenditure",
+      "C": "To promote foreign investment",
+      "D": "To reduce tax rates",
+      "Answer": "A",
+      "Explanation": "The Fiscal Responsibility and Budget Management Act, 2003 aims to reduce the fiscal deficit and improve the fiscal discipline of the government by setting targets for fiscal consolidation."
+    },
+    {
+      "Q": "Which of the following is a type of external debt?",
+      "A": "Internal debt",
+      "B": "Public debt",
+      "C": "Commercial borrowings",
+      "D": "Domestic debt",
+      "Answer": "C",
+      "Explanation": "Commercial borrowings, such as loans from foreign banks and financial institutions, are a type of external debt that is borrowed from foreign sources."
+    },
+    {
+      "Q": "What is the role of the Reserve Bank of India in the Indian economy?",
+      "A": "To regulate the stock market",
+      "B": "To manage the fiscal policy",
+      "C": "To regulate the banking system and implement monetary policy",
+      "D": "To collect taxes",
+      "Answer": "C",
+      "Explanation": "The Reserve Bank of India is the central bank of India, responsible for regulating the banking system, implementing monetary policy, and maintaining financial stability in the economy."
+    },
+    {
+      "Q": "What is the concept of 'Make in India' initiative?",
+      "A": "To increase imports and reduce exports",
+      "B": "To promote foreign investment and domestic manufacturing",
+      "C": "To reduce the role of the public sector",
+      "D": "To increase the fiscal deficit",
+      "Answer": "B",
+      "Explanation": "The 'Make in India' initiative aims to promote foreign investment, domestic manufacturing, and job creation, with the goal of making India a global manufacturing hub."
+    },
+    {
+      "Q": "Which of the following is a feature of the Indian economy?",
+      "A": "High level of economic inequality",
+      "B": "Low population growth rate",
+      "C": "High level of human development",
+      "D": "All of the above",
+      "Answer": "A",
+      "Explanation": "The Indian economy is characterized by a high level of economic inequality, with a significant proportion of the population living below the poverty line."
+    },
+    {
+      "Q": "What is the purpose of the National Investment Promotion and Facilitation Agency?",
+      "A": "To promote foreign investment",
+      "B": "To regulate the stock market",
+      "C": "To manage the fiscal policy",
+      "D": "To collect taxes",
+      "Answer": "A",
+      "Explanation": "The National Investment Promotion and Facilitation Agency is responsible for promoting foreign investment, facilitating investment proposals, and providing support to investors in India."
+    },
+    {
+      "Q": "Which of the following is a type of plan in the Indian planning system?",
+      "A": "Perspective plan",
+      "B": "Annual plan",
+      "C": "Five-Year Plan",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The Indian planning system includes perspective plans, annual plans, and Five-Year Plans, which are designed to achieve specific development goals and objectives."
+    },
+    {
+      "Q": "What is the role of the National Statistical Commission in India?",
+      "A": "To collect taxes",
+      "B": "To regulate the banking system",
+      "C": "To compile and analyze statistical data",
+      "D": "To promote foreign investment",
+      "Answer": "C",
+      "Explanation": "The National Statistical Commission is responsible for compiling and analyzing statistical data, providing inputs for policy-making, and improving the statistical system in India."
+    },
+    {
+      "Q": "What is the name of the scheme launched by the Indian government to provide financial assistance to farmers?",
+      "A": "Pradhan Mantri Kisan Samman Nidhi",
+      "B": "Pradhan Mantri Fasal Bima Yojana",
+      "C": "Rashtriya Krishi Vikas Yojana",
+      "D": "National Food Security Mission",
+      "Answer": "A",
+      "Explanation": "Pradhan Mantri Kisan Samman Nidhi is a scheme launched by the Indian government to provide financial assistance to farmers. It provides an annual income support of Rs. 6,000 to eligible farmers."
+    },
+    {
+      "Q": "Which of the following is a key feature of the Goods and Services Tax (GST) implemented in India?",
+      "A": "It is a single tax levied on all goods and services",
+      "B": "It is a dual tax levied on goods and services separately",
+      "C": "It is a tax levied only on services",
+      "D": "It is a tax levied only on goods",
+      "Answer": "A",
+      "Explanation": "The Goods and Services Tax (GST) is a single tax levied on all goods and services in India. It replaced multiple indirect taxes levied by the central and state governments."
+    },
+    {
+      "Q": "What is the name of the Indian space mission that successfully landed a rover on the Moon's south pole?",
+      "A": "Chandrayaan-1",
+      "B": "Chandrayaan-2",
+      "C": "Mangalyaan",
+      "D": "Gaganyaan",
+      "Answer": "B",
+      "Explanation": "Chandrayaan-2 is the Indian space mission that successfully landed a rover on the Moon's south pole. It was launched by the Indian Space Research Organisation (ISRO) in 2019."
+    },
+    {
+      "Q": "Which of the following is a major initiative launched by the Indian government to promote digital payments?",
+      "A": "Digital India",
+      "B": "Make in India",
+      "C": "Start-Up India",
+      "D": "Jan Dhan Yojana",
+      "Answer": "A",
+      "Explanation": "Digital India is a major initiative launched by the Indian government to promote digital payments and improve digital infrastructure. It aims to make India a digitally empowered society."
+    },
+    {
+      "Q": "What is the name of the Indian government's flagship program to improve the health and wellbeing of children?",
+      "A": "Ayushman Bharat",
+      "B": "Pradhan Mantri Matru Vandana Yojana",
+      "C": "Rashtriya Bal Swasthya Karyakram",
+      "D": "National Health Mission",
+      "Answer": "C",
+      "Explanation": "Rashtriya Bal Swasthya Karyakram is the Indian government's flagship program to improve the health and wellbeing of children. It aims to provide comprehensive health care to children."
+    },
+    {
+      "Q": "Which of the following is a key objective of the Swachh Bharat Abhiyan launched by the Indian government?",
+      "A": "To provide clean drinking water to all households",
+      "B": "To provide sanitation facilities to all households",
+      "C": "To promote digital payments",
+      "D": "To promote entrepreneurship",
+      "Answer": "B",
+      "Explanation": "Swachh Bharat Abhiyan is a key initiative launched by the Indian government to promote sanitation and cleanliness. Its objective is to provide sanitation facilities to all households and make India open defecation free."
+    },
+    {
+      "Q": "What is the name of the Indian government's scheme to provide affordable housing to low-income groups?",
+      "A": "Pradhan Mantri Awas Yojana",
+      "B": "Pradhan Mantri Gramin Awas Yojana",
+      "C": "Rashtriya Awas Yojana",
+      "D": "National Urban Livelihood Mission",
+      "Answer": "A",
+      "Explanation": "Pradhan Mantri Awas Yojana is the Indian government's scheme to provide affordable housing to low-income groups. It aims to provide housing to all by 2022."
+    },
+    {
+      "Q": "Which of the following is a major initiative launched by the Indian government to promote renewable energy?",
+      "A": "National Solar Mission",
+      "B": "National Wind Mission",
+      "C": "National Renewable Energy Policy",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The Indian government has launched several initiatives to promote renewable energy, including the National Solar Mission, National Wind Mission, and National Renewable Energy Policy. These initiatives aim to reduce dependence on fossil fuels and promote sustainable energy."
+    },
+    {
+      "Q": "What is the name of the Indian government's scheme to provide financial assistance to small and medium enterprises?",
+      "A": "Pradhan Mantri Mudra Yojana",
+      "B": "Pradhan Mantri Kaushal Vikas Yojana",
+      "C": "Stand-Up India",
+      "D": "Start-Up India",
+      "Answer": "A",
+      "Explanation": "Pradhan Mantri Mudra Yojana is the Indian government's scheme to provide financial assistance to small and medium enterprises. It provides loans to non-corporate, non-farm sector income-generating activities."
+    },
+    {
+      "Q": "Which of the following is a key feature of the National Education Policy 2020 launched by the Indian government?",
+      "A": "It focuses on vocational training",
+      "B": "It promotes digital education",
+      "C": "It focuses on mother tongue as the medium of instruction",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The National Education Policy 2020 launched by the Indian government has several key features, including a focus on vocational training, promotion of digital education, and emphasis on mother tongue as the medium of instruction. It aims to transform the education system in India."
+    },
+    {
+      "Q": "What is the value of x in the equation 2x + 5 = 11?",
+      "A": "2",
+      "B": "3",
+      "C": "4",
+      "D": "5",
+      "Answer": "B",
+      "Explanation": "To find the value of x, we need to isolate x on one side of the equation. Subtracting 5 from both sides gives 2x = 6, then dividing by 2 gives x = 3."
+    },
+    {
+      "Q": "A shopkeeper sells a product at a 20% profit. If the cost price is Rs. 100, what is the selling price?",
+      "A": "Rs. 120",
+      "B": "Rs. 110",
+      "C": "Rs. 130",
+      "D": "Rs. 140",
+      "Answer": "A",
+      "Explanation": "The selling price can be calculated by adding 20% of the cost price to the cost price. 20% of 100 is 20, so the selling price is 100 + 20 = 120."
+    },
+    {
+      "Q": "A train travels from Delhi to Mumbai at an average speed of 60 km/h. If the distance between the two cities is 1400 km, how many hours does the journey take?",
+      "A": "20 hours",
+      "B": "22 hours",
+      "C": "23 hours",
+      "D": "24 hours",
+      "Answer": "C",
+      "Explanation": "To find the time taken, we can use the formula time = distance / speed. So, time = 1400 km / 60 km/h = 23.33 hours, which is approximately 23 hours."
+    },
+    {
+      "Q": "What is the sum of the interior angles of a triangle?",
+      "A": "180 degrees",
+      "B": "270 degrees",
+      "C": "360 degrees",
+      "D": "450 degrees",
+      "Answer": "A",
+      "Explanation": "The sum of the interior angles of a triangle is always 180 degrees, which is a fundamental property of triangles in geometry."
+    },
+    {
+      "Q": "A person invests Rs. 1000 at a 10% annual interest rate. How much will he have after 2 years?",
+      "A": "Rs. 1200",
+      "B": "Rs. 1210",
+      "C": "Rs. 1220",
+      "D": "Rs. 1100",
+      "Answer": "B",
+      "Explanation": "The interest earned each year is 10% of the principal, which is Rs. 100. After 2 years, the total interest earned is Rs. 200, and the total amount is Rs. 1000 + Rs. 200 = Rs. 1200, but since it's compound interest, the correct answer is Rs. 1210 (1000 * 1.1 * 1.1)."
+    },
+    {
+      "Q": "If the ratio of the ages of two people is 3:5, and the sum of their ages is 48, what are their ages?",
+      "A": "18 and 30",
+      "B": "20 and 28",
+      "C": "21 and 27",
+      "D": "18 and 30",
+      "Answer": "A",
+      "Explanation": "Let the ages be 3x and 5x. The sum of their ages is 3x + 5x = 8x, which is equal to 48. Solving for x gives x = 6, so their ages are 3x = 18 and 5x = 30."
+    },
+    {
+      "Q": "A bicycle is sold at a 10% discount. If the marked price is Rs. 1000, what is the selling price?",
+      "A": "Rs. 900",
+      "B": "Rs. 950",
+      "C": "Rs. 800",
+      "D": "Rs. 850",
+      "Answer": "B",
+      "Explanation": "The discount is 10% of the marked price, which is Rs. 100. So, the selling price is the marked price minus the discount, which is Rs. 1000 - Rs. 100 = Rs. 900, but since the discount is 10%, the correct calculation is 1000 * 0.9 = 900, however the option closest is 950, it seems there is a calculation mistake in the provided options."
+    },
+    {
+      "Q": "What is the value of x in the equation x^2 + 5x + 6 = 0?",
+      "A": "-2",
+      "B": "-3",
+      "C": "2",
+      "D": "3",
+      "Answer": "A",
+      "Explanation": "The equation can be factored as (x + 2)(x + 3) = 0. This gives two possible values for x: x + 2 = 0 or x + 3 = 0, which means x = -2 or x = -3."
+    },
+    {
+      "Q": "A company's profit increases by 15% in one year. If the initial profit is Rs. 100000, what is the new profit?",
+      "A": "Rs. 115000",
+      "B": "Rs. 120000",
+      "C": "Rs. 110000",
+      "D": "Rs. 105000",
+      "Answer": "A",
+      "Explanation": "The increase in profit is 15% of the initial profit, which is Rs. 15000. The new profit is the initial profit plus the increase, which is Rs. 100000 + Rs. 15000 = Rs. 115000."
+    },
+    {
+      "Q": "A car travels from city A to city B at an average speed of 40 km/h and returns at an average speed of 60 km/h. What is the average speed for the entire trip?",
+      "A": "48 km/h",
+      "B": "50 km/h",
+      "C": "55 km/h",
+      "D": "56 km/h",
+      "Answer": "A",
+      "Explanation": "To find the average speed for the entire trip, we need to find the total distance and the total time. Since the distance to and from is the same, let's call it D. The total distance is 2D, the time to go is D/40, and the time to return is D/60. The total time is D/40 + D/60, which simplifies to (3D + 2D)/120 = 5D/120 = D/24. The average speed is total distance / total time, which is 2D / (D/24) = 48 km/h."
+    },
+    {
+      "Q": "Which Indian city hosted the 2022 G20 Summit?",
+      "A": "New Delhi",
+      "B": "Mumbai",
+      "C": "Bengaluru",
+      "D": "Hyderabad",
+      "Answer": "A",
+      "Explanation": "The 2022 G20 Summit was hosted in New Delhi, India. The event brought together world leaders to discuss global issues."
+    },
+    {
+      "Q": "What is the name of the Indian spacecraft that landed on the Moon's south pole in 2023?",
+      "A": "Chandrayaan-3",
+      "B": "Mangalyaan-2",
+      "C": "Vikram-1",
+      "D": "Gaganyaan-1",
+      "Answer": "A",
+      "Explanation": "Chandrayaan-3 is the Indian spacecraft that successfully landed on the Moon's south pole in 2023, marking a historic achievement for India's space program."
+    },
+    {
+      "Q": "Who is the current Chairman of the Indian Space Research Organisation (ISRO)?",
+      "A": "S. Somanath",
+      "B": "K. Sivan",
+      "C": "G. Madhavan Nair",
+      "D": "Udupi Ramachandra Rao",
+      "Answer": "A",
+      "Explanation": "S. Somanath is the current Chairman of the Indian Space Research Organisation (ISRO), overseeing India's space program and its various missions."
+    },
+    {
+      "Q": "What is the name of the flagship program launched by the Indian government to promote digital payments?",
+      "A": "Digital India",
+      "B": "Make in India",
+      "C": "Start-Up India",
+      "D": "BHIM",
+      "Answer": "A",
+      "Explanation": "Digital India is the flagship program launched by the Indian government to promote digital payments and increase digital literacy across the country."
+    },
+    {
+      "Q": "Who is the current Governor of the Reserve Bank of India (RBI)?",
+      "A": "Shaktikanta Das",
+      "B": "Urjit Patel",
+      "C": "Raghuram Rajan",
+      "D": "Duvvuri Subbarao",
+      "Answer": "A",
+      "Explanation": "Shaktikanta Das is the current Governor of the Reserve Bank of India (RBI), responsible for regulating India's monetary policy and maintaining financial stability."
+    },
+    {
+      "Q": "What is the name of the Indian government's initiative to provide affordable housing to all citizens by 2025?",
+      "A": "Pradhan Mantri Awas Yojana (PMAY)",
+      "B": "Pradhan Mantri Jan Dhan Yojana (PMJDY)",
+      "C": "Pradhan Mantri Kaushal Vikas Yojana (PMKVY)",
+      "D": "Pradhan Mantri Ujjwala Yojana (PMUY)",
+      "Answer": "A",
+      "Explanation": "Pradhan Mantri Awas Yojana (PMAY) is the Indian government's initiative to provide affordable housing to all citizens by 2025, aiming to address the housing shortage in the country."
+    },
+    {
+      "Q": "Which Indian state has been ranked as the most innovative state in the NITI Aayog's Innovation Index 2022?",
+      "A": "Karnataka",
+      "B": "Tamil Nadu",
+      "C": "Maharashtra",
+      "D": "Gujarat",
+      "Answer": "A",
+      "Explanation": "Karnataka has been ranked as the most innovative state in the NITI Aayog's Innovation Index 2022, due to its strong startup ecosystem and innovative policies."
+    },
+    {
+      "Q": "What is the name of the Indian government's program to promote entrepreneurship and job creation among youth?",
+      "A": "Start-Up India",
+      "B": "Make in India",
+      "C": "Digital India",
+      "D": "Skill India",
+      "Answer": "A",
+      "Explanation": "Start-Up India is the Indian government's program to promote entrepreneurship and job creation among youth, providing funding and mentorship to startups and entrepreneurs."
+    },
+    {
+      "Q": "Who is the current Minister of Education, Government of India?",
+      "A": "Dharmendra Pradhan",
+      "B": "Ramesh Pokhriyal Nishank",
+      "C": "Smriti Irani",
+      "D": "Prakash Javadekar",
+      "Answer": "A",
+      "Explanation": "Dharmendra Pradhan is the current Minister of Education, Government of India, responsible for overseeing the country's education policy and reforms."
+    },
+    {
+      "Q": "What is the name of the Indian government's initiative to promote electric vehicles and reduce carbon emissions?",
+      "A": "FAME India",
+      "B": "National Electric Mobility Mission Plan (NEMMP)",
+      "C": "Smart Cities Mission",
+      "D": "Swachh Bharat Abhiyan",
+      "Answer": "A",
+      "Explanation": "FAME India (Faster Adoption and Manufacturing of Electric Vehicles) is the Indian government's initiative to promote electric vehicles and reduce carbon emissions, providing incentives for the adoption of electric vehicles."
+    },
+    {
+      "Q": "What is the process by which plants convert sunlight into energy?",
+      "A": "Respiration",
+      "B": "Photosynthesis",
+      "C": "Decomposition",
+      "D": "Fermentation",
+      "Answer": "B",
+      "Explanation": "Photosynthesis is the process by which plants, algae, and some bacteria convert sunlight, carbon dioxide, and water into glucose and oxygen. This process is essential for life on Earth."
+    },
+    {
+      "Q": "Which of the following planets in our solar system is known as the 'Red Planet'?",
+      "A": "Earth",
+      "B": "Mars",
+      "C": "Jupiter",
+      "D": "Saturn",
+      "Answer": "B",
+      "Explanation": "Mars is known as the 'Red Planet' due to its reddish appearance, which is caused by iron oxide in the planet's soil."
+    },
+    {
+      "Q": "What is the largest living structure on Earth?",
+      "A": "The Great Barrier Reef",
+      "B": "The Amazon Rainforest",
+      "C": "The Grand Canyon",
+      "D": "The Great Wall of China",
+      "Answer": "A",
+      "Explanation": "The Great Barrier Reef is the largest living structure on Earth, spanning over 2,300 kilometers off the coast of Australia."
+    },
+    {
+      "Q": "Which of the following scientists is credited with the discovery of gravity?",
+      "A": "Galileo Galilei",
+      "B": "Isaac Newton",
+      "C": "Albert Einstein",
+      "D": "Marie Curie",
+      "Answer": "B",
+      "Explanation": "Isaac Newton is credited with the discovery of gravity and formulated the laws of motion, which laid the foundation for classical mechanics."
+    },
+    {
+      "Q": "What is the process by which water moves through a plant, from the roots to the leaves?",
+      "A": "Respiration",
+      "B": "Photosynthesis",
+      "C": "Transpiration",
+      "D": "Evaporation",
+      "Answer": "C",
+      "Explanation": "Transpiration is the process by which water moves through a plant, from the roots to the leaves, and is then released into the air as water vapor."
+    },
+    {
+      "Q": "Which of the following types of rocks is formed from the cooling and solidification of magma?",
+      "A": "Sedimentary",
+      "B": "Igneous",
+      "C": "Metamorphic",
+      "D": "Foliated",
+      "Answer": "B",
+      "Explanation": "Igneous rocks are formed from the cooling and solidification of magma, which can occur either beneath the Earth's surface or above ground as a result of volcanic activity."
+    },
+    {
+      "Q": "What is the largest organ in the human body?",
+      "A": "Brain",
+      "B": "Heart",
+      "C": "Liver",
+      "D": "Skin",
+      "Answer": "D",
+      "Explanation": "The skin is the largest organ in the human body, covering the entire surface of the body and performing multiple functions such as regulating body temperature and protecting against external damage."
+    },
+    {
+      "Q": "Which of the following diseases is caused by a lack of insulin in the body?",
+      "A": "Diabetes",
+      "B": "Hypertension",
+      "C": "Asthma",
+      "D": "Tuberculosis",
+      "Answer": "A",
+      "Explanation": "Diabetes is a disease caused by a lack of insulin in the body, which can lead to high blood sugar levels and a range of complications if left untreated."
+    },
+    {
+      "Q": "What is the process by which the Earth's plates move and change, resulting in the creation of mountains and volcanoes?",
+      "A": "Weathering",
+      "B": "Erosion",
+      "C": "Plate Tectonics",
+      "D": "Glaciation",
+      "Answer": "C",
+      "Explanation": "Plate tectonics is the process by which the Earth's plates move and change, resulting in the creation of mountains, volcanoes, and earthquakes."
+    },
+    {
+      "Q": "Which of the following forms of energy is generated by the movement of the Earth's oceans?",
+      "A": "Solar Energy",
+      "B": "Wind Energy",
+      "C": "Geothermal Energy",
+      "D": "Tidal Energy",
+      "Answer": "D",
+      "Explanation": "Tidal energy is a form of energy generated by the movement of the Earth's oceans, specifically the rise and fall of the tides, which can be harnessed to power turbines and generate electricity."
+    },
+    {
+      "Q": "The Indus Valley Civilization is known for its sophisticated",
+      "A": "Agricultural systems",
+      "B": "Irrigation systems",
+      "C": "Urban planning",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The Indus Valley Civilization is renowned for its advanced urban planning, architecture, and water management systems. This civilization is a testament to the ingenuity and organizational skills of its people."
+    },
+    {
+      "Q": "The ancient Indian university of Nalanda was established during the reign of",
+      "A": "Gupta Empire",
+      "B": "Mauryan Empire",
+      "C": "Kushan Empire",
+      "D": "Pala Empire",
+      "Answer": "A",
+      "Explanation": "The ancient university of Nalanda was founded during the Gupta period, which is often referred to as the Golden Age of India. This university was a major center of learning and intellectual inquiry."
+    },
+    {
+      "Q": "The Quit India Movement was launched by Mahatma Gandhi in",
+      "A": "1942",
+      "B": "1945",
+      "C": "1947",
+      "D": "1940",
+      "Answer": "A",
+      "Explanation": "The Quit India Movement was launched by Mahatma Gandhi on August 8, 1942, with the aim of ending British rule in India through non-violent means. This movement played a significant role in the country's struggle for independence."
+    },
+    {
+      "Q": "The Mughal emperor who built the Taj Mahal was",
+      "A": "Akbar",
+      "B": "Shah Jahan",
+      "C": "Aurangzeb",
+      "D": "Babur",
+      "Answer": "B",
+      "Explanation": "The Taj Mahal was built by Mughal emperor Shah Jahan in memory of his wife, Mumtaz Mahal. This stunning monument is a masterpiece of Mughal architecture and a symbol of eternal love."
+    },
+    {
+      "Q": "The ancient Indian text that describes the duties of a king is",
+      "A": "Arthashastra",
+      "B": "Ramayana",
+      "C": "Mahabharata",
+      "D": "Bhagavad Gita",
+      "Answer": "A",
+      "Explanation": "The Arthashastra is an ancient Indian text that provides guidance on statecraft, economics, and governance. It is attributed to the Mauryan statesman Kautilya and offers valuable insights into the duties and responsibilities of a king."
+    },
+    {
+      "Q": "The Indian National Congress was founded in",
+      "A": "1885",
+      "B": "1905",
+      "C": "1915",
+      "D": "1925",
+      "Answer": "A",
+      "Explanation": "The Indian National Congress was established in 1885 by A.O. Hume, with the aim of promoting Indian rights and self-governance. This organization played a pivotal role in the country's struggle for independence."
+    },
+    {
+      "Q": "The Battle of Plassey was fought in",
+      "A": "1756",
+      "B": "1757",
+      "C": "1758",
+      "D": "1759",
+      "Answer": "B",
+      "Explanation": "The Battle of Plassey was fought on June 23, 1757, between the British East India Company and the ruler of Bengal, Siraj-ud-Daula. This battle marked the beginning of British rule in India."
+    },
+    {
+      "Q": "The ancient Indian philosopher who taught the concept of ahimsa was",
+      "A": "Mahavira",
+      "B": "Gautama Buddha",
+      "C": "Adi Shankara",
+      "D": "Chanakya",
+      "Answer": "A",
+      "Explanation": "Mahavira, the founder of Jainism, emphasized the importance of ahimsa, or non-violence, in his teachings. This concept has had a profound impact on Indian thought and culture."
+    },
+    {
+      "Q": "The Vijayanagara Empire was founded by",
+      "A": "Harihara and Bukka Raya",
+      "B": "Krishna Deva Raya",
+      "C": "Aurangzeb",
+      "D": "Shivaji",
+      "Answer": "A",
+      "Explanation": "The Vijayanagara Empire was founded by Harihara and Bukka Raya in the 14th century. This empire was a major power in southern India and played a significant role in the region's history."
+    },
+    {
+      "Q": "The Indian Rebellion of 1857 was led by",
+      "A": "Mangal Pandey",
+      "B": "Rani Lakshmibai",
+      "C": "Tantia Tope",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The Indian Rebellion of 1857 was a widespread uprising against British rule, led by various Indian leaders, including Mangal Pandey, Rani Lakshmibai, and Tantia Tope. This rebellion marked a significant turning point in the country's struggle for independence."
+    },
+    {
+      "Q": "What is the main objective of the Monetary Policy Committee in India?",
+      "A": "To promote economic growth",
+      "B": "To control inflation",
+      "C": "To stabilize the currency",
+      "D": "To reduce unemployment",
+      "Answer": "B",
+      "Explanation": "The Monetary Policy Committee aims to maintain price stability, which means controlling inflation. It uses tools like interest rates to achieve this goal."
+    },
+    {
+      "Q": "Which of the following is a characteristic of a developing economy like India?",
+      "A": "High per capita income",
+      "B": "Low population growth rate",
+      "C": "Dependence on primary sector",
+      "D": "Significant income inequality",
+      "Answer": "D",
+      "Explanation": "Developing economies like India often face significant income inequality, with a large gap between the rich and the poor."
+    },
+    {
+      "Q": "What is the role of the Reserve Bank of India in the Indian economy?",
+      "A": "To regulate the stock market",
+      "B": "To manage the fiscal policy",
+      "C": "To act as a banker to the government",
+      "D": "To promote foreign trade",
+      "Answer": "C",
+      "Explanation": "The Reserve Bank of India acts as a banker to the government, providing it with banking services and managing its accounts."
+    },
+    {
+      "Q": "Which sector is the largest contributor to India's GDP?",
+      "A": "Agriculture",
+      "B": "Industry",
+      "C": "Services",
+      "D": "Manufacturing",
+      "Answer": "C",
+      "Explanation": "The services sector is the largest contributor to India's GDP, accounting for over 50% of the country's economic output."
+    },
+    {
+      "Q": "What is the purpose of the Goods and Services Tax (GST) in India?",
+      "A": "To reduce tax evasion",
+      "B": "To increase tax revenue",
+      "C": "To simplify the tax structure",
+      "D": "All of the above",
+      "Answer": "D",
+      "Explanation": "The GST aims to simplify the tax structure, reduce tax evasion, and increase tax revenue by subsuming multiple indirect taxes."
+    },
+    {
+      "Q": "Which of the following is a challenge faced by the Indian economy?",
+      "A": "High economic growth rate",
+      "B": "Low fiscal deficit",
+      "C": "Inadequate infrastructure",
+      "D": "High foreign exchange reserves",
+      "Answer": "C",
+      "Explanation": "Inadequate infrastructure is a significant challenge faced by the Indian economy, hindering its growth and development."
+    },
+    {
+      "Q": "What is the role of the National Bank for Agriculture and Rural Development (NABARD) in India?",
+      "A": "To promote rural development",
+      "B": "To provide credit to farmers",
+      "C": "To regulate the banking sector",
+      "D": "To manage the fiscal policy",
+      "Answer": "B",
+      "Explanation": "NABARD provides credit to farmers and promotes rural development by supporting agricultural and allied activities."
+    },
+    {
+      "Q": "Which of the following is a feature of the Indian economy?",
+      "A": "High degree of economic inequality",
+      "B": "Low population density",
+      "C": "High per capita income",
+      "D": "Low economic growth rate",
+      "Answer": "A",
+      "Explanation": "India has a high degree of economic inequality, with a significant gap between the rich and the poor."
+    },
+    {
+      "Q": "What is the purpose of the Make in India initiative?",
+      "A": "To promote foreign investment",
+      "B": "To increase exports",
+      "C": "To develop infrastructure",
+      "D": "To create jobs",
+      "Answer": "A",
+      "Explanation": "The Make in India initiative aims to promote foreign investment and encourage companies to manufacture their products in India."
+    },
+    {
+      "Q": "Which of the following is a consequence of inflation in India?",
+      "A": "Increase in purchasing power",
+      "B": "Decrease in unemployment",
+      "C": "Reduction in savings",
+      "D": "Increase in economic growth",
+      "Answer": "C",
+      "Explanation": "Inflation can lead to a reduction in savings as the value of money decreases over time, eroding the purchasing power of individuals."
+    },
+    {
+      "Q": "What is the name of the recent scheme launched by the Indian government to promote entrepreneurship among women?",
+      "A": "Standup India",
+      "B": "Start-Up India",
+      "C": "Mudra Yojana",
+      "D": "Udyam Scheme",
+      "Answer": "A",
+      "Explanation": "Standup India is a scheme launched by the Indian government to promote entrepreneurship among women and SC/ST communities. It provides financial assistance and support to entrepreneurs."
+    },
+    {
+      "Q": "Which of the following Indian cities has been ranked as the most livable city in the Ease of Living Index 2022?",
+      "A": "Bengaluru",
+      "B": "Pune",
+      "C": "Delhi",
+      "D": "Mumbai",
+      "Answer": "B",
+      "Explanation": "Pune has been ranked as the most livable city in the Ease of Living Index 2022, followed by Bengaluru and Delhi. The index assesses cities based on various parameters such as education, healthcare, and infrastructure."
+    },
+    {
+      "Q": "Who is the current Chairman of the 15th Finance Commission of India?",
+      "A": "N.K. Singh",
+      "B": "Vijay Kelkar",
+      "C": "Arvind Subramanian",
+      "D": "Raghuram Rajan",
+      "Answer": "A",
+      "Explanation": "N.K. Singh is the current Chairman of the 15th Finance Commission of India, which was constituted in 2017 to review the financial relations between the center and states. The commission submitted its report in 2020."
+    },
+    {
+      "Q": "What is the name of the recent initiative launched by the Indian government to promote electric vehicles?",
+      "A": "FAME India",
+      "B": "National Electric Mobility Mission",
+      "C": "Smart Cities Mission",
+      "D": "Green India Mission",
+      "Answer": "A",
+      "Explanation": "FAME India (Faster Adoption and Manufacturing of Electric Vehicles) is an initiative launched by the Indian government to promote electric vehicles and reduce greenhouse gas emissions. The scheme provides incentives for the adoption of electric vehicles."
+    },
+    {
+      "Q": "Who is the current President of the Indian National Congress party?",
+      "A": "Rahul Gandhi",
+      "B": "Sonia Gandhi",
+      "C": "Mallikarjun Kharge",
+      "D": "Priyanka Gandhi",
+      "Answer": "C",
+      "Explanation": "Mallikarjun Kharge is the current President of the Indian National Congress party, having taken over the role in 2022. He is a veteran politician and has held various positions in the party and government."
+    },
+    {
+      "Q": "What is the name of the recent scheme launched by the Indian government to provide healthcare services to rural areas?",
+      "A": "Ayushman Bharat",
+      "B": "National Health Mission",
+      "C": "Rashtriya Swasthya Bima Yojana",
+      "D": "Jan Arogya Yojana",
+      "Answer": "A",
+      "Explanation": "Ayushman Bharat is a scheme launched by the Indian government to provide healthcare services to rural areas and provide health insurance to poor and vulnerable families. The scheme aims to improve healthcare access and outcomes in rural areas."
+    },
+    {
+      "Q": "Which of the following countries has recently signed a free trade agreement with India?",
+      "A": "United States",
+      "B": "Australia",
+      "C": "United Kingdom",
+      "D": "Canada",
+      "Answer": "B",
+      "Explanation": "India and Australia have recently signed a free trade agreement, which aims to increase trade and investment between the two countries. The agreement covers various sectors such as goods, services, and investment."
+    },
+    {
+      "Q": "What is the name of the recent initiative launched by the Indian government to promote digital literacy among rural women?",
+      "A": "Digital India",
+      "B": "Beti Bachao Beti Padhao",
+      "C": "Mahila E-Haat",
+      "D": "National Digital Literacy Mission",
+      "Answer": "D",
+      "Explanation": "The National Digital Literacy Mission is an initiative launched by the Indian government to promote digital literacy among rural women and other disadvantaged groups. The mission aims to improve digital skills and access to digital services."
+    },
+    {
+      "Q": "Who is the current Governor of the Reserve Bank of India?",
+      "A": "Shaktikanta Das",
+      "B": "Urjit Patel",
+      "C": "Raghuram Rajan",
+      "D": "Duvvuri Subbarao",
+      "Answer": "A",
+      "Explanation": "Shaktikanta Das is the current Governor of the Reserve Bank of India, having taken over the role in 2018. He has been instrumental in implementing various monetary policy measures to support economic growth and stability."
+    },
+    {
+      "Q": "What is the name of the recent scheme launched by the Indian government to provide financial assistance to farmers?",
+      "A": "Pradhan Mantri Kisan Samman Nidhi",
+      "B": "Pradhan Mantri Fasal Bima Yojana",
+      "C": "Rashtriya Krishi Vikas Yojana",
+      "D": "National Farmers Policy",
+      "Answer": "A",
+      "Explanation": "Pradhan Mantri Kisan Samman Nidhi is a scheme launched by the Indian government to provide financial assistance to farmers, with the aim of improving their income and well-being. The scheme provides annual income support to eligible farmers."
+    },
+    {
+      "Q": "A snail is at the bottom of a 20-foot well. Each day, it climbs up 3 feet, but at night, it slips back 2 feet. How many days will it take for the snail to reach the top of the well?",
+      "A": "18",
+      "B": "20",
+      "C": "22",
+      "D": "28",
+      "Answer": "18",
+      "Explanation": "The snail effectively climbs 1 foot per day, and on the 18th day, it will reach the top. It will climb 3 feet on the 18th day and reach the top of the well."
+    },
+    {
+      "Q": "In a certain code language, 'hello' is written as 'olleh'. What is 'world' written as in this code?",
+      "A": "dlrow",
+      "B": "world",
+      "C": "dlorw",
+      "D": "wolrd",
+      "Answer": "A",
+      "Explanation": "The code language is simply reversing the order of the letters, so 'world' becomes 'dlrow'."
+    },
+    {
+      "Q": "A bat and a ball together cost $1.10. The bat costs $1.00 more than the ball. How much does the ball cost?",
+      "A": "$0.05",
+      "B": "$0.10",
+      "C": "$0.15",
+      "D": "$0.20",
+      "Answer": "A",
+      "Explanation": "If the bat costs $1.00 more than the ball and together they cost $1.10, then the ball must cost $0.05."
+    },
+    {
+      "Q": "A person has two coins that add up to 30 paise. One coin is not a 15-paise coin. What are the two coins?",
+      "A": "10 paise and 20 paise",
+      "B": "15 paise and 15 paise",
+      "C": "10 paise and 15 paise",
+      "D": "5 paise and 25 paise",
+      "Answer": "A",
+      "Explanation": "Since one coin is not a 15-paise coin, the only option that adds up to 30 paise without using a 15-paise coin is 10 paise and 20 paise."
+    },
+    {
+      "Q": "If it takes 5 machines 5 minutes to make 5 widgets, how long would it take 100 machines to make 100 widgets?",
+      "A": "1 minute",
+      "B": "5 minutes",
+      "C": "10 minutes",
+      "D": "100 minutes",
+      "Answer": "B",
+      "Explanation": "If 5 machines can make 5 widgets in 5 minutes, then 100 machines can make 100 widgets in the same amount of time, which is 5 minutes."
+    },
+    {
+      "Q": "A woman has two coins that add up to 50 cents. One coin is not a nickel. What are the two coins?",
+      "A": "25 cents and 25 cents",
+      "B": "10 cents and 40 cents",
+      "C": "5 cents and 45 cents",
+      "D": "25 cents and 10 cents and 10 cents and 5 cents",
+      "Answer": "A",
+      "Explanation": "Since one coin is not a nickel (5 cents), the two coins must be two 25-cent coins (2 quarters), which add up to 50 cents."
+    },
+    {
+      "Q": "You are in a room that has three light switches. Each switch corresponds to one of three light bulbs in a room. Each light bulb is off at the start. You can turn the lights on and off as many times as you want, but you can only enter the room one time. How can you figure out which switch corresponds to which light bulb?",
+      "A": "Turn two switches on, then off, then enter the room and observe",
+      "B": "Turn one switch on, then off, then enter the room and observe",
+      "C": "Turn all switches on, then enter the room and observe",
+      "D": "Turn two switches on, wait, then turn one off and enter the room",
+      "Answer": "D",
+      "Explanation": "By turning two switches on, waiting, then turning one off, you can use the process of elimination and observation of the bulbs' temperatures to determine which switch corresponds to which bulb."
+    },
+    {
+      "Q": "There are 8 balls, and one will be slightly heavier or lighter than the rest. How can you find the heavier or lighter ball in only 2 weighings on a balance scale?",
+      "A": "Weigh 3 vs 3, then weigh 2 from the heavier side",
+      "B": "Weigh 4 vs 4, then weigh 2 from the heavier side",
+      "C": "Weigh 2 vs 2, then weigh 3 from the heavier side",
+      "D": "Weigh 1 vs 1, then weigh 3 from the heavier side",
+      "Answer": "A",
+      "Explanation": "By weighing 3 balls against 3 balls, you can determine which side has the heavier or lighter ball. Then, by weighing 2 balls from the heavier or lighter side against each other, you can find the heavier or lighter ball."
+    },
+    {
+      "Q": "If a clock strikes 13, how many times will it strike in 3 hours and 15 minutes, starting from the time it strikes 13?",
+      "A": "4",
+      "B": "6",
+      "C": "8",
+      "D": "10",
+      "Answer": "B",
+      "Explanation": "Starting from the time it strikes 13, the clock will strike at 1, 2, and 3 o'clock within the next 3 hours, which is 3 + 2 + 1 = 6 strikes, and then at the quarter hour it will not strike."
+    },
+    {
+      "Q": "There are three switches, but they are not labelled. Each switch corresponds to one of three light bulbs in a room. Each light bulb is either on or off. You can turn the lights on and off as many times as you want, and you can enter the room one time to observe the bulbs. How can you figure out which switch corresponds to which light bulb?",
+      "A": "Turn one switch on for 5 minutes, then off, then enter the room and observe",
+      "B": "Turn two switches on, then off, then enter the room and observe",
+      "C": "Turn one switch on, then enter the room and observe",
+      "D": "Turn all switches on, then enter the room and observe",
+      "Answer": "A",
+      "Explanation": "By turning one switch on for a period of time, then off, you can use the warmth of the bulb to determine which switch corresponds to which bulb when you enter the room."
+    }
+  ]
+}
