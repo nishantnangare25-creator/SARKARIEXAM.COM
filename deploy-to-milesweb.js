@@ -6,7 +6,7 @@ async function deploy() {
     try {
         console.log("Connecting to MilesWeb FTP...");
         await client.access({
-            host: process.env.FTP_SERVER || "103.86.176.249",
+            host: process.env.FTP_SERVER || "sarkariexamai.com",
             user: process.env.FTP_USERNAME,
             password: process.env.FTP_PASSWORD,
             secure: false
