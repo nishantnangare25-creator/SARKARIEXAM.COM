@@ -6,16 +6,17 @@ async function deploy() {
     try {
         console.log("Connecting to MilesWeb FTP...");
         await client.access({
-            host: process.env.FTP_SERVER || "sarkariexamai.com",
+            host: process.env.FTP_SERVER || "103.86.176.249",
             user: process.env.FTP_USERNAME,
             password: process.env.FTP_PASSWORD,
             secure: false
         });
 
         console.log("Connected! Navigating to public_html...");
+        await client.cd("public_html");
         
-        console.log("Uploading all new files from 'dist' directly into Root (server base directory)...");
-        // uploadFromDir basically copies the contents of local 'dist' into remote current directory (Root)
+        console.log("Uploading all new files from 'dist' into public_html...");
+        // uploadFromDir basically copies the contents of local 'dist' into remote current directory
         await client.uploadFromDir("dist");
         
         console.log("Upload Complete! The new files are now live.");
