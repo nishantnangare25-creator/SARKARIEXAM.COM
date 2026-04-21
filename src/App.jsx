@@ -27,6 +27,41 @@ import CurrentAffairs from './pages/CurrentAffairs';
 import './i18n';
 import './index.css';
 
+class PageErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('[Global Error]', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: '40px 20px', textAlign: 'center', background: '#f8fafc', minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <h1 style={{ marginBottom: '16px', color: '#1e293b' }}>Oops! Something went wrong.</h1>
+          <p style={{ color: '#64748b', marginBottom: '24px', maxWidth: '400px' }}>The page encountered an error. Please try refreshing or going back to the dashboard.</p>
+          <button 
+            onClick={() => window.location.href = '/'}
+            style={{ padding: '12px 24px', background: '#2563eb', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+          >
+            Back to Home
+          </button>
+          {process.env.NODE_ENV === 'development' && (
+            <pre style={{ marginTop: '32px', textAlign: 'left', padding: '16px', background: '#fee2e2', color: '#991b1b', borderRadius: '8px', overflow: 'auto', maxWidth: '90%' }}>
+              {this.state.error?.toString()}
+            </pre>
+          )}
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function AppLayout({ sidebarOpen, setSidebarOpen }) {
   const location = useLocation();
 
@@ -50,28 +85,30 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
       {showSidebar && (
         <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
       )}
-      <Routes>
-        <Route path="/"               element={<Landing />} />
-        <Route path="/login"          element={<Login />} />
-        <Route path="/dashboard"      element={<Dashboard onToggleSidebar={() => setSidebarOpen(true)} />} />
-        <Route path="/study-planner"  element={<StudyPlanner />} />
-        <Route path="/mock-test"      element={<MockTest />} />
-        <Route path="/pyqs-mock-test" element={<PYQSMockTest />} />
-        <Route path="/pyq-pdfs"       element={<PYQPdfs />} />
-        <Route path="/pyq-practice"   element={<PYQPractice />} />
-        <Route path="/past-papers"    element={<PastPaperAnalyzer />} />
-        <Route path="/notes"          element={<NotesGenerator />} />
-        <Route path="/tutor"          element={<InteractiveTutor />} />
-        <Route path="/analytics"      element={<Analytics />} />
-        <Route path="/forum"          element={<Forum />} />
-        <Route path="/peer-matching"  element={<PeerMatching />} />
-        <Route path="/settings"       element={<Settings />} />
-        <Route path="/about"          element={<AboutUs />} />
-        <Route path="/privacy"        element={<PrivacyPolicy />} />
-        <Route path="/blog"           element={<Blog />} />
-        <Route path="/current-affairs"  element={<CurrentAffairs />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <PageErrorBoundary>
+        <Routes>
+          <Route path="/"               element={<Landing />} />
+          <Route path="/login"          element={<Login />} />
+          <Route path="/dashboard"      element={<Dashboard onToggleSidebar={() => setSidebarOpen(true)} />} />
+          <Route path="/study-planner"  element={<StudyPlanner />} />
+          <Route path="/mock-test"      element={<MockTest />} />
+          <Route path="/pyqs-mock-test" element={<PYQSMockTest />} />
+          <Route path="/pyq-pdfs"       element={<PYQPdfs />} />
+          <Route path="/pyq-practice"   element={<PYQPractice />} />
+          <Route path="/past-papers"    element={<PastPaperAnalyzer />} />
+          <Route path="/notes"          element={<NotesGenerator />} />
+          <Route path="/tutor"          element={<InteractiveTutor />} />
+          <Route path="/analytics"      element={<Analytics />} />
+          <Route path="/forum"          element={<Forum />} />
+          <Route path="/peer-matching"  element={<PeerMatching />} />
+          <Route path="/settings"       element={<Settings />} />
+          <Route path="/about"          element={<AboutUs />} />
+          <Route path="/privacy"        element={<PrivacyPolicy />} />
+          <Route path="/blog"           element={<Blog />} />
+          <Route path="/current-affairs"  element={<CurrentAffairs />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </PageErrorBoundary>
       {/* Mobile bottom nav: only shown on phones (<768px), hidden on tablet/desktop */}
       {showSidebar && <MobileBottomNav />}
     </>

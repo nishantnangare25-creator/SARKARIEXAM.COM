@@ -781,8 +781,8 @@ tr:hover td { background: var(--bg-tertiary); color: var(--text-primary); }
 @media (max-width: 768px) {
   .immersive-tutor-layout {
     padding: 0 !important;
-    /* Subtract both top navbar and bottom nav heights to prevent overflow */
-    height: calc(100vh - var(--navbar-height) - 86px) !important; 
+    height: calc(100vh - var(--navbar-height)) !important;
+    min-height: calc(100vh - var(--navbar-height)) !important;
   }
   
   .tutor-header {

@@ -6,15 +6,16 @@
   max-width: none !important;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .riya-tutor-container {
   display: flex;
   flex-direction: column;
   height: calc(100vh - var(--navbar-height));
-  background: #FFFFFF;
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
+  background: #FFFFFF;
   width: 100%;
 }
 
