@@ -1,0 +1,512 @@
+{
+  "app": {
+    "name": "Sarkari Exam AI",
+    "tagline": "AI-Powered Government Exam Preparation"
+  },
+  "nav": {
+    "home": "Home",
+    "dashboard": "Home",
+    "currentAffairs": "Current Affairs",
+    "blog": "Blog",
+    "studyPlanner": "Study Planner",
+    "mockTest": "Mock Test",
+    "pastPaper": "Past Paper Analyzer",
+    "notes": "Notes Generator",
+    "analytics": "Analytics",
+    "forum": "Community",
+    "peerMatch": "Study Partners",
+    "settings": "Settings",
+    "login": "Login",
+    "signup": "Sign Up",
+    "logout": "Logout",
+    "profile": "Profile",
+    "tutor": "Riya",
+    "pyqsMockTest": "PYQs Mock Test",
+    "pyqPdfs": "PYQ PDFs",
+    "sections": {
+      "main": "Main",
+      "tests": "Tests",
+      "studyTools": "Study Tools",
+      "ai": "AI",
+      "community": "Community",
+      "account": "Account"
+    }
+  },
+  "home": {
+    "hero": "Your AI-Powered Exam Preparation Partner",
+    "hero_line1": "Your",
+    "hero_accent": "AI-Powered",
+    "hero_line2": "Exam Preparation Partner",
+    "subtitle": "Stop Guessing. Start Mastering. Get data-driven insights and personalized AI coaching to crack India's toughest exams.",
+    "cta": "Start Learning Free",
+    "ctaSecondary": "Explore Features",
+    "heroBadge": "AI-Powered Exam Success",
+    "floating": {
+      "analyzing": "AI Analyzing weak topics...",
+      "focus": "Focus Area: Indian Polity",
+      "improvement": "+15% Improvement"
+    },
+    "feature1Title": "AI Study Planner",
+    "feature1Desc": "Get a personalized study plan based on your goals and schedule",
+    "feature2Title": "Smart Mock Tests",
+    "feature2Desc": "10-minute daily adaptive quizzes with instant explanations",
+    "feature3Title": "Past Paper Analysis",
+    "feature3Desc": "AI analyzes past papers to predict important topics",
+    "feature4Title": "AI Notes Generator",
+    "feature4Desc": "Concise, exam-focused study notes downloadable as PDF",
+    "feature5Title": "Performance Analytics",
+    "feature5Desc": "Track your strengths, weaknesses, and exam readiness",
+    "feature6Title": "Study Partners",
+    "feature6Desc": "Find peers with similar goals for collaborative learning",
+    "feature7Title": "AI Riya Tutor",
+    "feature7Desc": "Get instant personalized lessons on any topic in your own language using our AI tutor Riya.",
+    "feature8Title": "PYQs Practice",
+    "feature8Desc": "Practice previous year questions from real government exam papers with AI-powered quiz mode.",
+    "feature9Title": "PYQs Mock Test",
+    "feature9Desc": "Take full-length mock tests based on real PYQ patterns to simulate actual exam conditions.",
+    "stats1": "Active Students",
+    "stats2": "AI Questions Generated",
+    "stats3": "Exams Covered",
+    "stats4": "Languages Supported",
+    "examTitle": "Exams We Cover",
+    "examSubtitle": "Tailored AI optimization for 15+ major Indian competitive exams.",
+    "precisionTitle": "Master Every Subject with Precision AI",
+    "precisionDesc": "Don't just study—study smart with tools designed by AI experts for Indian aspirants.",
+    "ctaTitle": "Ready to Outperform the Competition?",
+    "ctaDesc": "Join 50,000+ successful aspirants who use AI to stay ahead of the curve.",
+    "trustTitle": "Trusted by thousands of aspirants across India"
+  },
+  "dashboard": {
+    "welcome": "Welcome back",
+    "header": {
+      "overview": "Home Overview",
+      "guest": "Guest Mode",
+      "openMenu": "Open Menu"
+    },
+    "greeting": {
+      "morning": "Good Morning",
+      "afternoon": "Good Afternoon",
+      "evening": "Good Evening",
+      "scholar": "Scholar",
+      "aspirant": "Aspirant",
+      "ready": "Ready to continue your preparation?",
+      "startGuest": "Start your prep today as a guest or login to track progress."
+    },
+    "stats": {
+      "streak": "Daily Streak",
+      "readiness": "Readiness",
+      "days": "Days"
+    },
+    "auth": {
+      "personalize": "Personalize Prep",
+      "sync": "Login to sync progress"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "goNow": "Go Now",
+      "mock": { "title": "Start Mock Test", "desc": "Full length test" },
+      "pyqLib": { "title": "PYQ Library", "desc": "Past papers & uploads" },
+      "pyqTest": { "title": "PYQs Practice", "desc": "10-min 10-qns" },
+      "tutor": { "title": "AI Study Tutor", "desc": "Ask Riya anything" }
+    },
+    "analytics": {
+      "title": "Performance Analytics",
+      "viewDetails": "View Details",
+      "locked": "Analytics Locked",
+      "loginToUnlock": "Login to Unlock",
+      "noData": "No test data yet. Start your first mock test!"
+    },
+    "suggestions": {
+      "title": "Smart Suggestions",
+      "focus": "Focus on {{subject}}",
+      "review": "Review mistakes in {{subject}}",
+      "takeMock": "Take a full mock test",
+      "newUpdate": "New update in Current Affairs"
+    },
+    "challenge": {
+      "badge": "DAILY CHALLENGE",
+      "title": "Constitution of India Special Quiz",
+      "button": "Challenge Now"
+    },
+    "pyq": {
+      "badge": "STUDY MATERIAL & UPLOADS",
+      "title": "Comprehensive PYQs Library",
+      "subtitle": "Access curated Past Year Question papers, or upload your own to practice interactively!",
+      "upload": {
+        "reading": "Reading Document & Extracting Questions...",
+        "readingDesc": "This might take a few moments for larger papers.",
+        "drag": "Drag & drop your PYQ document here",
+        "click": "or click to browse. Let our AI extract questions for an interactive test!"
+      },
+      "searchPlaceholder": "Search PYQs by name or year...",
+      "allYears": "All Years",
+      "allExams": "All Exams",
+      "startPractice": "Start Practice Test",
+      "noMaterials": "No study materials found.",
+      "noMaterialsDesc": "Try clearing your search or exam filters.",
+      "paperSolution": "Question Paper + Solution",
+      "paper": "Question Paper"
+    },
+    "ca": {
+      "title": "Current Affairs",
+      "latest": "LATEST",
+      "viewAll": "View All"
+    },
+    "testsCompleted": "Tests Completed",
+    "dailyQuiz": "Daily Quiz",
+    "takeQuiz": "Take Today's Quiz",
+    "recentActivity": "Recent Activity"
+  },
+  "studyPlanner": {
+    "title": "AI Study Planner",
+    "subtitle": "Get a personalized study plan powered by AI",
+    "exam": "Target Exam",
+    "hours": "Available Hours/Day",
+    "level": "Preparation Level",
+    "weak": "Weak Subjects",
+    "strong": "Strong Subjects",
+    "generate": "Generate Study Plan",
+    "generating": "AI is creating your plan...",
+    "yourPlan": "Your Weekly Study Plan",
+    "tips": "Pro Tips",
+    "focus": "Focus Areas",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "mockTest": {
+    "title": "Daily Smart Mock Test",
+    "subtitle": "10-minute adaptive quiz to boost your preparation",
+    "start": "Start Mock Test",
+    "generating": "AI is generating questions...",
+    "accuracy": "Accuracy",
+    "loaded": "loaded",
+    "error": "Could not generate questions. Check your API key or response format.",
+    "question": "Question",
+    "of": "of",
+    "timeLeft": "Time Left",
+    "next": "Next",
+    "previous": "Previous",
+    "submit": "Submit Test",
+    "finishEarly": "Finish Early",
+    "loadingMore": "Loading More...",
+    "loadNext": "Load Next Questions",
+    "timesUp": "Time's Up!",
+    "timesUpDesc": "Your 10 minutes are over. Submitting your test automatically.",
+    "result": "Test Results",
+    "score": "Your Score",
+    "correct": "Correct",
+    "incorrect": "Incorrect",
+    "explanation": "Explanation",
+    "retake": "Take Another Test",
+    "selectSubject": "Select Subject",
+    "saveResultsTitle": "Want to save these results?",
+    "saveResultsDesc": "Create a free account to track your performance over time and unlock AI analytics.",
+    "loginCreate": "Login / Create Account"
+  },
+  "pastPaper": {
+    "title": "AI Past Paper Analyzer",
+    "subtitle": "Upload exam papers and let AI find patterns",
+    "upload": "Upload PDF",
+    "dropzone": "Drop your PDF here or click to upload",
+    "analyzing": "AI is analyzing the paper...",
+    "frequentTopics": "Frequent Topics",
+    "patterns": "Question Patterns",
+    "predicted": "Predicted High-Yield Topics",
+    "breakdown": "Subject-wise Breakdown",
+    "recommendations": "Recommendations",
+    "pdfExtractionError": "Only text files or manual pasting is supported in basic mode. Please paste the exam text below.",
+    "pasteLabel": "Or paste exam text here",
+    "pastePlaceholder": "Paste the questions or text from your exam paper...",
+    "analyzeBtn": "Analyze with AI",
+    "downloadPdf": "Download PDF",
+    "downloadMd": "Download Text/MD"
+  },
+  "notes": {
+    "title": "AI Notes Generator",
+    "subtitle": "Create concise, exam-focused study notes",
+    "selectExam": "Select Exam",
+    "selectSubject": "Select Subject",
+    "topics": "Specific Topics",
+    "generate": "Generate Notes",
+    "generating": "AI is crafting your notes...",
+    "yourNotes": "Your Study Notes",
+    "downloadPdf": "Download PDF",
+    "downloadText": "Download MD/Text"
+  },
+  "analytics": {
+    "title": "Performance Analytics",
+    "subtitle": "Track your progress and identify areas for improvement",
+    "stats": {
+      "accuracy": "Accuracy",
+      "consistency": "Consistency",
+      "completion": "Completion",
+      "excellent": "Excellent",
+      "steady": "Steady",
+      "needsFocus": "Needs Focus"
+    },
+    "locked": {
+      "title": "Analytics Locked",
+      "desc": "Create an account to unlock personalized performance tracking and AI insights.",
+      "join": "Join to Unlock",
+      "tryMock": "Try a Mock Test"
+    },
+    "breakdown": { "title": "Subject-wise Performance" },
+    "milestones": {
+      "title": "Recent Milestones",
+      "builder": { "title": "Foundation Builder", "desc": "Completed early preparation modules." },
+      "time": { "title": "Time Master", "desc": "Improved test completion speed by 15%." }
+    },
+    "proTip": { "title": "AI Pro-Tip", "desc": "Focus on Indian Polity this week. Based on your trend, it's your biggest growth opportunity." },
+    "deepDive": { "title": "AI Performance Deep Dive", "desc": "Let our AI analyze your entire test history to find hidden patterns and bottlenecks.", "button": "Generate Detailed Report" },
+    "demoMode": "Showing sample data. Start testing to see your own analysis!"
+  },
+  "forum": {
+    "title": "Community",
+    "subtitle": "Discuss, learn, and grow together",
+    "currentAffairs": "Current Affairs",
+    "examStrategies": "Exam Strategies",
+    "doubtSolving": "Doubt Solving",
+    "general": "General Discussion",
+    "newPost": "New Discussion",
+    "postTitle": "Title",
+    "postContent": "What's on your mind?",
+    "post": "Post",
+    "reply": "Reply",
+    "replies": "replies",
+    "noPostsYet": "No discussions yet. Start one!"
+  },
+  "peerMatch": {
+    "title": "Study Partners",
+    "subtitle": "Find like-minded peers for collaborative learning",
+    "findPartners": "Find Study Partners",
+    "matching": "Finding the best matches...",
+    "connect": "Connect",
+    "connected": "Connected",
+    "exam": "Exam",
+    "level": "Level",
+    "noMatches": "No matches found yet"
+  },
+  "settings": {
+    "title": "Settings",
+    "apiKey": "AI Configuration",
+    "apiKeyPlaceholder": "API Key is configured in .env",
+    "save": "Save Settings",
+    "saved": "Settings saved!",
+    "language": "Language",
+    "theme": "Theme"
+  },
+  "auth": {
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Login to continue your preparation",
+    "signupTitle": "Join AIGovPrep",
+    "signupSubtitle": "Start your AI-powered exam journey",
+    "email": "Email Address",
+    "password": "Password",
+    "name": "Full Name",
+    "login": "Login",
+    "signup": "Create Account",
+    "googleLogin": "Continue with Google",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "forgotPassword": "Forgot password?"
+  },
+  "tutor": {
+    "title": "Riya - AI Tutor",
+    "subtitle": "Get instant, targeted lessons on any topic",
+    "subjectLabel": "Topic / Subject",
+    "subjectPlaceholder": "e.g., Indian History, Geography",
+    "keywordsLabel": "Specific Keywords (Optional)",
+    "keywordsPlaceholder": "e.g., Mughal Empire, Rivers of India",
+    "suggestions": [
+      "Explain UPSC Syllabus",
+      "What are Ashok's Edicts?",
+      "2024 Current Affairs",
+      "Indian Constitution basics"
+    ],
+    "generate": "Start Lesson",
+    "generating": "Preparing your lesson...",
+    "yourLesson": "Your Lesson",
+    "welcome": {
+      "title": "Hi! I'm Riya, your AI Tutor 👋",
+      "subtitle": "Ask me anything about your exam preparation. I can explain concepts, solve doubts, and help you study smarter!"
+    },
+    "inputPlaceholder": "Ask Riya anything about your exam...",
+    "clearChatConfirm": "Are you sure you want to clear this chat?",
+    "thinking": "Riya is thinking...",
+    "footer": "Riya AI may make mistakes. Verify important facts from official sources.",
+    "role": {
+      "assistant": "Riya AI",
+      "user": "You"
+    },
+    "actions": {
+      "downloadPdf": "Download as PDF",
+      "downloadText": "Download as Text",
+      "clearChat": "Clear Chat"
+    },
+    "error": {
+      "downloadFailed": "Download failed. Please try again."
+    }
+  },
+  "onboarding": {
+    "title": "Let's Personalize Your Experience",
+    "step1": "Select Target Exam",
+    "step2": "Language Preference",
+    "step3": "Study Habits",
+    "step4": "Subject Assessment",
+    "next": "Next Step",
+    "back": "Go Back",
+    "finish": "Start Preparation",
+    "hoursLabel": "How many hours can you study daily?",
+    "levelLabel": "What is your current preparation level?",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "advanced": "Advanced"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "view": "View",
+    "close": "Close",
+    "search": "Search",
+    "noResults": "No results found",
+    "seeAll": "See All",
+    "all": "All",
+    "by": "by",
+    "back": "Back",
+    "select": "Select",
+    "history": "History",
+    "geography": "Geography",
+    "polity": "Polity",
+    "online": "Online",
+    "send": "Send"
+  },
+  "footer": {
+    "tagline": "India's Leading AI-Powered Exam Preparation Platform",
+    "platform": "Platform",
+    "exams": "Exams",
+    "company": "Company",
+    "about": "About Us",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "rights": "© 2026 Sarkari AI. All rights reserved. Built with ❤️ for Bharat's Future Leaders."
+  },
+  "about": {
+    "hero": {
+      "title_line1": "Empowering Bharat's",
+      "title_accent": "Future Leaders",
+      "subtitle": "We are on a mission to revolutionize how India prepares for competitive exams. By combining deep pedagogical expertise with cutting-edge AI, we make exam success achievable for everyone — from a small town to a big city."
+    },
+    "mission": {
+      "title": "Our Mission",
+      "desc": "To democratize high-quality government exam preparation for every aspirant in India — from mastering the complete UPSC syllabus to cracking MPSC, SSC, and Railway exams — through the power of Artificial Intelligence."
+    },
+    "innovation": {
+      "title": "AI Innovation",
+      "desc": "We leverage state-of-the-art AI models and real UPSC exam samples to deliver personalized coaching that adapts to each student's unique learning pace and knowledge gaps."
+    },
+    "vision": {
+      "title": "Future Vision",
+      "desc": "Building a future where world-class exam coaching — including MPSC online classes and live doubt sessions — is accessible to every aspirant, regardless of location or financial background."
+    },
+    "story": {
+      "title": "The Problem We're Solving",
+      "p1": "Every year, millions of aspirants across India invest years of effort and significant resources preparing for government exams. From navigating the vast UPSC syllabus — covering History, Geography, Polity, Economy, and Current Affairs — to finding authentic UPSC exam samples for practice, the journey is both demanding and expensive.",
+      "p2": "For state-level aspirants, the challenge is no different. Finding reliable and structured MPSC online classes that are also affordable is a struggle for most students outside major cities. High-quality coaching has historically been locked behind expensive institute fees and geography.",
+      "p3": "Sarkari AI was built to change this. We combine the rigor of expert-curated content with the personalization of AI — giving every student access to a smart study planner, real UPSC exam samples for practice, and MPSC online classes-style interactive learning, all in one platform."
+    },
+    "stats": {
+      "trusted": "Trusted by 50K+ Students",
+      "exams": "15+ Exams Covered",
+      "languages": "12 Indian Languages"
+    },
+    "exams": {
+      "title_line1": "Exams We",
+      "title_accent": "Cover",
+      "subtitle": "Comprehensive preparation for India's most sought-after government examinations."
+    },
+    "solutions": {
+      "title_line1": "Our",
+      "title_accent": "AI-Driven",
+      "subtitle": "Tools designed to accelerate your learning and maximize performance."
+    },
+    "cta": {
+      "title": "Start Your Journey Today",
+      "subtitle": "Join 50,000+ aspirants who are already using AI-powered UPSC syllabus guides, real UPSC exam samples, and MPSC online classes to achieve their government job dreams."
+    },
+    "examsList": [
+      "UPSC Civil Services (IAS/IPS/IFS)",
+      "MPSC State Services",
+      "SSC CGL, CHSL & MTS",
+      "IBPS PO & Clerk (Banking)",
+      "Railway RRB NTPC & Group D",
+      "UPSC CAPF & CDS",
+      "State PSC Exams (All India)"
+    ],
+    "features": {
+      "tutor": { "title": "Personalized AI Tutor", "desc": "An interactive AI tutor that identifies your weak areas and guides you through complex UPSC syllabus topics with clarity and depth." },
+      "pyq": { "title": "Smart PYQ Analysis", "desc": "AI-powered analysis of UPSC exam samples and previous year questions to identify high-yield patterns and predict likely exam topics." },
+      "data": { "title": "Data-Driven Insights", "desc": "Detailed performance tracking and predictive analytics to measure your exam readiness and optimize your preparation strategy." }
+    }
+  },
+  "ca": {
+    "title": "Current Affairs",
+    "subtitle": "Daily exam-focused news updates summarized by AI",
+    "loading": "Fetching latest updates...",
+    "refreshUpdates": "Refresh Updates",
+    "refreshing": "Refreshing...",
+    "backToDashboard": "Back to Home",
+    "dailyFactTitle": "Daily Exam Fact",
+    "dailyFactContent": "Strategic preparation and consistency are keys to cracking competitive exams. Review today's news for relevant UPSC/MPSC pointers.",
+    "shareNews": "Sarkari News",
+    "noNews": "No news updates found.",
+    "showAll": "Show All",
+    "browseCategory": "Browse by Category",
+    "categories": {
+      "all": "All",
+      "national": "National",
+      "economy": "Economy",
+      "scienceTech": "Science & Tech",
+      "international": "International",
+      "sports": "Sports",
+      "policy": "Policy"
+    }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "updated": "Last Updated: March 25, 2026. Your trust is our most valuable asset.",
+    "commitment": "Commitment to Privacy:",
+    "commitmentDesc": "Sarkari AI is built with privacy-by-design principles. We never sell your data to third parties.",
+    "intro": "At Sarkari AI, we understand that your data is private. This policy outlines how we handle your information with the transparency and respect you deserve.",
+    "collection": {
+      "title": "Data Collection",
+      "content": "We collect information you provide directly to us, such as when you create an account, update your profile, or use our AI tools. This includes your name, email address, language preferences, and performance data from mock tests."
+    },
+    "usage": {
+      "title": "How We Use Data",
+      "content": "Your data is primarily used to personalize your learning experience. Our AI models analyze your performance to identify weak areas and generate customized study plans. We also use aggregated, non-identifiable data to improve our algorithms."
+    },
+    "security": {
+      "title": "Data Security",
+      "content": "We implement industry-standard security measures to protect your personal information. This includes encryption for data at rest and in transit, regular security audits, and strict access controls for our infrastructure."
+    },
+    "rights": {
+      "title": "Your Rights",
+      "content": "You have the right to access, correct, or delete your personal information at any time. You can also export your performance data. We believe in complete transparency and give you full control over your digital footprint on our platform."
+    },
+    "cookiesTitle": "Cookies and Tracking",
+    "cookiesDesc": "We use essential cookies to maintain your session and remember your preferences. We also use analytics cookies to understand how users intersect with our platform, which helps us improve the user experience.",
+    "thirdPartyTitle": "Third-Party Services",
+    "thirdPartyDesc": "We use trusted third-party services for essential functions like authentication (Firebase/Google Auth) and AI processing (OpenRouter/OpenAI). These providers only receive the data necessary to perform their specific services.",
+    "contact": {
+      "title": "Contact Us",
+      "desc": "If you have any questions about our privacy practices or wish to exercise your data rights, please contact our privacy team at privacy@sarkaraiai.com."
+    }
+  }
+}

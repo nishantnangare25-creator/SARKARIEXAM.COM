@@ -1,0 +1,17 @@
+{
+  "answers": [
+    {
+      "keywords": ["upsc", "ias", "ips"],
+      "response": "The UPSC Civil Services Examination (CSE) is conducted in three stages: Prelims (Objective), Mains (Descriptive), and Interview. Focus on NCERTs from class 6-12, The Hindu for current affairs, and standard books like Laxmikanth for Polity. (Offline Mode Active)"
+    },
+    {
+      "keywords": ["ssc", "cgl", "chsl"],
+      "response": "SSC exams focus heavily on Quantitative Aptitude, English Comprehension, Reasoning, and General Awareness. Practice previous year papers and focus on advanced math formulas. (Offline Mode Active)"
+    },
+    {
+      "keywords": ["hello", "hi", "hey"],
+      "response": "Hello! I am Riya, your AI Tutor. Note: Our servers are currently experiencing extremely high traffic, so I am running in simplified offline mode. (Offline Mode Active)"
+    }
+  ],
+  "default": "I apologize, but our servers are currently experiencing an unprecedented amount of student traffic (1,00,000+). I am operating in a simplified offline mode and cannot answer this dynamic question right now. However, you can still take Mock Tests and view Study Plans seamlessly. Please wait a few seconds and try again."
+}

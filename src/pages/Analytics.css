@@ -1,0 +1,118 @@
+/* Analytics Dashboard Styles & Animations */
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+  margin-bottom: var(--space-2xl);
+}
+
+.analytics-card {
+  background: #FFFFFF;
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  border: 1.5px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.analytics-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); border-color: var(--primary-light); }
+.analytics-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 20px; font-weight: 700; color: var(--text-primary); }
+
+/* Circular Gauge Charts */
+.gauge-container {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  margin: 0 auto;
+}
+.gauge-svg { transform: rotate(-90deg); width: 100%; height: 100%; }
+.gauge-bg { fill: none; stroke: var(--bg-tertiary); stroke-width: 12px; }
+.gauge-progress {
+  fill: none;
+  stroke: var(--primary);
+  stroke-width: 12px;
+  stroke-linecap: round;
+  stroke-dasharray: 377; /* 2 * PI * 60 */
+  stroke-dashoffset: 377;
+  transition: stroke-dashoffset 1.5s cubic-bezier(0.19, 1, 0.22, 1);
+}
+.gauge-text {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+.gauge-value { font-size: 1.75rem; font-weight: 800; color: var(--text-primary); line-height: 1; margin-bottom: 2px; }
+.gauge-label { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+
+/* Subjects Bar Chart */
+.subject-performance-list { display: flex; flex-direction: column; gap: 20px; }
+.subject-item { display: flex; flex-direction: column; gap: 8px; }
+.subject-info { display: flex; justify-content: space-between; align-items: center; }
+.subject-name { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
+.subject-score { font-family: var(--font-display); font-weight: 900; color: var(--primary); font-size: 1rem; }
+.bar-container { height: 10px; background: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden; }
+.bar-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--primary);
+  border-radius: var(--radius-full);
+  transition: width 1.2s cubic-bezier(0.19, 1, 0.22, 1);
+  position: relative;
+}
+.bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shine-sweep 2s infinite linear;
+}
+
+@keyframes shine-sweep { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
+/* Section Themes */
+.subject-row:nth-child(2) .bar-fill { background: var(--accent-orange); }
+.subject-row:nth-child(3) .bar-fill { background: var(--accent-green); }
+.subject-row:nth-child(4) .bar-fill { background: #8b5cf6; }
+.subject-row:nth-child(5) .bar-fill { background: #ec4899; }
+
+/* Interactive State (Hover/Active) */
+.subject-item:hover .bar-fill { opacity: 0.9; transform: scaleY(1.1); }
+.subject-item:hover .subject-score { transform: scale(1.1); transition: transform 0.2s; }
+
+/* AI Deep Dive Feature */
+.ai-report-banner {
+  background: linear-gradient(135deg, #eff6ff 0%, #fef3c7 100%);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  padding: var(--space-xl);
+  border-radius: var(--radius-2xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xl);
+}
+.ai-banner-content { flex: 1; }
+.ai-banner-content h3 { font-size: 1.4rem; color: #1e3a8a; margin-bottom: 8px; }
+.ai-banner-content p { font-size: 0.94rem; color: #475569; line-height: 1.5; }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .analytics-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .analytics-grid { grid-template-columns: 1fr; gap: var(--space-md); }
+  .grid-2 { grid-template-columns: 1fr !important; gap: var(--space-lg); }
+  .ai-report-banner { flex-direction: column; text-align: center; }
+  .ai-report-banner .btn { width: 100%; justify-content: center; }
+  .gauge-container { width: 120px; height: 120px; }
+  .gauge-value { font-size: 1.35rem; }
+  .analytics-card { padding: var(--space-lg); }
+}
+
+@media (max-width: 480px) {
+  .gauge-container { width: 100px; height: 100px; }
+  .gauge-value { font-size: 1.15rem; }
+  .gauge-label { font-size: 0.6rem; }
+}
