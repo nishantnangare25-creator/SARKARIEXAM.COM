@@ -71,6 +71,7 @@ class TutorErrorBoundary extends React.Component {
 }
 
 export default function InteractiveTutor() {
+  console.log('[Riya] InteractiveTutor mounting...');
   const { t, i18n } = useTranslation();
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -97,6 +98,7 @@ export default function InteractiveTutor() {
   }, [messages, loading]);
 
   if (authLoading) {
+    console.log('[Riya] Auth loading...');
     return (
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#FFFFFF' }}>
         <Loader2 size={32} className="text-blue animate-spin" />
@@ -219,8 +221,8 @@ export default function InteractiveTutor() {
   return (
     <TutorErrorBoundary>
     <main className="page-wrapper tutor-page-wrapper">
-      {/* Immersive Layout — removed page-with-sidebar to fix margin gap */}
-      <div className="immersive-tutor-layout riya-tutor-container">
+      {/* Immersive Layout — ensured min-height to prevent white screen collapse */}
+      <div className="immersive-tutor-layout riya-tutor-container" style={{ minHeight: '100vh' }}>
         
         {/* Modern Compact Header */}
         <header className="riya-header">
