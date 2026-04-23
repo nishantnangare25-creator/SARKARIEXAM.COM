@@ -12,25 +12,7 @@ export default function Settings() {
   const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [customKey, setCustomKey] = useState('');
-  const [keySaved, setKeySaved] = useState(false);
 
-  useEffect(() => {
-    const saved = localStorage.getItem('sarkari_custom_gemini_key');
-    if (saved) setCustomKey(saved);
-  }, []);
-
-  const handleSaveKey = () => {
-    if (customKey.trim()) {
-      localStorage.setItem('sarkari_custom_gemini_key', customKey.trim());
-      setKeySaved(true);
-      setTimeout(() => setKeySaved(false), 3000);
-    } else {
-      localStorage.removeItem('sarkari_custom_gemini_key');
-      setKeySaved(true);
-      setTimeout(() => setKeySaved(false), 3000);
-    }
-  };
 
   const handleLogout = async () => {
     try {

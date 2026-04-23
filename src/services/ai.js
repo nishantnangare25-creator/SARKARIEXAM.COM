@@ -239,25 +239,7 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     return data;
   };
 
-  // --- BYOK (Bring Your Own Key) LAYER ---
-  try {
-    const customKey = localStorage.getItem('sarkari_custom_gemini_key');
-    if (customKey && customKey.length > 20) {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${customKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: messages.map(m => m.content).join('\n') }] }],
-          generationConfig: { maxOutputTokens: options.max_tokens || 2000 }
-        })
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return saveCache(data.candidates[0].content.parts[0].text);
-      }
-      console.warn("Custom BYOK key failed, falling back to system keys...");
-    }
-  } catch (e) { console.warn("BYOK Error:", e); }
+
 
   // --- LOCAL CACHING LAYER ---
   if (cacheKey) {
