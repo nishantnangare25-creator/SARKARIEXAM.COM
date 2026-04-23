@@ -9,9 +9,9 @@ async function deploy() {
         client.ftp.timeout = 60000; // 1 minute timeout
         
         await client.access({
-            host: "sarkariexamai.com",
-            user: "253@sarkariexamai.com",
-            password: "SarkariExam99).",
+            host: "103.86.176.249",
+            user: "sarkariexam@sarkariexamai.com",
+            password: "15M~Ro>r5vRrL}3<",
             secure: false
         });
 
