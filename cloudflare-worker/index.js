@@ -12,20 +12,35 @@ export default {
 
     try {
       const body = await request.json();
-      const { messages, options = {}, cacheKey } = body;
+      const { action = 'ai', messages, options = {}, cacheKey, data, uid } = body;
 
-      if (!messages || !Array.isArray(messages)) {
-        return corsResponse(JSON.stringify({ error: 'messages required' }), 400);
+      // 0. WAITING ROOM CHECK
+      const activeLoad = await env.QUESTION_CACHE.get('system:load') || 0;
+      if (parseInt(activeLoad) > 300000 && action === 'ai') {
+        return corsResponse(JSON.stringify({ 
+          error: 'Waiting Room active. Peak capacity reached.',
+          retryAfter: 60 
+        }), 503);
       }
 
-      // 1. CACHE CHECK (KV)
-      if (cacheKey && env.QUESTION_CACHE) {
-        const cached = await env.QUESTION_CACHE.get(`cache:${cacheKey}`, 'json');
-        if (cached && cached.questionSets && cached.questionSets.length > 0) {
-          const randomSet = cached.questionSets[Math.floor(Math.random() * cached.questionSets.length)];
-          console.log(`Cache HIT: ${cacheKey}`);
-          return corsResponse(JSON.stringify({ content: randomSet, fromCache: true }), 200);
-        }
+      // --- ACTION: DB WRITE PROXY ---
+      if (action === 'write') {
+        console.log(`Buffering write for user: ${uid}`);
+        // In a full production env, we'd use env.MY_QUEUE.send({ uid, data })
+        // For now, we write to KV as a buffer
+        const queueId = `queue:${Date.now()}:${Math.random().toString(36).substring(7)}`;
+        await env.QUESTION_CACHE.put(queueId, JSON.stringify({ uid, data, type: body.type }), { expirationTtl: 3600 });
+        return corsResponse(JSON.stringify({ success: true, queueId }), 202);
+      }
+
+      // 1. EDGE CACHE CHECK (Cache API - Faster than KV)
+      const cacheUrl = new URL(request.url);
+      if (cacheKey) cacheUrl.searchParams.set('cacheKey', cacheKey);
+      const cache = caches.default;
+      let response = await cache.match(cacheUrl);
+      if (response) {
+        console.log(`Edge Cache HIT: ${cacheKey}`);
+        return response;
       }
 
       // 2. AI CALL (Multi-Provider Cascade + Rotation)
@@ -43,7 +58,15 @@ export default {
         }
       }
 
-      return corsResponse(JSON.stringify({ content: result }), 200);
+      const finalResult = corsResponse(JSON.stringify({ content: result }), 200);
+      
+      // 4. PUT IN EDGE CACHE (Background)
+      if (cacheKey) {
+        finalResult.headers.append('Cache-Control', 'public, max-age=86400');
+        await cache.put(cacheUrl, finalResult.clone());
+      }
+
+      return finalResult;
 
     } catch (err) {
       console.error('Worker error:', err.message);
@@ -70,10 +93,11 @@ async function callAIWithRotation(messages, options, env) {
     return keys;
   };
 
-  // Helper: Check if a key is "cooling off" (marked as 429 in KV)
+  // Helper: Check if a key is "cooling off"
   const isAvailable = async (keyId) => {
     if (!env.QUESTION_CACHE) return true;
-    const status = await env.QUESTION_CACHE.get(`status:${keyId}`);
+    // Fast path: use cache for status to avoid KV read latency in tight loops
+    const status = await env.QUESTION_CACHE.get(`status:${keyId}`, { cacheTtl: 60 });
     return status !== 'cooling';
   };
 

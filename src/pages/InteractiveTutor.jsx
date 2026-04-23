@@ -11,34 +11,23 @@ import { useAuth } from '../contexts/AuthContext';
 import { generateNotesPdf } from '../utils/pdfGenerator';
 import './InteractiveTutor.css';
 
-// Safe markdown renderer — if ReactMarkdown fails, falls back to plain text
-// Safe markdown renderer — if ReactMarkdown fails, falls back to plain text
+import { marked } from 'marked';
+
+// Safe markdown renderer using marked and dangerouslySetInnerHTML to avoid React render crashes
 function SafeMarkdown({ children }) {
-  const [MarkdownComp, setMarkdownComp] = React.useState(null);
-  const [failed, setFailed] = React.useState(false);
-
-  React.useEffect(() => {
-    let isMounted = true;
-    import('react-markdown')
-      .then(mod => {
-        if (isMounted) setMarkdownComp(() => mod.default);
-      })
-      .catch((err) => {
-        console.error('SafeMarkdown import failed:', err);
-        if (isMounted) setFailed(true);
-      });
-    return () => { isMounted = false; };
-  }, []);
-
-  const fallback = <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, wordBreak: 'break-word' }}>{children || ''}</div>;
-
-  if (failed || !children) return fallback;
-  if (!MarkdownComp) return fallback;
-
+  if (!children) return <div />;
+  
   try {
-    return <MarkdownComp>{children}</MarkdownComp>;
+    const htmlContent = marked.parse(children);
+    return (
+      <div 
+        className="markdown-body"
+        dangerouslySetInnerHTML={{ __html: htmlContent }} 
+        style={{ whiteSpace: 'normal', lineHeight: 1.7, wordBreak: 'break-word' }}
+      />
+    );
   } catch (err) {
-    return fallback;
+    return <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, wordBreak: 'break-word' }}>{children}</div>;
   }
 }
 

@@ -93,31 +93,7 @@ export default function Settings() {
             )}
           </div>
 
-          {/* BYOK Developer Section */}
-          <div className="card animate-fadeInUp" style={{ animationDelay: '0.05s', padding: '24px', border: '1px solid rgba(168, 85, 247, 0.3)' }}>
-            <h3 style={{ marginBottom: 10, display: 'flex', alignItems: 'center', gap: 10, fontSize: '1.2rem', color: 'var(--text-primary)' }}>
-              <Key size={22} color="#a855f7" /> Custom API Key (BYOK)
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '16px' }}>
-              If our servers are busy, you can use your own free <strong>Google Gemini API Key</strong> to completely bypass rate limits and access premium features.
-            </p>
-            <div style={{ display: 'flex', gap: '10px', flexDirection: 'column' }}>
-              <input
-                type="password"
-                placeholder="Paste your Gemini AI Key here (AIzaSy...)"
-                value={customKey}
-                onChange={(e) => setCustomKey(e.target.value)}
-                className="input"
-                style={{ width: '100%', padding: '12px', background: 'var(--bg-glass)' }}
-              />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noreferrer" style={{ fontSize: '0.85rem', color: 'var(--primary)' }}>Get Free Key</a>
-                <button onClick={handleSaveKey} className="btn btn-primary" style={{ padding: '8px 20px' }}>
-                  {keySaved ? 'Saved!' : 'Save Key'}
-                </button>
-              </div>
-            </div>
-          </div>
+
 
           {/* Information & Legal Section */}
           <div className="card animate-fadeInUp" style={{ animationDelay: '0.1s', padding: '24px' }}>
