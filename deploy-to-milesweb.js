@@ -2,33 +2,35 @@ import * as ftp from "basic-ftp";
 
 async function deploy() {
     const client = new ftp.Client();
-    client.ftp.verbose = true; // Log progress
+    client.ftp.verbose = true;
+
     try {
         console.log("Connecting to MilesWeb FTP...");
-        client.ftp.ipFamily = 4; // Force IPv4
-        client.ftp.timeout = 60000; // 1 minute timeout
-        
+        client.ftp.ipFamily = 4;
+        client.ftp.timeout = 120000;
+
         await client.access({
-            host: "103.86.176.249",
-            user: "sarkariexam@sarkariexamai.com",
-            password: "15M~Ro>r5vRrL}3<",
+            host: process.env.FTP_SERVER || "103.86.176.249",
+            user: process.env.FTP_USERNAME || "sarkariexam@sarkariexamai.com",
+            password: process.env.FTP_PASSWORD || "15M~Ro>r5vRrL}3<",
             secure: false
         });
 
         console.log("Connected! Navigating to public_html...");
-        await client.ensureDir("public_html"); // Better than cd
-        
-        console.log("Cleaning old files (optional) and uploading new files from 'dist'...");
-        // Use uploadFromDir which is more robust
+        await client.ensureDir("public_html");
+
+        console.log("Uploading files from 'dist'...");
         await client.uploadFromDir("dist");
-        
+
         console.log("Upload Complete! The new files are now live.");
     }
     catch (err) {
         console.error("Deployment failed:", err);
-        process.exit(1); // Force GitHub Action to show failure if deployment fails
+        process.exit(1);
     }
-    client.close();
+    finally {
+        client.close();
+    }
 }
 
 deploy();
