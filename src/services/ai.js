@@ -124,13 +124,13 @@ const extractJSON = (text) => {
       const conversation = cleanText.replace(jsonStr, '').trim();
       return { data, conversation };
     }
-    const startArr = cleanText.indexOf('[');
-    const endArr = cleanText.lastIndexOf(']');
     if (startArr !== -1 && endArr !== -1 && startArr < endArr) {
       const jsonStr = cleanText.substring(startArr, endArr + 1);
       const data = JSON.parse(jsonStr);
       const conversation = cleanText.replace(jsonStr, '').trim();
-      return { data, conversation };
+      // Ensure data is wrapped in questions object if it's just an array
+      const normalizedData = Array.isArray(data) ? { questions: data } : data;
+      return { data: normalizedData, conversation };
     }
   } catch (e) {
     console.error('Failed to parse AI response:', text, 'Error:', e.message);
@@ -234,12 +234,12 @@ const normalizeQuestions = (rawQuestions, count) => {
       };
     }
     
-    // Convert from {Q,A,B,C,D,Answer,Explanation} → {question,options[],correctAnswer,explanation}
-    const options = [
-      q.A || q.optionA || '', 
-      q.B || q.optionB || '', 
-      q.C || q.optionC || '', 
-      q.D || q.optionD || ''
+    // Convert from {Q,A,B,C,D,Answer,Explanation} or {question, options:[]} format
+    const options = Array.isArray(q.options) ? q.options : [
+      q.A || q.optionA || q.option1 || '', 
+      q.B || q.optionB || q.option2 || '', 
+      q.C || q.optionC || q.option3 || '', 
+      q.D || q.optionD || q.option4 || ''
     ].filter(Boolean);
     
     const ans = q.Answer || q.correctAnswer || '';
@@ -253,10 +253,10 @@ const normalizeQuestions = (rawQuestions, count) => {
 
     return {
       id: `fallback-${i}`,
-      question: q.Q || q.question || '',
+      question: q.Q || q.question || q.questionText || q.text || q.desc || '',
       options: options,
       correctAnswer: correctAnswer,
-      explanation: q.Explanation || q.explanation || 'Study this topic for deeper understanding.'
+      explanation: q.Explanation || q.explanation || q.desc || 'Study this topic for deeper understanding.'
     };
   }).filter(q => q.question && q.options.length > 0);
 };
@@ -518,9 +518,13 @@ Explanation: [1-2 sentences of explanation]`
     const result = await callAI(messages, { max_tokens: 1500 });
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
-      // Fallback for strict JSON parser if text parsing didn't catch anything due to model ignoring formatting
+      // Fallback for strict JSON parser
       const fallbackParsed = extractJSON(result);
-      if (fallbackParsed.data?.questions?.length > 0) return fallbackParsed;
+      const rawQs = fallbackParsed.data?.questions || (Array.isArray(fallbackParsed.data) ? fallbackParsed.data : []);
+      if (rawQs.length > 0) {
+        const normalized = normalizeQuestions(rawQs, count);
+        return { data: { questions: normalized }, conversation: result };
+      }
       throw new Error("Unable to parse generated mock questions.");
     }
     return parsed;
@@ -578,7 +582,11 @@ Explanation: [1-2 sentences of explanation]`
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
       const fallbackParsed = extractJSON(result);
-      if (fallbackParsed.data?.questions?.length > 0) return fallbackParsed;
+      const rawQs = fallbackParsed.data?.questions || (Array.isArray(fallbackParsed.data) ? fallbackParsed.data : []);
+      if (rawQs.length > 0) {
+        const normalized = normalizeQuestions(rawQs, count);
+        return { data: { questions: normalized }, conversation: result };
+      }
       throw new Error("Unable to parse generated past year questions.");
     }
     return parsed;
