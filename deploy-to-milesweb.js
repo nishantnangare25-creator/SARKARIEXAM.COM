@@ -1,14 +1,41 @@
 import * as ftp from "basic-ftp";
+import * as fs from "fs";
+import * as path from "path";
 
-async function deployWithRetry(maxRetries = 3) {
+/**
+ * Custom recursive upload that processes files one by one with a delay.
+ * This is much more stable on servers with strict rate limits or BitNinja protection.
+ */
+async function uploadSlowly(client, localDir) {
+    const entries = fs.readdirSync(localDir, { withFileTypes: true });
+    
+    for (const entry of entries) {
+        const localPath = path.join(localDir, entry.name);
+        
+        if (entry.isDirectory()) {
+            console.log(`📂 Entering Directory: ${entry.name}`);
+            await client.ensureDir(entry.name);
+            await uploadSlowly(client, localPath);
+            await client.cd(".."); // Return to previous level
+        } else {
+            process.stdout.write(`📄 Uploading: ${entry.name.padEnd(40)}`);
+            await client.uploadFrom(localPath, entry.name);
+            console.log(" [DONE]");
+            // 500ms gap helps prevent BitNinja from flagging the burst of connections
+            await new Promise(r => setTimeout(r, 500));
+        }
+    }
+}
+
+async function deployWithRetry(maxRetries = 5) {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
         const client = new ftp.Client();
-        client.ftp.verbose = true;
+        // client.ftp.verbose = true; // High verbosity for debugging
         
         try {
             console.log(`\n🚀 Deployment attempt ${attempt}/${maxRetries}...`);
             client.ftp.ipFamily = 4;
-            client.ftp.timeout = 120000; // 2 minutes
+            client.ftp.timeout = 180000; // 3 minutes timeout
 
             await client.access({
                 host: process.env.FTP_SERVER || "103.86.176.249",
@@ -18,19 +45,19 @@ async function deployWithRetry(maxRetries = 3) {
             });
 
             const pwd = await client.pwd();
-            console.log("Current FTP directory:", pwd);
+            console.log("Logged in. Current directory:", pwd);
 
             if (pwd === "/" || pwd === "") {
                 console.log("Navigating into public_html...");
                 await client.ensureDir("public_html");
             }
             
-            console.log("Uploading files from 'dist' to MilesWeb...");
-            await client.uploadFromDir("dist");
+            console.log("Starting slow upload strategy (Slow & Steady)...");
+            await uploadSlowly(client, "dist");
             
-            console.log("✅ SUCCESS: Upload Complete! Website is now live.");
+            console.log("\n✅ SUCCESS: Website is now live on MilesWeb.");
             client.close();
-            return; // Exit on success
+            return; 
         } 
         catch (err) {
             console.error(`❌ Attempt ${attempt} failed:`, err.message);
@@ -41,14 +68,15 @@ async function deployWithRetry(maxRetries = 3) {
                 throw err;
             }
             
-            const delay = attempt * 5000;
-            console.log(`🔄 Retrying in ${delay / 1000} seconds...`);
+            const delay = attempt * 10000; // 10s, 20s, 30s...
+            console.log(`🔄 Waiting ${delay / 1000} seconds before next attempt...`);
             await new Promise(resolve => setTimeout(resolve, delay));
         }
     }
 }
 
+console.log("Starting Optimized Deployment for MilesWeb (BitNinja Compatible)...");
 deployWithRetry().catch(err => {
-    console.error("FATAL: Deployment failed after multiple attempts.");
+    console.error("FATAL ERROR: Deployment failed. Please check FTP credentials and server status.");
     process.exit(1);
 });
