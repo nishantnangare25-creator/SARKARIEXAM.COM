@@ -35,3 +35,15 @@ To ensure privacy and build control, follow these rules strictly:
   - **Command**: Run `.\gradlew.bat assembleDebug` from the project root.
 - **FILE PERSISTENCE**: If a build is successful, keep the APK in the local workspace root or the `app/build/outputs/apk/` directory for the user to access.
 <!-- ANTIGRAVITY LOCAL BUILD RULES END -->
+
+<!-- FTP DEPLOYMENT & CI STABILITY START -->
+## FTP Deployment & GitHub Actions Stability
+
+To ensure reliable deployments to MilesWeb/Production servers:
+
+- **RETRY LOGIC**: Always use the `deployWithRetry` wrapper in `deploy-to-milesweb.js`. It is configured for 3 attempts with exponential backoff to handle `ECONNRESET` and network glitches.
+- **TIMEOUTS**: Keep FTP connection timeouts at 120,000ms (2 minutes) to prevent premature disconnection during large file uploads.
+- **SUBMODULE CONFLICTS**: Do not include folders with their own `.git` directories (like `GIT_UPLOAD_REPO`) in the main repository tracking. They must be added to `.gitignore` to prevent GitHub Actions from failing with "No url found for submodule" errors.
+- **WORKFLOW TIMEOUTS**: Always set a `timeout-minutes: 15` on deployment steps in `.github/workflows/deploy.yml` to prevent hung processes from consuming Action minutes.
+- **CLEAN UPLOAD**: Ensure only the `dist` folder is uploaded to `public_html` to keep the production environment clean and deployment fast.
+<!-- FTP DEPLOYMENT & CI STABILITY END -->
