@@ -124,6 +124,8 @@ const extractJSON = (text) => {
       const conversation = cleanText.replace(jsonStr, '').trim();
       return { data, conversation };
     }
+    const startArr = cleanText.indexOf('[');
+    const endArr = cleanText.lastIndexOf(']');
     if (startArr !== -1 && endArr !== -1 && startArr < endArr) {
       const jsonStr = cleanText.substring(startArr, endArr + 1);
       const data = JSON.parse(jsonStr);
