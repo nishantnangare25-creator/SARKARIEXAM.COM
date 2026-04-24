@@ -141,8 +141,8 @@ const extractJSON = (text) => {
 const parseTextToQuestions = (text) => {
   const questions = [];
   try {
-    // Split by variations of "Q:", "Q1.", "Question 1:", etc.
-    const blocks = text.split(/(?:^|\n)\s*(?:Q|Question)\s*\d*[:.]?\s*/i).filter(b => b.trim());
+    // Split by variations of "Q:", "Q1.", "Question 1:", "प्रश्न:", etc.
+    const blocks = text.split(/(?:^|\n)\s*(?:Q|Question|प्रश्न|S|Sl|No)\s*\d*[:.]?\s*/i).filter(b => b.trim());
     
     blocks.forEach((block, index) => {
       const lines = block.split('\n').filter(l => l.trim() !== '');
@@ -156,18 +156,23 @@ const parseTextToQuestions = (text) => {
       
       lines.forEach(line => {
         const trimmed = line.trim();
-        // Match options like "A) ", "A. ", "(A) "
-        const optionMatch = trimmed.match(/^[\(]?([A-E])[\).:]\s*(.+)/i);
+        // Match options like "A) ", "A. ", "(A) ", "१) ", "1) "
+        const optionMatch = trimmed.match(/^[\(]?([A-E1-4]|[a-e]|[अ-ह])[\).:]\s*(.+)/i);
         if (optionMatch) {
           mode = 'O';
           options.push(optionMatch[2].trim());
-        } else if (/^(?:Answer|Correct(?: Answer)?)[:.]\s*/i.test(trimmed)) {
+        } else if (/^(?:Answer|Correct(?: Answer)?|उत्तर|Ans|A)[:.]\s*/i.test(trimmed)) {
           mode = 'A';
-          let ansStr = trimmed.replace(/^(?:Answer|Correct(?: Answer)?)[:.]\s*/i, '').trim();
+          let ansStr = trimmed.replace(/^(?:Answer|Correct(?: Answer)?|उत्तर|Ans|A)[:.]\s*/i, '').trim();
           // Extract just the letter if they wrote "A", "A)", "Option A"
-          const letterMatch = ansStr.match(/(?:Option\s*)?([A-E])/i);
+          const letterMatch = ansStr.match(/(?:Option\s*)?([A-E1-4]|[a-e]|[अ-ह])/i);
           if (letterMatch && options.length > 0) {
-             const letterIndex = letterMatch[1].toUpperCase().charCodeAt(0) - 65;
+             const matchedValue = letterMatch[1].toUpperCase();
+             let letterIndex = -1;
+             
+             if (/[A-E]/.test(matchedValue)) letterIndex = matchedValue.charCodeAt(0) - 65;
+             else if (/[1-4]/.test(matchedValue)) letterIndex = parseInt(matchedValue) - 1;
+             
              if (letterIndex >= 0 && letterIndex < options.length) {
                correctAnswerStr = options[letterIndex];
              } else {
@@ -176,10 +181,10 @@ const parseTextToQuestions = (text) => {
           } else {
              correctAnswerStr = ansStr;
           }
-        } else if (/^Explanation[:.]\s*/i.test(trimmed) || mode === 'E') {
+        } else if (/^(?:Explanation|विवरण|व्याख्या)[:.]\s*/i.test(trimmed) || mode === 'E') {
           if (mode !== 'E') {
             mode = 'E';
-            explanationStr = trimmed.replace(/^Explanation[:.]\s*/i, '').trim();
+            explanationStr = trimmed.replace(/^(?:Explanation|विवरण|व्याख्या)[:.]\s*/i, '').trim();
           } else {
             explanationStr += '\n' + trimmed;
           }
@@ -210,6 +215,50 @@ const parseTextToQuestions = (text) => {
   }
   
   return { data: { questions }, conversation: text };
+};
+
+
+const normalizeQuestions = (rawQuestions, count) => {
+  if (!rawQuestions || !Array.isArray(rawQuestions)) return [];
+  
+  // Shuffle all questions
+  const shuffled = [...rawQuestions].sort(() => 0.5 - Math.random());
+  const picked = shuffled.slice(0, count || 10);
+  
+  return picked.map((q, i) => {
+    // Already in correct format?
+    if (q.options && q.question) {
+      return {
+        ...q,
+        id: q.id || `q-${i}`
+      };
+    }
+    
+    // Convert from {Q,A,B,C,D,Answer,Explanation} → {question,options[],correctAnswer,explanation}
+    const options = [
+      q.A || q.optionA || '', 
+      q.B || q.optionB || '', 
+      q.C || q.optionC || '', 
+      q.D || q.optionD || ''
+    ].filter(Boolean);
+    
+    const ans = q.Answer || q.correctAnswer || '';
+    let correctAnswer = ans;
+    
+    // If Answer is a letter like 'A','B','C','D', map to its text
+    if (['A','B','C','D'].includes(ans)) {
+      const map = { A: q.A, B: q.B, C: q.C, D: q.D };
+      correctAnswer = map[ans] || ans;
+    }
+
+    return {
+      id: `fallback-${i}`,
+      question: q.Q || q.question || '',
+      options: options,
+      correctAnswer: correctAnswer,
+      explanation: q.Explanation || q.explanation || 'Study this topic for deeper understanding.'
+    };
+  }).filter(q => q.question && q.options.length > 0);
 };
 
 
@@ -482,30 +531,7 @@ Explanation: [1-2 sentences of explanation]`
       const fallbackDb = await import('../data/fallback_mocks.json');
       const rawQuestions = fallbackDb.default?.questions || [];
       if (rawQuestions.length > 0) {
-        // Shuffle all questions
-        const shuffled = [...rawQuestions].sort(() => 0.5 - Math.random());
-        const picked = shuffled.slice(0, count || 10);
-        // Convert from {Q,A,B,C,D,Answer,Explanation} → {question,options[],correctAnswer,explanation}
-        const normalized = picked.map((q, i) => {
-          // Support BOTH formats: new {question,options[]} AND old {Q,A,B,C,D}
-          if (q.options && q.question) return q; // Already correct format
-          return {
-            id: `fallback-${i}`,
-            question: q.Q || q.question || '',
-            options: [
-              q.A || '', q.B || '', q.C || '', q.D || ''
-            ].filter(Boolean),
-            correctAnswer: (() => {
-              const ans = q.Answer || q.correctAnswer || '';
-              // If Answer is a letter like 'A','B','C','D', map to its text
-              if (['A','B','C','D'].includes(ans)) {
-                return { A: q.A, B: q.B, C: q.C, D: q.D }[ans] || ans;
-              }
-              return ans;
-            })(),
-            explanation: q.Explanation || q.explanation || 'Study this topic for deeper understanding.'
-          };
-        }).filter(q => q.question && q.options.length > 0);
+        const normalized = normalizeQuestions(rawQuestions, count);
         console.log(`[Offline Fallback] Serving ${normalized.length} questions from static DB`);
         return { data: { questions: normalized }, isOffline: true };
       }
@@ -561,9 +587,9 @@ Explanation: [1-2 sentences of explanation]`
     try {
       const fallbackDb = await import('../data/fallback_mocks.json');
       const staticQuestions = fallbackDb.default?.questions || [];
-      if (staticQuestions.length >= count) {
-        const shuffled = staticQuestions.sort(() => 0.5 - Math.random());
-        return { data: { questions: shuffled.slice(0, count) } };
+      if (staticQuestions.length > 0) {
+        const normalized = normalizeQuestions(staticQuestions, count);
+        return { data: { questions: normalized }, isOffline: true };
       }
     } catch (e) {
       console.error("Fallback DB also unavailable:", e);
@@ -606,8 +632,18 @@ Explanation: [Provide highly detailed background information on why the answer i
     }
     return parsed;
   } catch (err) {
-    console.error("AI call failed:", err);
-    throw new Error("Failed to process PDF. Please try again later.");
+    console.error("AI call failed, activating offline fallback for PDF:", err);
+    try {
+      const fallbackDb = await import('../data/fallback_mocks.json');
+      const staticQuestions = fallbackDb.default?.questions || [];
+      if (staticQuestions.length > 0) {
+        const normalized = normalizeQuestions(staticQuestions, 10);
+        return { data: { questions: normalized }, isOffline: true };
+      }
+    } catch (e) {
+      console.error("Fallback DB also unavailable for PDF:", e);
+    }
+    throw new Error("Failed to process PDF. Using offline backup questions instead.");
   }
 };
 
