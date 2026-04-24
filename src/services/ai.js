@@ -4,6 +4,9 @@
 import i18n, { languages } from '../i18n';
 import { db } from './firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import fallbackMocks from '../data/fallback_mocks.json';
+import fallbackPlanners from '../data/fallback_planners.json';
+import fallbackChat from '../data/fallback_chat.json';
 
 const getGroqKeys = () => {
   const keys = [
@@ -440,11 +443,13 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
 
   // LAST RESORT: Static Fallback if all keys fail
   console.error('All AI providers exhausted. Using Static Fallback.');
-  if (options.type === 'mock_test') {
-    return { data: { questions: STATIC_FALLBACKS.questions }, conversation: "Static Fallback Mode" };
-  }
-
-  throw new Error('Our servers are currently busy due to 1,00,000+ students. Using offline backup questions.');
+  
+  // Return a string that looks like questions so the parser can handle it
+  const fallbackText = STATIC_FALLBACKS.questions.map((q, i) => 
+    `Q: ${q.question}\nA) ${q.options[0]}\nB) ${q.options[1]}\nC) ${q.options[2]}\nD) ${q.options[3]}\nAnswer: ${q.correctAnswer}\nExplanation: ${q.explanation}`
+  ).join('\n\n');
+  
+  return saveCache(fallbackText);
 };
 
 
@@ -533,19 +538,12 @@ Explanation: [1-2 sentences of explanation]`
     return parsed;
   } catch (err) {
     console.error("AI call failed, activating offline fallback:", err);
-    try {
-      // Import the static offline database
-      const fallbackDb = await import('../data/fallback_mocks.json');
-      const rawQuestions = fallbackDb.default?.questions || [];
-      if (rawQuestions.length > 0) {
-        const normalized = normalizeQuestions(rawQuestions, count);
-        console.log(`[Offline Fallback] Serving ${normalized.length} questions from static DB`);
-        return { data: { questions: normalized }, isOffline: true };
-      }
-    } catch (e) {
-      console.error("Fallback DB also unavailable:", e);
+    const rawQuestions = fallbackMocks?.questions || [];
+    if (rawQuestions.length > 0) {
+      const normalized = normalizeQuestions(rawQuestions, count);
+      return { data: { questions: normalized }, isOffline: true };
     }
-    throw new Error("AI Server is too busy or API limits exhausted. Please try again later.");
+    throw new Error("AI Server is too busy. Please try again later.");
   }
 };
 
@@ -595,17 +593,12 @@ Explanation: [1-2 sentences of explanation]`
     return parsed;
   } catch (err) {
     console.error("AI call failed, activating offline fallback:", err);
-    try {
-      const fallbackDb = await import('../data/fallback_mocks.json');
-      const staticQuestions = fallbackDb.default?.questions || [];
-      if (staticQuestions.length > 0) {
-        const normalized = normalizeQuestions(staticQuestions, count);
-        return { data: { questions: normalized }, isOffline: true };
-      }
-    } catch (e) {
-      console.error("Fallback DB also unavailable:", e);
+    const staticQuestions = fallbackMocks?.questions || [];
+    if (staticQuestions.length > 0) {
+      const normalized = normalizeQuestions(staticQuestions, count);
+      return { data: { questions: normalized }, isOffline: true };
     }
-    throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
+    throw new Error("Our servers are experiencing very high student traffic. Please try again in a few seconds.");
   }
 };
 
@@ -644,15 +637,10 @@ Explanation: [Provide highly detailed background information on why the answer i
     return parsed;
   } catch (err) {
     console.error("AI call failed, activating offline fallback for PDF:", err);
-    try {
-      const fallbackDb = await import('../data/fallback_mocks.json');
-      const staticQuestions = fallbackDb.default?.questions || [];
-      if (staticQuestions.length > 0) {
-        const normalized = normalizeQuestions(staticQuestions, 10);
-        return { data: { questions: normalized }, isOffline: true };
-      }
-    } catch (e) {
-      console.error("Fallback DB also unavailable for PDF:", e);
+    const staticQuestions = fallbackMocks?.questions || [];
+    if (staticQuestions.length > 0) {
+      const normalized = normalizeQuestions(staticQuestions, 10);
+      return { data: { questions: normalized }, isOffline: true };
     }
     throw new Error("Failed to process PDF. Using offline backup questions instead.");
   }
@@ -727,19 +715,14 @@ export const generateTutorLesson = async ({ history, language }) => {
     return await callAI(messages, { max_tokens: 1500 });
   } catch (err) {
     console.error("AI call failed, activating offline chat fallback:", err);
-    try {
-      const fallbackDb = await import('../data/fallback_chat.json');
-      const lastMsg = history[history.length - 1]?.content?.toLowerCase() || '';
-      for (const rule of fallbackDb.default.answers) {
-        if (rule.keywords.some(kw => lastMsg.includes(kw))) {
-          return rule.response;
-        }
+    const answers = fallbackChat?.answers || [];
+    const lastMsg = history[history.length - 1]?.content?.toLowerCase() || '';
+    for (const rule of answers) {
+      if (rule.keywords.some(kw => lastMsg.includes(kw))) {
+        return rule.response;
       }
-      return fallbackDb.default.default;
-    } catch (e) {
-      console.error("Fallback chat unavailable", e);
     }
-    throw new Error("I apologize, but our servers are extremely busy. Please try again in a few moments.");
+    return fallbackChat?.default || "I am currently processing many requests. How can I help you with your exam prep?";
   }
 };
 
