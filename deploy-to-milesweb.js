@@ -1,48 +1,54 @@
 import * as ftp from "basic-ftp";
 
-async function deploy() {
-    const client = new ftp.Client();
-    client.ftp.verbose = true;
+async function deployWithRetry(maxRetries = 3) {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        const client = new ftp.Client();
+        client.ftp.verbose = true;
+        
+        try {
+            console.log(`\n🚀 Deployment attempt ${attempt}/${maxRetries}...`);
+            client.ftp.ipFamily = 4;
+            client.ftp.timeout = 120000; // 2 minutes
 
-    try {
-        console.log("Connecting to MilesWeb FTP...");
-        client.ftp.ipFamily = 4;
-        client.ftp.timeout = 120000;
+            await client.access({
+                host: process.env.FTP_SERVER || "103.86.176.249",
+                user: process.env.FTP_USERNAME || "sarkariexam@sarkariexamai.com",
+                password: process.env.FTP_PASSWORD || "15M~Ro>r5vRrL}3<",
+                secure: false
+            });
 
-        await client.access({
-            host: process.env.FTP_SERVER || "103.86.176.249",
-            user: process.env.FTP_USERNAME || "sarkariexam@sarkariexamai.com",
-            password: process.env.FTP_PASSWORD || "15M~Ro>r5vRrL}3<",
-            secure: false
-        });
+            const pwd = await client.pwd();
+            console.log("Current FTP directory:", pwd);
 
-        // Print current directory to verify we are in the right place
-        const pwd = await client.pwd();
-        console.log("Current FTP directory after login:", pwd);
-
-        // If already in /public_html (chroot), upload directly here
-        // If in root (/), navigate into public_html first
-        if (pwd === "/" || pwd === "") {
-            console.log("Navigating into public_html...");
-            await client.ensureDir("public_html");
-            const pwd2 = await client.pwd();
-            console.log("Now in:", pwd2);
-        } else {
-            console.log("Already in correct directory:", pwd, "- uploading directly...");
+            if (pwd === "/" || pwd === "") {
+                console.log("Navigating into public_html...");
+                await client.ensureDir("public_html");
+            }
+            
+            console.log("Uploading files from 'dist' to MilesWeb...");
+            await client.uploadFromDir("dist");
+            
+            console.log("✅ SUCCESS: Upload Complete! Website is now live.");
+            client.close();
+            return; // Exit on success
+        } 
+        catch (err) {
+            console.error(`❌ Attempt ${attempt} failed:`, err.message);
+            client.close();
+            
+            if (attempt === maxRetries) {
+                console.error("⛔ Max retries reached. Deployment failed.");
+                throw err;
+            }
+            
+            const delay = attempt * 5000;
+            console.log(`🔄 Retrying in ${delay / 1000} seconds...`);
+            await new Promise(resolve => setTimeout(resolve, delay));
         }
-
-        console.log("Uploading files from 'dist'...");
-        await client.uploadFromDir("dist");
-
-        console.log("✅ Upload Complete! Website is now live.");
-    }
-    catch (err) {
-        console.error("Deployment failed:", err);
-        process.exit(1);
-    }
-    finally {
-        client.close();
     }
 }
 
-deploy();
+deployWithRetry().catch(err => {
+    console.error("FATAL: Deployment failed after multiple attempts.");
+    process.exit(1);
+});
