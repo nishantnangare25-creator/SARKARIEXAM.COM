@@ -7,6 +7,7 @@ import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 
 const getGroqKeys = () => {
   const keys = [
+    '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',
     import.meta.env.VITE_GROQ_API_KEY,
     import.meta.env.VITE_GROQ_API_KEY_1, import.meta.env.VITE_GROQ_API_KEY_2, import.meta.env.VITE_GROQ_API_KEY_3,
     import.meta.env.VITE_GROQ_API_KEY_4, import.meta.env.VITE_GROQ_API_KEY_5, import.meta.env.VITE_GROQ_API_KEY_6,
