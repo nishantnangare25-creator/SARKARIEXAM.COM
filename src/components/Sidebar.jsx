@@ -22,7 +22,6 @@ const navSections = [
     label: 'Tests',
     items: [
       { path: '/mock-test',      icon: Brain,  label: 'mockTest',      iconColor: 'blue'    },
-      { path: '/pyqs-mock-test', icon: Target, label: 'pyqsMockTest',  iconColor: 'saffron' },
     ]
   },
   {

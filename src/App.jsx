@@ -9,7 +9,6 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import StudyPlanner from './pages/StudyPlanner';
 import MockTest from './pages/MockTest';
-import PYQSMockTest from './pages/PYQSMockTest';
 import PYQPdfs from './pages/PYQPdfs';
 import PYQPractice from './pages/PYQPractice';
 import PastPaperAnalyzer from './pages/PastPaperAnalyzer';
@@ -92,7 +91,6 @@ function AppLayout({ sidebarOpen, setSidebarOpen }) {
           <Route path="/dashboard"      element={<Dashboard onToggleSidebar={() => setSidebarOpen(true)} />} />
           <Route path="/study-planner"  element={<StudyPlanner />} />
           <Route path="/mock-test"      element={<MockTest />} />
-          <Route path="/pyqs-mock-test" element={<PYQSMockTest />} />
           <Route path="/pyq-pdfs"       element={<PYQPdfs />} />
           <Route path="/pyq-practice"   element={<PYQPractice />} />
           <Route path="/past-papers"    element={<PastPaperAnalyzer />} />
