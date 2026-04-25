@@ -201,13 +201,12 @@ const parseTextToQuestions = (text) => {
         }
       });
       
-      // Attempt to auto-detect correct answer if it wasn't explicitly formatted but options contain it
+      // If no explicit answer found, default to first option so question is still shown
       if (!correctAnswerStr && options.length > 0) {
-        // Fallback: assume answering failed formatting or first option usually isn't answer unless stated
-        // Actually, if Answer: is not found, we might skip the question entirely as it's malformed.
+        correctAnswerStr = options[0];
       }
 
-      if (questionStr && options.length >= 2 && correctAnswerStr) {
+      if (questionStr && options.length >= 2) {
         questions.push({
           id: index + 1,
           question: questionStr,
