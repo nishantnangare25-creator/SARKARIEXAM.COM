@@ -77,15 +77,15 @@ async function deployWithRetry(maxRetries = 5) {
             await client.access(FTP_CONFIG);
             console.log("✅ Connected to FTP server.");
 
-            const REMOTE_ROOT = "/public_html";
+            const REMOTE_ROOT = ""; // Empty string for root directory
 
             // Step 1: Clean old assets (removes all stale JS/CSS files)
             console.log("\n🗑️  Cleaning old assets folder...");
-            await clearRemoteDir(client, REMOTE_ROOT + "/assets");
+            await clearRemoteDir(client, "/assets");
 
             // Step 2: Upload fresh build
             console.log("\n📤 Uploading fresh build...");
-            await uploadSlowly(client, "dist", REMOTE_ROOT);
+            await uploadSlowly(client, "dist", "");
 
             console.log("\n✅ SUCCESS: Website is now live on MilesWeb.");
             client.close();
