@@ -48,6 +48,12 @@ export default function PYQSMockTest() {
       if (result.data && result.data.questions) {
         const newQs = result.data.questions.map((q, i) => ({ ...q, id: `batch1-${i}` }));
         setQuestions(newQs);
+        
+        // Show offline notice if serving from static DB
+        if (result.isOffline) {
+          setError('⚡ AI limit reached — showing offline questions from our database. Full AI resumes soon!');
+        }
+        
         setStarted(true);
         setTimer(600);
         setCurrent(0);
@@ -362,11 +368,13 @@ export default function PYQSMockTest() {
           <article className="card animate-fadeIn" style={{ minHeight: 400, display: 'flex', flexDirection: 'column' }}>
             <div style={{ marginBottom: 24 }}>
                <span className="text-muted" style={{ fontSize: '0.85rem', fontWeight: 600 }}>QUESTION {current + 1} OF {questions.length}</span>
-               <h2 style={{ marginTop: 12, lineHeight: 1.4, fontSize: '1.75rem' }}>{q?.question}</h2>
+               <h2 style={{ marginTop: 12, lineHeight: 1.4, fontSize: '1.75rem', color: '#111827' }}>
+                 {q?.question || 'Question content is being loaded or is unavailable...'}
+               </h2>
             </div>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginBottom: 32 }}>
-              {q?.options?.map((opt, i) => {
+              {q?.options && q.options.length > 0 ? q.options.map((opt, i) => {
                 const isSelected = answers[q.id] === opt;
                 return (
                   <button 
@@ -397,7 +405,11 @@ export default function PYQSMockTest() {
                     </div>
                   </button>
                 );
-              })}
+              }) : (
+                <div style={{ padding: 20, textAlign: 'center', color: '#6B7280' }}>
+                  Options could not be loaded for this question.
+                </div>
+              )}
             </div>
 
             {/* Nav Buttons */}

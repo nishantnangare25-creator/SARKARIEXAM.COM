@@ -1,5 +1,6 @@
 // Groq AI API Service
 // API key is stored in environment variables (VITE_GROQ_API_KEY)
+export const BUILD_ID = "v2.1." + Date.now();
 
 import i18n, { languages } from '../i18n';
 import { db } from './firebase';
@@ -147,12 +148,12 @@ const extractJSON = (text) => {
 const parseTextToQuestions = (text) => {
   const questions = [];
   try {
-    // Split by variations of "Q:", "Q1.", "Question 1:", "प्रश्न:", etc.
-    const blocks = text.split(/(?:^|\n)\s*(?:Q|Question|प्रश्न|S|Sl|No)\s*\d*[:.]?\s*/i).filter(b => b.trim());
+    // Split by variations of "Q:", "Q1.", "Question 1:", "प्रश्न:", "1.", etc.
+    const blocks = text.split(/(?:^|\n)\s*(?:Q|Question|प्रश्न|S|Sl|No|No\.|Number|)?\s*\d+[:.]\s*/i).filter(b => b.trim());
     
     blocks.forEach((block, index) => {
       const lines = block.split('\n').filter(l => l.trim() !== '');
-      if (lines.length < 3) return; 
+      if (lines.length < 2) return; 
 
       let questionStr = '';
       let options = [];
@@ -378,17 +379,16 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
 
   // All available free OpenRouter models for maximum capacity
   const OR_FREE_MODELS = [
-    'google/gemini-2.0-flash-lite-001:free',
-    'google/gemini-2.5-pro-exp-03-25:free',
-    'meta-llama/llama-4-scout:free',
-    'meta-llama/llama-4-maverick:free',
-    'meta-llama/llama-3.3-70b-instruct:free',
-    'meta-llama/llama-3.2-3b-instruct:free',
-    'deepseek/deepseek-chat-v3-0324:free',
+    'google/gemini-2.0-flash-lite-preview:free',
+    'google/gemini-2.0-pro-exp-02-05:free',
     'deepseek/deepseek-r1:free',
+    'deepseek/deepseek-chat:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'meta-llama/llama-3.1-8b-instruct:free',
     'mistralai/mistral-7b-instruct:free',
-    'qwen/qwen3-235b-a22b:free',
-    'microsoft/phi-4-reasoning-plus:free',
+    'qwen/qwen-2.5-72b-instruct:free',
+    'qwen/qwen-2.5-coder-32b-instruct:free',
+    'microsoft/phi-3-medium-128k-instruct:free',
   ];
 
   const providers = [
