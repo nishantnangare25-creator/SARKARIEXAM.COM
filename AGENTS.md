@@ -47,3 +47,26 @@ To ensure reliable deployments to MilesWeb/Production servers:
 - **WORKFLOW TIMEOUTS**: Always set a `timeout-minutes: 15` on deployment steps in `.github/workflows/deploy.yml` to prevent hung processes from consuming Action minutes.
 - **CLEAN UPLOAD**: Ensure only the `dist` folder is uploaded to `public_html` to keep the production environment clean and deployment fast.
 <!-- FTP DEPLOYMENT & CI STABILITY END -->
+
+<!-- BLOG POSTING RULES START -->
+## Daily Blog Posting Rules
+
+- **SCHEDULE**: Two posts daily.
+  - **Morning Post**: 8:00 AM IST.
+  - **Evening Post**: 5:00 PM IST.
+- **PROCESS**:
+  1. **Plagiarism Check**: Use web search/analysis to verify uniqueness.
+  2. **SEO Optimization**: Rewrite content for SEO (headings, keywords, readability).
+  3. **Implementation**: Add the new post to `src/data/blogPosts.json` and images to `public/assets/blog/`.
+  4. **Git Push**: Commit and push the blog post ONLY to the website repository (`AIGovPrep`).
+- **CONTENT FORMAT**:
+  - **TITLE**: The Title MUST be exactly the **Keyword** provided by the USER.
+  - **FORMAT**: Ensure every post has a Title, Excerpt, Content (HTML), Tags, Date, and FeaturedImage.
+- **WRITING STYLE**: 
+  - **100% HUMAN STYLE**: Content must be written in a natural, human-like tone. Avoid generic AI patterns. 
+  - **ZERO PLAGIARISM**: Ensure content is entirely original and passes uniqueness checks.
+- **IMAGES**:
+  - **NO AI GENERATION**: Do not use `generate_image` or AI-generated visuals for blog posts.
+  - **WEB SOURCES**: Use real, high-quality images from the web (e.g., Unsplash or official sources) that match the keyword/topic perfectly.
+- **EXCLUSION**: Do not push Android app changes when performing blog updates unless explicitly asked.
+<!-- BLOG POSTING RULES END -->
