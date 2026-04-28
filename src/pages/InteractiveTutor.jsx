@@ -10,7 +10,6 @@ import { generateTutorLesson } from '../services/ai';
 import { useAuth } from '../contexts/AuthContext';
 import { generateNotesPdf } from '../utils/pdfGenerator';
 import './InteractiveTutor.css';
-
 import { marked } from 'marked';
 
 // Safe markdown renderer using marked and dangerouslySetInnerHTML to avoid React render crashes
@@ -223,7 +222,7 @@ export default function InteractiveTutor() {
             <div className="riya-badge-row">
               <span className="riya-status-badge">
                 <span className="dot" style={{ width: 6, height: 6, background: 'var(--accent-green)', borderRadius: '50%' }} />
-                {t('common.online') === 'common.online' ? 'Online' : t('common.online')}
+                {t('common.online') || 'Online'}
               </span>
               <span className="riya-lang-badge">
                 <Languages size={10} />
@@ -237,7 +236,7 @@ export default function InteractiveTutor() {
               className="btn-riya-action" 
               onClick={downloadChatPdf} 
               disabled={messages.length === 0}
-              title={t('tutor.actions.downloadPdf') === 'tutor.actions.downloadPdf' ? 'Download PDF' : t('tutor.actions.downloadPdf')}
+              title={t('tutor.actions.downloadPdf')}
             >
               <Download size={15} />
             </button>
@@ -245,7 +244,7 @@ export default function InteractiveTutor() {
               className="btn-riya-action" 
               onClick={downloadChatText} 
               disabled={messages.length === 0}
-              title={t('tutor.actions.downloadText') === 'tutor.actions.downloadText' ? 'Download Text' : t('tutor.actions.downloadText')}
+              title={t('tutor.actions.downloadText')}
             >
               <FileText size={15} />
             </button>
@@ -253,7 +252,7 @@ export default function InteractiveTutor() {
               className="btn-riya-action danger" 
               onClick={clearChat} 
               disabled={messages.length === 0}
-              title={t('tutor.actions.clearChat') === 'tutor.actions.clearChat' ? 'Clear Chat' : t('tutor.actions.clearChat')}
+              title={t('tutor.actions.clearChat')}
             >
               <Trash2 size={15} />
             </button>
@@ -279,13 +278,16 @@ export default function InteractiveTutor() {
             </div>
           ) : messages.length === 0 ? (
             <div style={{ margin: 'auto', textAlign: 'center', maxWidth: 450 }} className="animate-fadeIn">
+              <div className="feature-icon indigo" style={{ margin: '0 auto 24px', width: 64, height: 64 }}>
+                <article>
+                  <Sparkles size={32} />
+                </article>
+              </div>
+              <h2 style={{ marginBottom: 12 }}>{t('tutor.welcome.title')}</h2>
+              <p style={{ color: 'var(--text-muted)', marginBottom: 32 }}>{t('tutor.welcome.subtitle')}</p>
+              
               <div className="tutor-suggestions-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-                {(Array.isArray(t('tutor.suggestions', { returnObjects: true })) ? t('tutor.suggestions', { returnObjects: true }) : [
-                  "Explain UPSC Syllabus",
-                  "What are Ashok's Edicts?",
-                  "2024 Current Affairs",
-                  "Indian Constitution basics"
-                ]).map(suggest => (
+                {Array.isArray(t('tutor.suggestions', { returnObjects: true })) && t('tutor.suggestions', { returnObjects: true }).map(suggest => (
                   <button 
                     key={suggest} 
                     className="chip" 
@@ -302,9 +304,7 @@ export default function InteractiveTutor() {
               <div key={idx} className={`chat-msg-wrapper ${msg.role === 'assistant' ? 'assistant' : 'user'}`}>
                 <div className="chat-msg-info">
                   <div className="chat-avatar">{msg.role === 'assistant' ? 'R' : (user?.displayName?.[0] || 'U')}</div>
-                  <span>{msg.role === 'assistant' 
-                    ? (t('tutor.role.assistant') === 'tutor.role.assistant' ? 'Riya AI' : t('tutor.role.assistant')) 
-                    : (t('tutor.role.user') === 'tutor.role.user' ? 'You' : t('tutor.role.user'))}</span>
+                  <span>{msg.role === 'assistant' ? t('tutor.role.assistant') : t('tutor.role.user')}</span>
                 </div>
                 
                 <div className="chat-bubble">
@@ -325,7 +325,7 @@ export default function InteractiveTutor() {
             <div className="chat-msg-wrapper assistant">
               <div className="chat-msg-info">
                 <div className="chat-avatar">R</div>
-                <span>{t('tutor.thinking') === 'tutor.thinking' ? 'Riya is thinking...' : t('tutor.thinking')}</span>
+                <span>{t('tutor.thinking')}</span>
               </div>
               <div className="chat-bubble" style={{ padding: '12px 20px' }}>
                 <div style={{ display: 'flex', gap: 6 }}>
@@ -373,7 +373,7 @@ export default function InteractiveTutor() {
               type="text"
               value={currentInput}
               onChange={(e) => setCurrentInput(e.target.value)}
-              placeholder={t('tutor.inputPlaceholder') === 'tutor.inputPlaceholder' ? 'Ask Riya anything...' : t('tutor.inputPlaceholder')}
+              placeholder={t('tutor.inputPlaceholder')}
               disabled={loading}
               autoFocus
             />
@@ -389,11 +389,10 @@ export default function InteractiveTutor() {
         </section>
 
         <div style={{ padding: '4px 20px 8px', textAlign: 'center', fontSize: '0.65rem', color: 'var(--text-muted)', background: '#FFFFFF' }}>
-          {t('tutor.footer') === 'tutor.footer' ? 'Riya AI may make mistakes. Verify important facts.' : t('tutor.footer')}
+          {t('tutor.footer')}
         </div>
       </div>
     </main>
     </TutorErrorBoundary>
   );
 }
-
