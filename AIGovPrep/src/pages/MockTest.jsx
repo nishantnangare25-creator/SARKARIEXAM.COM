@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { generateMockQuestions } from '../services/ai';
+import { generatePYQSMockQuestions } from '../services/ai';
 import { EXAMS, SUBJECTS } from '../utils/constants';
 import { Brain, Clock, CheckCircle, XCircle, Sparkles, ArrowRight, RotateCcw, Download, Activity, Zap, Target, AlertCircle } from 'lucide-react';
 import { saveTestResult } from '../services/firebase';
@@ -39,7 +39,7 @@ export default function MockTest() {
     setLoading(true);
     setError('');
     try {
-      const result = await generateMockQuestions({ exam, subject, difficulty: 'medium', count: 10, language: i18n.language });
+      const result = await generatePYQSMockQuestions({ topic: exam + (subject ? ` - ${subject}` : ''), count: 10, language: i18n.language });
       if (result.data && result.data.questions && result.data.questions.length > 0) {
         const newQs = result.data.questions.map((q, i) => ({ ...q, id: q.id || `batch1-${i}` }));
         setQuestions(newQs);
@@ -65,7 +65,7 @@ export default function MockTest() {
   const fetchMoreQuestions = async () => {
     setLoadingMore(true);
     try {
-      const result = await generateMockQuestions({ exam, subject, difficulty: 'medium', count: 10, language: i18n.language });
+      const result = await generatePYQSMockQuestions({ topic: exam + (subject ? ` - ${subject}` : ''), count: 10, language: i18n.language });
       if (result.data && result.data.questions) {
         const batchId = Date.now();
         const newQs = result.data.questions.map((q, i) => ({ ...q, id: `batch${batchId}-${i}` }));
@@ -140,8 +140,8 @@ export default function MockTest() {
       <main className="page-wrapper" id="mock-test">
         <div className="page-with-sidebar">
           <header className="page-header animate-fadeInUp">
-            <h1><Brain size={28} style={{ verticalAlign: 'middle' }} aria-hidden="true" /> {t('mockTest.title')}</h1>
-            <p>{t('mockTest.subtitle')}</p>
+            <h1><Brain size={28} style={{ verticalAlign: 'middle' }} aria-hidden="true" /> PYQs Mock Test</h1>
+            <p>Practice with real Previous Year Questions powered by AI.</p>
           </header>
           <div className="content-area">
             <section className="card animate-fadeInUp" style={{ maxWidth: 500, margin: '0 auto' }}>

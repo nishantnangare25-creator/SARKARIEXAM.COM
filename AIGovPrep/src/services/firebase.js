@@ -135,8 +135,32 @@ export const getStudyPlan = async (uid) => {
   return snap.exists() ? snap.data() : null;
 };
 
+// ===== SCALE-AWARE WRITE PROXY =====
+const getWorkerUrl = () => import.meta.env.VITE_WORKER_URL || '';
+
+const proxyWrite = async (uid, data, type) => {
+  const workerUrl = getWorkerUrl();
+  if (!workerUrl) return false;
+  
+  try {
+    const response = await fetch(workerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'write', uid, data, type })
+    });
+    return response.ok;
+  } catch (e) {
+    console.warn("Proxy write failed, falling back to direct Firestore:", e);
+    return false;
+  }
+};
+
 // ===== TEST HISTORY =====
 export const saveTestResult = async (uid, result) => {
+  // Try proxying first for high-concurrency protection
+  const proxied = await proxyWrite(uid, result, 'testResult');
+  if (proxied) return { id: 'proxied', success: true };
+
   return addDoc(collection(db, 'testResults'), {
     uid,
     ...result,

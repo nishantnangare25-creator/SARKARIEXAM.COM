@@ -10,20 +10,23 @@ import { generateTutorLesson } from '../services/ai';
 import { useAuth } from '../contexts/AuthContext';
 import { generateNotesPdf } from '../utils/pdfGenerator';
 import './InteractiveTutor.css';
+import { marked } from 'marked';
 
-// Safe markdown renderer — if ReactMarkdown fails, falls back to plain text
+// Safe markdown renderer using marked and dangerouslySetInnerHTML to avoid React render crashes
 function SafeMarkdown({ children }) {
-  const [MarkdownComp, setMarkdownComp] = React.useState(null);
-  React.useEffect(() => {
-    import('react-markdown')
-      .then(mod => setMarkdownComp(() => mod.default))
-      .catch(() => setMarkdownComp(null));
-  }, []);
-  if (!MarkdownComp) return <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{children}</div>;
+  if (!children) return <div />;
+  
   try {
-    return <MarkdownComp>{children || ''}</MarkdownComp>;
-  } catch {
-    return <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7 }}>{children}</div>;
+    const htmlContent = marked.parse(children);
+    return (
+      <div 
+        className="markdown-body"
+        dangerouslySetInnerHTML={{ __html: htmlContent }} 
+        style={{ whiteSpace: 'normal', lineHeight: 1.7, wordBreak: 'break-word' }}
+      />
+    );
+  } catch (err) {
+    return <div style={{ whiteSpace: 'pre-wrap', lineHeight: 1.7, wordBreak: 'break-word' }}>{children}</div>;
   }
 }
 
@@ -56,8 +59,9 @@ class TutorErrorBoundary extends React.Component {
 }
 
 export default function InteractiveTutor() {
+  console.log('[Riya] InteractiveTutor mounting...');
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const trialUsed = localStorage.getItem('sarkari_trial_used') === 'true';
   const [messages, setMessages] = useState([]);
@@ -81,6 +85,14 @@ export default function InteractiveTutor() {
     }
   }, [messages, loading]);
 
+  if (authLoading) {
+    console.log('[Riya] Auth loading...');
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh', background: '#FFFFFF' }}>
+        <Loader2 size={32} className="text-blue animate-spin" />
+      </div>
+    );
+  }
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -197,8 +209,8 @@ export default function InteractiveTutor() {
   return (
     <TutorErrorBoundary>
     <main className="page-wrapper tutor-page-wrapper">
-      {/* Immersive Layout */}
-      <div className="page-with-sidebar riya-tutor-container">
+      {/* Immersive Layout — ensured min-height to prevent white screen collapse */}
+      <div className="immersive-tutor-layout riya-tutor-container" style={{ minHeight: '100vh' }}>
         
         {/* Modern Compact Header */}
         <header className="riya-header">
@@ -384,4 +396,3 @@ export default function InteractiveTutor() {
     </TutorErrorBoundary>
   );
 }
-

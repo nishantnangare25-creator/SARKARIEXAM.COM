@@ -25,11 +25,9 @@ jobs:
     - name: Build Project
       run: npm run build
 
-    - name: Deploy to MilesWeb via FTP
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.4
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./dist/ # Vite default build output folder
-        server-dir: /public_html/ # Cpanel public_html folder (change if subdomain)
+    - name: Deploy to MilesWeb via Custom Script
+      run: node deploy-to-milesweb.js
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}

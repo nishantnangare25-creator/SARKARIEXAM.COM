@@ -1,12 +1,17 @@
 // Groq AI API Service
 // API key is stored in environment variables (VITE_GROQ_API_KEY)
+export const BUILD_ID = "v2.1." + Date.now();
 
 import i18n, { languages } from '../i18n';
 import { db } from './firebase';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
+import fallbackMocks from '../data/fallback_mocks.json';
+import fallbackPlanners from '../data/fallback_planners.json';
+import fallbackChat from '../data/fallback_chat.json';
 
 const getGroqKeys = () => {
   const keys = [
+    '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',
     import.meta.env.VITE_GROQ_API_KEY,
     import.meta.env.VITE_GROQ_API_KEY_1, import.meta.env.VITE_GROQ_API_KEY_2, import.meta.env.VITE_GROQ_API_KEY_3,
     import.meta.env.VITE_GROQ_API_KEY_4, import.meta.env.VITE_GROQ_API_KEY_5, import.meta.env.VITE_GROQ_API_KEY_6,
@@ -130,7 +135,9 @@ const extractJSON = (text) => {
       const jsonStr = cleanText.substring(startArr, endArr + 1);
       const data = JSON.parse(jsonStr);
       const conversation = cleanText.replace(jsonStr, '').trim();
-      return { data, conversation };
+      // Ensure data is wrapped in questions object if it's just an array
+      const normalizedData = Array.isArray(data) ? { questions: data } : data;
+      return { data: normalizedData, conversation };
     }
   } catch (e) {
     console.error('Failed to parse AI response:', text, 'Error:', e.message);
@@ -141,12 +148,12 @@ const extractJSON = (text) => {
 const parseTextToQuestions = (text) => {
   const questions = [];
   try {
-    // Split by variations of "Q:", "Q1.", "Question 1:", etc.
-    const blocks = text.split(/(?:^|\n)\s*(?:Q|Question)\s*\d*[:.]?\s*/i).filter(b => b.trim());
+    // Split by variations of "Q:", "Q1.", "Question 1:", "प्रश्न:", "1.", etc.
+    const blocks = text.split(/(?:^|\n)\s*(?:Q|Question|प्रश्न|S|Sl|No|No\.|Number|)?\s*\d+[:.]\s*/i).filter(b => b.trim());
     
     blocks.forEach((block, index) => {
       const lines = block.split('\n').filter(l => l.trim() !== '');
-      if (lines.length < 3) return; 
+      if (lines.length < 2) return; 
 
       let questionStr = '';
       let options = [];
@@ -156,18 +163,23 @@ const parseTextToQuestions = (text) => {
       
       lines.forEach(line => {
         const trimmed = line.trim();
-        // Match options like "A) ", "A. ", "(A) "
-        const optionMatch = trimmed.match(/^[\(]?([A-E])[\).:]\s*(.+)/i);
+        // Match options like "A) ", "A. ", "(A) ", "१) ", "1) "
+        const optionMatch = trimmed.match(/^[\(]?([A-E1-4]|[a-e]|[अ-ह])[\).:]\s*(.+)/i);
         if (optionMatch) {
           mode = 'O';
           options.push(optionMatch[2].trim());
-        } else if (/^(?:Answer|Correct(?: Answer)?)[:.]\s*/i.test(trimmed)) {
+        } else if (/^(?:Answer|Correct(?: Answer)?|उत्तर|Ans|A)[:.]\s*/i.test(trimmed)) {
           mode = 'A';
-          let ansStr = trimmed.replace(/^(?:Answer|Correct(?: Answer)?)[:.]\s*/i, '').trim();
+          let ansStr = trimmed.replace(/^(?:Answer|Correct(?: Answer)?|उत्तर|Ans|A)[:.]\s*/i, '').trim();
           // Extract just the letter if they wrote "A", "A)", "Option A"
-          const letterMatch = ansStr.match(/(?:Option\s*)?([A-E])/i);
+          const letterMatch = ansStr.match(/(?:Option\s*)?([A-E1-4]|[a-e]|[अ-ह])/i);
           if (letterMatch && options.length > 0) {
-             const letterIndex = letterMatch[1].toUpperCase().charCodeAt(0) - 65;
+             const matchedValue = letterMatch[1].toUpperCase();
+             let letterIndex = -1;
+             
+             if (/[A-E]/.test(matchedValue)) letterIndex = matchedValue.charCodeAt(0) - 65;
+             else if (/[1-4]/.test(matchedValue)) letterIndex = parseInt(matchedValue) - 1;
+             
              if (letterIndex >= 0 && letterIndex < options.length) {
                correctAnswerStr = options[letterIndex];
              } else {
@@ -176,10 +188,10 @@ const parseTextToQuestions = (text) => {
           } else {
              correctAnswerStr = ansStr;
           }
-        } else if (/^Explanation[:.]\s*/i.test(trimmed) || mode === 'E') {
+        } else if (/^(?:Explanation|विवरण|व्याख्या)[:.]\s*/i.test(trimmed) || mode === 'E') {
           if (mode !== 'E') {
             mode = 'E';
-            explanationStr = trimmed.replace(/^Explanation[:.]\s*/i, '').trim();
+            explanationStr = trimmed.replace(/^(?:Explanation|विवरण|व्याख्या)[:.]\s*/i, '').trim();
           } else {
             explanationStr += '\n' + trimmed;
           }
@@ -189,13 +201,12 @@ const parseTextToQuestions = (text) => {
         }
       });
       
-      // Attempt to auto-detect correct answer if it wasn't explicitly formatted but options contain it
+      // If no explicit answer found, default to first option so question is still shown
       if (!correctAnswerStr && options.length > 0) {
-        // Fallback: assume answering failed formatting or first option usually isn't answer unless stated
-        // Actually, if Answer: is not found, we might skip the question entirely as it's malformed.
+        correctAnswerStr = options[0];
       }
 
-      if (questionStr && options.length >= 2 && correctAnswerStr) {
+      if (questionStr && options.length >= 2) {
         questions.push({
           id: index + 1,
           question: questionStr,
@@ -210,6 +221,50 @@ const parseTextToQuestions = (text) => {
   }
   
   return { data: { questions }, conversation: text };
+};
+
+
+const normalizeQuestions = (rawQuestions, count) => {
+  if (!rawQuestions || !Array.isArray(rawQuestions)) return [];
+  
+  // Shuffle all questions
+  const shuffled = [...rawQuestions].sort(() => 0.5 - Math.random());
+  const picked = shuffled.slice(0, count || 10);
+  
+  return picked.map((q, i) => {
+    // Already in correct format?
+    if (q.options && q.question) {
+      return {
+        ...q,
+        id: q.id || `q-${i}`
+      };
+    }
+    
+    // Convert from {Q,A,B,C,D,Answer,Explanation} or {question, options:[]} format
+    const options = Array.isArray(q.options) ? q.options : [
+      q.A || q.optionA || q.option1 || '', 
+      q.B || q.optionB || q.option2 || '', 
+      q.C || q.optionC || q.option3 || '', 
+      q.D || q.optionD || q.option4 || ''
+    ].filter(Boolean);
+    
+    const ans = q.Answer || q.correctAnswer || '';
+    let correctAnswer = ans;
+    
+    // If Answer is a letter like 'A','B','C','D', map to its text
+    if (['A','B','C','D'].includes(ans)) {
+      const map = { A: q.A, B: q.B, C: q.C, D: q.D };
+      correctAnswer = map[ans] || ans;
+    }
+
+    return {
+      id: `fallback-${i}`,
+      question: q.Q || q.question || q.questionText || q.text || q.desc || '',
+      options: options,
+      correctAnswer: correctAnswer,
+      explanation: q.Explanation || q.explanation || q.desc || 'Study this topic for deeper understanding.'
+    };
+  }).filter(q => q.question && q.options.length > 0);
 };
 
 
@@ -239,25 +294,7 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
     return data;
   };
 
-  // --- BYOK (Bring Your Own Key) LAYER ---
-  try {
-    const customKey = localStorage.getItem('sarkari_custom_gemini_key');
-    if (customKey && customKey.length > 20) {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${customKey}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ parts: [{ text: messages.map(m => m.content).join('\n') }] }],
-          generationConfig: { maxOutputTokens: options.max_tokens || 2000 }
-        })
-      });
-      if (response.ok) {
-        const data = await response.json();
-        return saveCache(data.candidates[0].content.parts[0].text);
-      }
-      console.warn("Custom BYOK key failed, falling back to system keys...");
-    }
-  } catch (e) { console.warn("BYOK Error:", e); }
+
 
   // --- LOCAL CACHING LAYER ---
   if (cacheKey) {
@@ -341,17 +378,16 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
 
   // All available free OpenRouter models for maximum capacity
   const OR_FREE_MODELS = [
-    'google/gemini-2.0-flash-lite-001:free',
-    'google/gemini-2.5-pro-exp-03-25:free',
-    'meta-llama/llama-4-scout:free',
-    'meta-llama/llama-4-maverick:free',
-    'meta-llama/llama-3.3-70b-instruct:free',
-    'meta-llama/llama-3.2-3b-instruct:free',
-    'deepseek/deepseek-chat-v3-0324:free',
+    'google/gemini-2.0-flash-lite-preview:free',
+    'google/gemini-2.0-pro-exp-02-05:free',
     'deepseek/deepseek-r1:free',
+    'deepseek/deepseek-chat:free',
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'meta-llama/llama-3.1-8b-instruct:free',
     'mistralai/mistral-7b-instruct:free',
-    'qwen/qwen3-235b-a22b:free',
-    'microsoft/phi-4-reasoning-plus:free',
+    'qwen/qwen-2.5-72b-instruct:free',
+    'qwen/qwen-2.5-coder-32b-instruct:free',
+    'microsoft/phi-3-medium-128k-instruct:free',
   ];
 
   const providers = [
@@ -406,11 +442,13 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
 
   // LAST RESORT: Static Fallback if all keys fail
   console.error('All AI providers exhausted. Using Static Fallback.');
-  if (options.type === 'mock_test') {
-    return { data: { questions: STATIC_FALLBACKS.questions }, conversation: "Static Fallback Mode" };
-  }
-
-  throw new Error('Our servers are currently busy due to 1,00,000+ students. Using offline backup questions.');
+  
+  // Return a string that looks like questions so the parser can handle it
+  const fallbackText = STATIC_FALLBACKS.questions.map((q, i) => 
+    `Q: ${q.question}\nA) ${q.options[0]}\nB) ${q.options[1]}\nC) ${q.options[2]}\nD) ${q.options[3]}\nAnswer: ${q.correctAnswer}\nExplanation: ${q.explanation}`
+  ).join('\n\n');
+  
+  return saveCache(fallbackText);
 };
 
 
@@ -487,50 +525,24 @@ Explanation: [1-2 sentences of explanation]`
     const result = await callAI(messages, { max_tokens: 1500 });
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
-      // Fallback for strict JSON parser if text parsing didn't catch anything due to model ignoring formatting
+      // Fallback for strict JSON parser
       const fallbackParsed = extractJSON(result);
-      if (fallbackParsed.data?.questions?.length > 0) return fallbackParsed;
+      const rawQs = fallbackParsed.data?.questions || (Array.isArray(fallbackParsed.data) ? fallbackParsed.data : []);
+      if (rawQs.length > 0) {
+        const normalized = normalizeQuestions(rawQs, count);
+        return { data: { questions: normalized }, conversation: result };
+      }
       throw new Error("Unable to parse generated mock questions.");
     }
     return parsed;
   } catch (err) {
     console.error("AI call failed, activating offline fallback:", err);
-    try {
-      // Import the static offline database
-      const fallbackDb = await import('../data/fallback_mocks.json');
-      const rawQuestions = fallbackDb.default?.questions || [];
-      if (rawQuestions.length > 0) {
-        // Shuffle all questions
-        const shuffled = [...rawQuestions].sort(() => 0.5 - Math.random());
-        const picked = shuffled.slice(0, count || 10);
-        // Convert from {Q,A,B,C,D,Answer,Explanation} → {question,options[],correctAnswer,explanation}
-        const normalized = picked.map((q, i) => {
-          // Support BOTH formats: new {question,options[]} AND old {Q,A,B,C,D}
-          if (q.options && q.question) return q; // Already correct format
-          return {
-            id: `fallback-${i}`,
-            question: q.Q || q.question || '',
-            options: [
-              q.A || '', q.B || '', q.C || '', q.D || ''
-            ].filter(Boolean),
-            correctAnswer: (() => {
-              const ans = q.Answer || q.correctAnswer || '';
-              // If Answer is a letter like 'A','B','C','D', map to its text
-              if (['A','B','C','D'].includes(ans)) {
-                return { A: q.A, B: q.B, C: q.C, D: q.D }[ans] || ans;
-              }
-              return ans;
-            })(),
-            explanation: q.Explanation || q.explanation || 'Study this topic for deeper understanding.'
-          };
-        }).filter(q => q.question && q.options.length > 0);
-        console.log(`[Offline Fallback] Serving ${normalized.length} questions from static DB`);
-        return { data: { questions: normalized }, isOffline: true };
-      }
-    } catch (e) {
-      console.error("Fallback DB also unavailable:", e);
+    const rawQuestions = fallbackMocks?.questions || [];
+    if (rawQuestions.length > 0) {
+      const normalized = normalizeQuestions(rawQuestions, count);
+      return { data: { questions: normalized }, isOffline: true };
     }
-    throw new Error("AI Server is too busy or API limits exhausted. Please try again later.");
+    throw new Error("AI Server is too busy. Please try again later.");
   }
 };
 
@@ -570,23 +582,22 @@ Explanation: [1-2 sentences of explanation]`
     const parsed = parseTextToQuestions(result);
     if (!parsed.data || !parsed.data.questions || parsed.data.questions.length === 0) {
       const fallbackParsed = extractJSON(result);
-      if (fallbackParsed.data?.questions?.length > 0) return fallbackParsed;
+      const rawQs = fallbackParsed.data?.questions || (Array.isArray(fallbackParsed.data) ? fallbackParsed.data : []);
+      if (rawQs.length > 0) {
+        const normalized = normalizeQuestions(rawQs, count);
+        return { data: { questions: normalized }, conversation: result };
+      }
       throw new Error("Unable to parse generated past year questions.");
     }
     return parsed;
   } catch (err) {
     console.error("AI call failed, activating offline fallback:", err);
-    try {
-      const fallbackDb = await import('../data/fallback_mocks.json');
-      const staticQuestions = fallbackDb.default?.questions || [];
-      if (staticQuestions.length >= count) {
-        const shuffled = staticQuestions.sort(() => 0.5 - Math.random());
-        return { data: { questions: shuffled.slice(0, count) } };
-      }
-    } catch (e) {
-      console.error("Fallback DB also unavailable:", e);
+    const staticQuestions = fallbackMocks?.questions || [];
+    if (staticQuestions.length > 0) {
+      const normalized = normalizeQuestions(staticQuestions, count);
+      return { data: { questions: normalized }, isOffline: true };
     }
-    throw new Error("Our servers are experiencing very high student traffic. Please wait a few seconds and try again.");
+    throw new Error("Our servers are experiencing very high student traffic. Please try again in a few seconds.");
   }
 };
 
@@ -624,8 +635,13 @@ Explanation: [Provide highly detailed background information on why the answer i
     }
     return parsed;
   } catch (err) {
-    console.error("AI call failed:", err);
-    throw new Error("Failed to process PDF. Please try again later.");
+    console.error("AI call failed, activating offline fallback for PDF:", err);
+    const staticQuestions = fallbackMocks?.questions || [];
+    if (staticQuestions.length > 0) {
+      const normalized = normalizeQuestions(staticQuestions, 10);
+      return { data: { questions: normalized }, isOffline: true };
+    }
+    throw new Error("Failed to process PDF. Using offline backup questions instead.");
   }
 };
 
@@ -698,19 +714,14 @@ export const generateTutorLesson = async ({ history, language }) => {
     return await callAI(messages, { max_tokens: 1500 });
   } catch (err) {
     console.error("AI call failed, activating offline chat fallback:", err);
-    try {
-      const fallbackDb = await import('../data/fallback_chat.json');
-      const lastMsg = history[history.length - 1]?.content?.toLowerCase() || '';
-      for (const rule of fallbackDb.default.answers) {
-        if (rule.keywords.some(kw => lastMsg.includes(kw))) {
-          return rule.response;
-        }
+    const answers = fallbackChat?.answers || [];
+    const lastMsg = history[history.length - 1]?.content?.toLowerCase() || '';
+    for (const rule of answers) {
+      if (rule.keywords.some(kw => lastMsg.includes(kw))) {
+        return rule.response;
       }
-      return fallbackDb.default.default;
-    } catch (e) {
-      console.error("Fallback chat unavailable", e);
     }
-    throw new Error("I apologize, but our servers are extremely busy. Please try again in a few moments.");
+    return fallbackChat?.default || "I am currently processing many requests. How can I help you with your exam prep?";
   }
 };
 

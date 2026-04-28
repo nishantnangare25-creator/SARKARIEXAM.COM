@@ -7,6 +7,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import com.sarkari.exam.data.local.Language
+import com.sarkari.exam.data.local.IndianState
 
 class AiRepository {
     
@@ -24,16 +26,27 @@ class AiRepository {
 
     private val gson = Gson()
     
-    // Fallback logic implemented natively
-    suspend fun getAiResponse(messages: List<ChatMessage>, apiKey: String, provider: String = "groq"): String? = withContext(Dispatchers.IO) {
+    // Fallback logic implemented natively with Language Support
+    suspend fun getAiResponse(
+        messages: List<ChatMessage>, 
+        apiKey: String, 
+        languageCode: String = "en",
+        stateCode: String = "DL",
+        provider: String = "groq"
+    ): String? = withContext(Dispatchers.IO) {
         try {
+            val language = Language.values().find { it.code == languageCode } ?: Language.ENGLISH
+            val stateName = IndianState.values().find { it.code == stateCode }?.displayName ?: "Delhi"
+            val contextMessage = ChatMessage("system", "You are a helpful education assistant for government exams in India. The user is located in $stateName. ${language.aiInstruction}")
+            val fullMessages = listOf(contextMessage) + messages
+
             if (provider == "groq") {
-                val response = groqRetrofit.getGroqCompletion("Bearer $apiKey", AiRequest("llama-3.3-70b-versatile", messages))
+                val response = groqRetrofit.getGroqCompletion("Bearer $apiKey", AiRequest("llama-3.3-70b-versatile", fullMessages))
                 if (response.isSuccessful) {
                     return@withContext response.body()?.choices?.firstOrNull()?.message?.content
                 }
             } else {
-                val geminiMsg = messages.map { GeminiContent(listOf(GeminiPart(it.content))) }
+                val geminiMsg = fullMessages.map { GeminiContent(listOf(GeminiPart(it.content))) }
                 val response = geminiRetrofit.getGeminiCompletion(apiKey, GeminiRequest(geminiMsg))
                 if (response.isSuccessful) {
                     return@withContext response.body()?.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text

@@ -36,7 +36,7 @@ class TutorViewModel : ViewModel() {
     var isLoading by mutableStateOf(false)
     var currentInput by mutableStateOf("")
 
-    fun sendMessage(apiKey: String) {
+    fun sendMessage(apiKey: String = com.sarkari.exam.data.AppConstants.GROQ_API_KEY) {
         if (currentInput.isBlank()) return
         
         val userMsg = currentInput.trim()
@@ -47,7 +47,7 @@ class TutorViewModel : ViewModel() {
         // Use coroutine to fetch AI response
         viewModelScope.launch {
             val response = repository.getAiResponse(messages, apiKey, "groq")
-                ?: repository.getAiResponse(messages, "YOUR_FALLBACK_KEY", "gemini") // Need a real key strategy here
+                ?: repository.getAiResponse(messages, com.sarkari.exam.data.AppConstants.OPENROUTER_API_KEY_1, "en", "DL", "groq")
             
             isLoading = false
             if (response != null) {
@@ -58,6 +58,7 @@ class TutorViewModel : ViewModel() {
         }
     }
 }
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -160,7 +161,7 @@ fun InteractiveTutorScreen(navController: NavController, tutorViewModel: TutorVi
                     )
                     
                     FloatingActionButton(
-                        onClick = { tutorViewModel.sendMessage("YOUR_API_KEY") }, // Demo key
+                        onClick = { tutorViewModel.sendMessage() },
                         modifier = Modifier.size(48.dp),
                         containerColor = PrimaryBlue,
                         contentColor = Color.White,

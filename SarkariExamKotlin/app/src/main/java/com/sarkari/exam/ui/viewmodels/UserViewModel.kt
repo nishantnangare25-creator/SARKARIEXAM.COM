@@ -1,9 +1,11 @@
 package com.sarkari.exam.ui.viewmodels
 
-import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
+import com.sarkari.exam.data.local.AppPreferences
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 data class UserProfile(
     val exam: String = "",
@@ -15,16 +17,37 @@ data class UserProfile(
     val isOnboarded: Boolean = false
 )
 
-class UserViewModel : ViewModel() {
+class UserViewModel(application: Application) : AndroidViewModel(application) {
+    private val appPreferences = AppPreferences(application)
+    
     private val _userProfile = MutableStateFlow(UserProfile())
     val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            appPreferences.languageCode.collectLatest { lang ->
+                _userProfile.value = _userProfile.value.copy(language = lang)
+            }
+        }
+        viewModelScope.launch {
+            appPreferences.examCode.collectLatest { exam ->
+                _userProfile.value = _userProfile.value.copy(exam = exam)
+            }
+        }
+    }
+
     fun updateExam(exam: String) {
-        _userProfile.value = _userProfile.value.copy(exam = exam)
+        viewModelScope.launch {
+            appPreferences.saveExamCode(exam)
+            _userProfile.value = _userProfile.value.copy(exam = exam)
+        }
     }
 
     fun updateLanguage(language: String) {
-        _userProfile.value = _userProfile.value.copy(language = language)
+        viewModelScope.launch {
+            appPreferences.saveLanguageCode(language)
+            _userProfile.value = _userProfile.value.copy(language = language)
+        }
     }
 
     fun updateStudyHours(hours: Int) {

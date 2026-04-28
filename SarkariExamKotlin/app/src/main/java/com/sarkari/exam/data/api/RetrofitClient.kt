@@ -7,7 +7,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 object RetrofitClient {
-    private const val BASE_URL = "https://openrouter.ai/api/"
+    private const val BASE_URL = "https://api.groq.com/openai/"
+    private const val SARKARI_BASE_URL = "https://sarkari-exam-ai.nishantnangare34.workers.dev/"
 
     private val loggingInterceptor = HttpLoggingInterceptor().apply {
         level = HttpLoggingInterceptor.Level.BODY
@@ -28,5 +29,13 @@ object RetrofitClient {
             .build()
             .create(AiApiService::class.java)
     }
-}
 
+    val sarkariApiService: SarkariApiService by lazy {
+        Retrofit.Builder()
+            .baseUrl(SARKARI_BASE_URL)
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(SarkariApiService::class.java)
+    }
+}

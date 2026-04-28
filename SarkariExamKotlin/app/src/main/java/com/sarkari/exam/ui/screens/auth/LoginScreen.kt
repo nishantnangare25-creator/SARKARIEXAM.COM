@@ -1,145 +1,244 @@
 package com.sarkari.exam.ui.screens.auth
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.sarkari.exam.ui.navigation.Screen
+import com.sarkari.exam.ui.components.AuthTextField
+import com.sarkari.exam.ui.components.GradientAuthButton
+import com.sarkari.exam.ui.components.SocialAuthButton
 import com.sarkari.exam.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sarkari.exam.ui.viewmodels.AuthState
+import com.sarkari.exam.ui.viewmodels.AuthViewModel
+
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    onNavigateToSignup: () -> Unit,
+    onLoginSuccess: () -> Unit,
+    viewModel: AuthViewModel = viewModel()
+) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var isRegister by remember { mutableStateOf(false) }
-    var showPassword by remember { mutableStateOf(false) }
-    var loading by remember { mutableStateOf(false) }
+    var rememberMe by remember { mutableStateOf(false) }
+    
+    val authState by viewModel.authState.collectAsState()
+
+    LaunchedEffect(authState) {
+        if (authState is AuthState.Success) {
+            onLoginSuccess()
+            viewModel.resetState()
+        }
+    }
+
+    val isLoading = authState is AuthState.Loading
+    val errorMessage = (authState as? AuthState.Error)?.message
+
+    // Animations
+    val infiniteTransition = rememberInfiniteTransition()
+    val floatAnim by infiniteTransition.animateFloat(
+        initialValue = 0f,
+        targetValue = -15f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .background(Color.White)
+            .verticalScroll(rememberScrollState())
             .padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Hero Section mirroring web design
-        Surface(
-            modifier = Modifier.size(80.dp),
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
-            shape = CircleShape
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(Icons.Default.Face, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(40.dp))
-            }
+        Spacer(modifier = Modifier.height(40.dp))
+        
+        // Error Message
+        if (errorMessage != null) {
+            Text(
+                text = errorMessage,
+                color = Color.Red,
+                style = MaterialTheme.typography.bodySmall,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
         }
-        
+
+        // Logo Section
+        Box(
+            modifier = Modifier
+                .size(110.dp)
+                .graphicsLayer { translationY = floatAnim }
+                .clip(RoundedCornerShape(32.dp))
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(PrimaryBlue, AccentPurple)
+                    )
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.School,
+                contentDescription = null,
+                tint = BackgroundWhite,
+                modifier = Modifier.size(56.dp)
+            )
+        }
+
         Spacer(modifier = Modifier.height(24.dp))
-        
+
         Text(
-            text = if (isRegister) "Create your account" else "Welcome back",
-            style = MaterialTheme.typography.displayLarge,
-            fontSize = 28.sp,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        Text(
-            text = "Join 1,00,000+ students preparing for excellence",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(top = 8.dp, bottom = 40.dp)
+            text = "SarkariExamAI",
+            style = MaterialTheme.typography.displaySmall.copy(
+                fontWeight = FontWeight.Black,
+                letterSpacing = (-0.5).sp
+            ),
+            color = TextPrimary
         )
 
-        // Fields
-        OutlinedTextField(
+        Surface(
+            modifier = Modifier.padding(top = 10.dp),
+            shape = RoundedCornerShape(12.dp),
+            color = PrimaryBlue.copy(alpha = 0.06f)
+        ) {
+            Text(
+                text = "Next-Gen AI Preparation",
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold),
+                color = PrimaryBlue
+            )
+        }
+
+        Spacer(modifier = Modifier.height(60.dp))
+
+        // Welcome Text
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = "Welcome Back",
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.ExtraBold),
+                color = TextPrimary
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "Sign in to continue your preparation",
+                style = MaterialTheme.typography.bodyLarge,
+                color = TextMuted
+            )
+        }
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Input Fields
+        AuthTextField(
             value = email,
             onValueChange = { email = it },
-            label = { Text("Email Address") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline, 
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-            singleLine = true
+            label = "Email or Mobile Number",
+            leadingIcon = Icons.Default.Email,
+            keyboardType = KeyboardType.Email
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        OutlinedTextField(
+        AuthTextField(
             value = password,
             onValueChange = { password = it },
-            label = { Text("Password") },
-            trailingIcon = {
-                val icon = if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility
-                IconButton(onClick = { showPassword = !showPassword }) {
-                    Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-                }
-            },
-            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(12.dp),
-            colors = TextFieldDefaults.outlinedTextFieldColors(
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline, 
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                containerColor = MaterialTheme.colorScheme.surface
-            ),
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-            singleLine = true
+            label = "Password",
+            leadingIcon = Icons.Default.Lock,
+            isPassword = true,
+            keyboardType = KeyboardType.Password
         )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Options Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Checkbox(
+                    checked = rememberMe,
+                    onCheckedChange = { rememberMe = it },
+                    colors = CheckboxDefaults.colors(checkedColor = PrimaryBlue)
+                )
+                Text(text = "Remember Me", style = MaterialTheme.typography.bodySmall)
+            }
+            Text(
+                text = "Forgot Password?",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = PrimaryBlue
+                ),
+                modifier = Modifier.clickable { /* Handle forgot password */ }
+            )
+        }
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        Button(
-            onClick = {
-                loading = true
-                navController.navigate(Screen.Dashboard.route) {
-                    popUpTo(Screen.Login.route) { inclusive = true }
-                }
+        // Login Button
+        GradientAuthButton(
+            text = "Login",
+            onClick = { 
+                viewModel.login(email, password)
             },
-            modifier = Modifier.fillMaxWidth().height(56.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 2.dp, pressedElevation = 0.dp),
-            enabled = !loading
-        ) {
-            if (loading) {
-                CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
-            } else {
-                Text(
-                    text = if (isRegister) "Sign Up Free" else "Secure Login", 
-                    style = MaterialTheme.typography.labelLarge,
-                    fontSize = 16.sp
-                )
-            }
-        }
+            isLoading = isLoading
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        TextButton(onClick = { isRegister = !isRegister }) {
+        Text(text = "OR", color = Color.LightGray, style = MaterialTheme.typography.labelSmall)
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Google Login
+        SocialAuthButton(
+            text = "Continue with Google",
+            onClick = { /* Handle Google Login */ }
+        )
+
+        Spacer(modifier = Modifier.height(40.dp))
+
+        // Footer
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Don’t have an account? ", color = TextMuted, style = MaterialTheme.typography.bodyMedium)
             Text(
-                text = if (isRegister) "Already using Sarkari AI? Log In" else "Don't have an account? Sign Up Free",
-                color = MaterialTheme.colorScheme.primary,
-                style = MaterialTheme.typography.labelLarge
+                text = "Sign Up",
+                fontWeight = FontWeight.ExtraBold,
+                color = PrimaryBlue,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.clickable { onNavigateToSignup() }
             )
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
-

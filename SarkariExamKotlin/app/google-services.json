@@ -1,0 +1,34 @@
+{
+  "project_info": {
+    "project_number": "868025142353",
+    "project_id": "govai-7ee5b",
+    "storage_bucket": "govai-7ee5b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:868025142353:android:sarkariexam",
+        "android_client_info": {
+          "package_name": "com.sarkari.exam"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "868025142353-XXXXXXXX.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCWoAYg_1WQPABOS8WzFxoQCcgDY5Rgyzc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
