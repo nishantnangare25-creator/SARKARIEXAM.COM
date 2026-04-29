@@ -347,6 +347,8 @@
     border-bottom: 1px solid var(--border-color);
     box-shadow: var(--shadow-md);
   }
+
+  .mobile-menu-cta {
     display: block;
     margin-top: 12px;
     border-top: 1px solid var(--border-color);
@@ -354,6 +356,7 @@
   }
 
   .mobile-menu-cta .btn {
+
     width: 100%;
     justify-content: center;
     padding: 12px;

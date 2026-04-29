@@ -51,22 +51,24 @@ To ensure reliable deployments to MilesWeb/Production servers:
 <!-- BLOG POSTING RULES START -->
 ## Daily Blog Posting Rules
 
-- **SCHEDULE**: Two posts daily.
-  - **Morning Post**: 8:00 AM IST.
-  - **Evening Post**: 5:00 PM IST.
+- **SCHEDULE**: Two posts daily (8:00 AM and 5:00 PM IST).
 - **PROCESS**:
   1. **Plagiarism Check**: Use web search/analysis to verify uniqueness.
-  2. **SEO Optimization**: Rewrite content for SEO (headings, keywords, readability).
-  3. **Implementation**: Add the new post to `src/data/blogPosts.json` and images to `public/assets/blog/`.
-  4. **Git Push**: Commit and push the blog post ONLY to the website repository (`AIGovPrep`).
+  2. **SEO Ranking Strategy**: 
+     - **Keyword Density**: Use the provided keyword naturally in Title, H1, and First Paragraph.
+     - **LSI Keywords**: Include semantically related terms to help Google understand context.
+     - **Internal Linking**: Link to other relevant blog posts or features (Mock Tests, AI Tutor, etc.).
+     - **Hierarchy**: Use clean HTML5 structure (H1, H2, H3) for better crawling.
+  3. **Implementation**: Add to `src/data/blogPosts.json` and images to `public/assets/blog/`.
+  4. **Git Push**: Commit and push ONLY to the website repository (`AIGovPrep`).
 - **CONTENT FORMAT**:
   - **TITLE**: The Title MUST be exactly the **Keyword** provided by the USER.
-  - **FORMAT**: Ensure every post has a Title, Excerpt, Content (HTML), Tags, Date, and FeaturedImage.
+  - **META**: Ensure Meta Title and Description are click-worthy and keyword-optimized.
 - **WRITING STYLE**: 
-  - **100% HUMAN STYLE**: Content must be written in a natural, human-like tone. Avoid generic AI patterns. 
-  - **ZERO PLAGIARISM**: Ensure content is entirely original and passes uniqueness checks.
+  - **100% HUMAN STYLE**: Avoid repetitive AI structures. Use a natural, helpful, and authoritative tone.
+  - **ZERO PLAGIARISM**: Content must be 100% original.
 - **IMAGES**:
-  - **NO AI GENERATION**: Do not use `generate_image` or AI-generated visuals for blog posts.
-  - **WEB SOURCES**: Use real, high-quality images from the web (e.g., Unsplash or official sources) that match the keyword/topic perfectly.
-- **EXCLUSION**: Do not push Android app changes when performing blog updates unless explicitly asked.
+  - **NO AI GENERATION**: Use real, high-quality images from official or web sources.
+  - **ALT TEXT**: Always include descriptive alt text matching the keyword for Image SEO.
+- **EXCLUSION**: Do not push Android app changes when performing blog updates.
 <!-- BLOG POSTING RULES END -->

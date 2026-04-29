@@ -476,10 +476,10 @@ export const generateStudyPlan = async ({ exam, hours, level, weakSubjects, stro
   } catch (err) {
     console.error("AI call failed, activating offline fallback for Study Planner:", err);
     try {
-      const fallbackDb = await import('../data/fallback_planners.json');
-      const planners = fallbackDb.default?.planners || [];
+      const planners = fallbackPlanners?.planners || [];
       // Find the closest match
       const match = planners.find(p => p.exam.toLowerCase().includes(exam.toLowerCase())) || planners[0];
+
       if (match) {
         return match.content;
       }
