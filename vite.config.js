@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Trigger redeploy after security off
 export default defineConfig({
+
   plugins: [react()],
   build: {
     rolldownOptions: {
