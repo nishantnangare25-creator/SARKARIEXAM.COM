@@ -149,7 +149,7 @@ const parseTextToQuestions = (text) => {
   const questions = [];
   try {
     // Split by variations of "Q:", "Q1.", "Question 1:", "प्रश्न:", "1.", etc.
-    const blocks = text.split(/(?:^|\n)\s*(?:Q|Question|प्रश्न|S|Sl|No|No\.|Number|)?\s*\d+[:.]\s*/i).filter(b => b.trim());
+    const blocks = text.split(/(?:^|\n)\s*(?:(?:Q|Question|प्रश्न|S|Sl|No|No\.|Number)\s*\d*[:.]?|\d+[:.])\s*/i).filter(b => b.trim());
     
     blocks.forEach((block, index) => {
       const lines = block.split('\n').filter(l => l.trim() !== '');
@@ -163,8 +163,8 @@ const parseTextToQuestions = (text) => {
       
       lines.forEach(line => {
         const trimmed = line.trim();
-        // Match options like "A) ", "A. ", "(A) ", "१) ", "1) "
-        const optionMatch = trimmed.match(/^[\(]?([A-E1-4]|[a-e]|[अ-ह])[\).:]\s*(.+)/i);
+        // Match options like "A) ", "A. ", "(A) ", "१) ", "1) ", "Option A: "
+        const optionMatch = trimmed.match(/^(?:Option\s*)?[\(]?([A-E1-4]|[a-e]|[अ-ह])[\).:]\s*(.+)/i);
         if (optionMatch) {
           mode = 'O';
           options.push(optionMatch[2].trim());
@@ -411,7 +411,28 @@ const callAI = async (messages, options = {}, cacheKey = null) => {
           if (p.type === 'or') headers['HTTP-Referer'] = window.location.origin;
           body = JSON.stringify({ model: p.model, messages, temperature: options.temperature || 0.7, max_tokens: options.max_tokens || 1500 });
         } else {
-          body = JSON.stringify({ contents: [{ parts: [{ text: typeof messages === 'string' ? messages : messages.map(m => `${m.role}: ${m.content}`).join('\n') }] }] });
+          // Gemini 2.0+ supports system_instruction and structured contents
+          const systemMsg = Array.isArray(messages) ? messages.find(m => m.role === 'system') : null;
+          const chatMsgs = Array.isArray(messages) ? messages.filter(m => m.role !== 'system') : [];
+          
+          const contents = chatMsgs.map(m => ({
+            role: m.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: m.content }]
+          }));
+
+          // If no chat messages but we have a string prompt, use it
+          if (contents.length === 0 && typeof messages === 'string') {
+            contents.push({ role: 'user', parts: [{ text: messages }] });
+          }
+
+          body = JSON.stringify({
+            contents,
+            ...(systemMsg ? { system_instruction: { parts: [{ text: systemMsg.content }] } } : {}),
+            generationConfig: {
+              temperature: options.temperature || 0.7,
+              maxOutputTokens: options.max_tokens || 2048,
+            }
+          });
         }
 
         const res = await fetch(p.url, { method: 'POST', headers, body });
@@ -468,7 +489,8 @@ export const generateStudyPlan = async ({ exam, hours, level, weakSubjects, stro
 - Current preparation level: ${level}
 - Weak subjects: ${weakSubjects?.join(', ') || 'None specified'}
 - Strong subjects: ${strongSubjects?.join(', ') || 'None specified'}
-- Respond in: ${lang}`
+- Respond in: ${lang}
+CRITICAL: ALL headings, bullet points, and table contents MUST be in ${lang.toUpperCase()}. If you output in English while ${lang} was requested, the student will fail.`
     }
   ];
   try {
@@ -476,10 +498,10 @@ export const generateStudyPlan = async ({ exam, hours, level, weakSubjects, stro
   } catch (err) {
     console.error("AI call failed, activating offline fallback for Study Planner:", err);
     try {
-      const fallbackDb = await import('../data/fallback_planners.json');
-      const planners = fallbackDb.default?.planners || [];
+      const planners = fallbackPlanners?.planners || [];
       // Find the closest match
       const match = planners.find(p => p.exam.toLowerCase().includes(exam.toLowerCase())) || planners[0];
+
       if (match) {
         return match.content;
       }
@@ -499,15 +521,16 @@ export const generateMockQuestions = async ({ exam, subject, difficulty, count, 
       role: 'system',
       content: `You are an expert Indian competitive exam creator. Generate exactly ${count || 5} MCQ questions. Respond in ${lang}.
 CRITICAL RULES:
-1. DO NOT USE JSON. Respond STRICTLY in plain text/markdown format.
-2. Format EACH question exactly like this:
+1. DO NOT USE JSON. DO NOT USE CODE BLOCKS (```).
+2. Respond STRICTLY in plain text format.
+3. Use this EXACT format for EVERY question:
 Q: [Question text]
 A) [Option 1]
 B) [Option 2]
 C) [Option 3]
 D) [Option 4]
 Answer: [A, B, C, or D]
-Explanation: [1-2 sentences of explanation]`
+Explanation: [1-2 sentences]`
     },
     {
       role: 'user',
@@ -517,7 +540,8 @@ Explanation: [1-2 sentences of explanation]`
 - Randomization Seed: ${randomSeed} (Ensure these questions are highly diverse and different from previous sets)
 - Keep explanations SHORT (1-2 sentences).
 - CRITICAL: Return ONLY the structured text, no extra conversational filler.
-- Respond in: ${lang}`
+- Respond in: ${lang}
+CRITICAL: THE ENTIRE OUTPUT (Question, Options, Answer, and Explanation) MUST BE IN ${lang.toUpperCase()}. If I selected ${lang} and you respond in English, it is a critical failure.`
     }
   ];
   try {
@@ -556,15 +580,16 @@ export const generatePYQSMockQuestions = async ({ topic, year, count, language }
       role: 'system',
       content: `You are an expert Indian competitive exam creator. Generate exactly ${count || 5} Past Year Questions (PYQs). Respond in ${lang}.
 CRITICAL RULES:
-1. DO NOT USE JSON. Respond STRICTLY in plain text/markdown format.
-2. Format EACH question exactly like this:
+1. DO NOT USE JSON. DO NOT USE CODE BLOCKS (```).
+2. Respond STRICTLY in plain text format.
+3. Use this EXACT format for EVERY question:
 Q: [Question text]
 A) [Option 1]
 B) [Option 2]
 C) [Option 3]
 D) [Option 4]
 Answer: [A, B, C, or D]
-Explanation: [1-2 sentences of explanation]`
+Explanation: [1-2 sentences]`
     },
     {
       role: 'user',
@@ -573,7 +598,8 @@ Explanation: [1-2 sentences of explanation]`
 - Use real historical questions if available.
 - Keep explanations SHORT (1-2 sentences).
 - CRITICAL: Return ONLY the structured text, no extra conversational filler.
-- Respond in: ${lang}`
+- Respond in: ${lang}
+CRITICAL: THE ENTIRE OUTPUT (Question, Options, Answer, and Explanation) MUST BE IN ${lang.toUpperCase()}. Even if the question was originally in English, translate it to ${lang}.`
     }
   ];
   try {
@@ -622,7 +648,8 @@ Explanation: [Provide highly detailed background information on why the answer i
     },
     {
       role: 'user',
-      content: `Extract the best MCQs from this uploaded document text (ignore headers, footers, unstructured noise):\n\n${text.substring(0, 10000)}\n\nRespond in: ${lang}`
+      content: `Extract the best MCQs from this uploaded document text (ignore headers, footers, unstructured noise):\n\n${text.substring(0, 10000)}\n\nRespond in: ${lang}
+CRITICAL: TRANSLATE everything to ${lang.toUpperCase()}. The user explicitly wants to study in ${lang}.`
     }
   ];
   try {
@@ -678,7 +705,8 @@ export const generateNotes = async ({ exam, subject, topics, language }) => {
 - Include memory tricks and mnemonics where possible.
 - Provide an extensive deep dive into each sub-topic. Write as much relevant content as possible.
 - DO NOT include any introductory text, concluding remarks, or logs. Just the notes.
-- Respond in: ${lang}`
+- Respond in: ${lang}
+CRITICAL: EVERY SINGLE WORD must be in ${lang.toUpperCase()}. If you use English terms, provide ${lang} translations in brackets.`
     }
   ];
   return callAI(messages, { max_tokens: 1500 });
@@ -695,7 +723,8 @@ export const analyzePerformance = async ({ testHistory, exam, language }) => {
     },
     {
       role: 'user',
-      content: `Analyze my ${exam} exam preparation performance:\n\n${summary}\n\nProvide detailed analysis and a readiness score out of 100. Respond in: ${lang}`
+      content: `Analyze my ${exam} exam preparation performance:\n\n${summary}\n\nProvide detailed analysis and a readiness score out of 100. Respond in: ${lang}
+CRITICAL: THE ENTIRE ANALYSIS MUST BE IN ${lang.toUpperCase()}.`
     }
   ];
   return await callAI(messages, { max_tokens: 1500 });
@@ -706,7 +735,7 @@ export const generateTutorLesson = async ({ history, language }) => {
   const lang = getLanguageName(language);
   const systemPrompt = {
     role: 'system',
-    content: `You are Riya, an expert, patient, and engaging AI Tutor for Indian competitive exams. Answer the student's questions clearly based on your vast knowledge of exam topics. IMPORTANT IDENTITY RULE: If anyone asks who developed you, which AI model you are (like ChatGPT, Gemini, etc.), or what technology powers you, you MUST firmly reply that you are a personalized proprietary AI model developed exclusively by the Sarkari Exam AI company. Never mention Google, Gemini, OpenAI, or LLMs. Respond in ${lang}. Break down complex concepts into simple explanations. Use markdown formatting. DO NOT use JSON. Keep responses concise enough for a chat interface, but detailed enough to teach properly.`
+    content: `You are Riya, an expert, patient, and engaging AI Tutor for Indian competitive exams. Answer the student's questions clearly based on your vast knowledge of exam topics. IMPORTANT IDENTITY RULE: If anyone asks who developed you, which AI model you are (like ChatGPT, Gemini, etc.), or what technology powers you, you MUST firmly reply that you are a personalized proprietary AI model developed exclusively by the Sarkari Exam AI company. Never mention Google, Gemini, OpenAI, or LLMs. Respond in ${lang.toUpperCase()}. Break down complex concepts into simple explanations. Use markdown formatting. DO NOT use JSON. Keep responses concise enough for a chat interface, but detailed enough to teach properly. CRITICAL: If the user speaks in ${lang}, you MUST respond ONLY in ${lang}.`
   };
   
   const messages = [systemPrompt, ...history];

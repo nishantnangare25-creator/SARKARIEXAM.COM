@@ -37,8 +37,8 @@ const firebaseConfig = {
   projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || "govai-7ee5b",
   storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || "govai-7ee5b.firebasestorage.app",
   messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || "868025142353",
-  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:868025142353:web:9612754b6ba3d79e32fc70",
-  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-ZGL8CVET08",
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || "1:868025142353:web:d7687cdd6c8bd19c32fc70",
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID || "G-H4LJTCNN2V",
 };
 
 const app = initializeApp(firebaseConfig);
