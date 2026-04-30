@@ -1,4 +1,10 @@
-<!-- VERCEL BEST PRACTICES START -->
+<!-- GITHUB CONFIGURATION START -->
+## GitHub Repository Configuration
+- **Primary Repository**: `https://github.com/nishantnangare27-netizen/SARKARIEXAM.COM`
+- **Main Account**: `nishantnangare27-netizen`
+- **Deployment Branch**: `main`
+- **Note**: Always ensure that code is pushed to this specific repository for the MilesWeb deployment workflow to trigger correctly.
+<!-- GITHUB CONFIGURATION END -->
 ## Best practices for developing on Vercel
 
 These defaults are optimized for AI coding agents (and humans) working on apps that deploy to Vercel.
