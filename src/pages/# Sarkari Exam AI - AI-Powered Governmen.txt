@@ -1,0 +1,68 @@
+4 Sarkari Exam AI - AI-Powered Government Exam Preparation | UPSC, SSC, Banking
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎯</text></svg>" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- SEO Meta Tags -->
+    <title>Sarkari Exam AI - AI-Powered Government Exam Preparation | UPSC, SSC, Banking</title>
+    <meta name="description" content="Sarkari Exam AI is India's #1 AI-powered platform for government exam preparation. Get personalized study plans, smart mock tests, AI notes, past paper analysis for UPSC, SSC, Banking, Railway, NDA exams." />
+    <meta name="keywords" content="Sarkari Exam AI, AI Exam Coach, UPSC AI Mentor, AI Government Exam Preparation, Smart AI Study Planner for UPSC, SSC coaching online, Banking exam AI, Railway exam preparation, NDA exam AI, State PSC preparation, AI mock test, exam preparation India" />
+    <meta name="author" content="Sarkari Exam AI" />
+    <meta name="robots" content="index, follow" />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Sarkari Exam AI - AI-Powered Government Exam Preparation" />
+    <meta property="og:description" content="Prepare for UPSC, SSC, Banking, Railway & more with AI-powered study plans, mock tests, and analytics." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://sarkariexamai.com" />
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sarkari Exam AI - AI Exam Coach for Government Exams" />
+    <meta name="twitter:description" content="India's smartest AI-powered platform for UPSC, SSC, Banking exam preparation." />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Sarkari Exam AI",
+      "url": "https://sarkariexamai.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://sarkariexamai.com/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "Sarkari Exam AI",
+      "description": "India's leading AI-powered platform for UPSC, SSC, and Banking exam preparation.",
+      "url": "https://sarkariexamai.com",
+      "logo": "https://sarkariexamai.com/favicon.svg",
+      "sameAs": [],
+      "offers": {
+        "@type": "Offer",
+        "category": "Education",
+        "description": "Personalized AI coaching, adaptive mock tests, and past paper analysis."
+      }
+    }
+    </script>
+
+    <!-- Preconnect to fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <script type="module" crossorigin src="/assets/index-D8BtmXw0.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-D6pCb7aB.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

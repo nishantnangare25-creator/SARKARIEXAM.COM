@@ -1,0 +1,17 @@
+name = "sarkari-exam-ai"
+main = "index.js"
+compatibility_date = "2024-01-01"
+
+# KV Cache for questions (100K reads/day FREE)
+[[kv_namespaces]]
+binding = "QUESTION_CACHE"
+id = "2c07b02b94444c4fb3a74368ad48a7ad"
+
+[vars]
+GROQ_API_KEY_1 = "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"
+GROQ_API_KEY_2 = "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"
+OPENROUTER_API_KEY_1 = "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"
+OPENROUTER_API_KEY_2 = "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"
+OPENROUTER_API_KEY_3 = "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"
+GEMINI_API_KEY_1 = "AIzaSyDygQr0rfuG5j1hX9CE6BewvXAATPNqRKc"
+GEMINI_API_KEY_2 = "AIzaSyAy4fmPLzexhgglI9mtcCRG8Cwd-hczHig"

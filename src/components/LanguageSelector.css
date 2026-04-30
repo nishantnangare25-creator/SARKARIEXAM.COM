@@ -1,0 +1,224 @@
+.lang-splash {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-lg);
+  background: #F8FAFD;
+  position: relative;
+  overflow: hidden;
+}
+
+.lang-splash-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.lang-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(100px);
+  opacity: 0.15;
+}
+
+.lang-orb-1 {
+  width: 500px;
+  height: 500px;
+  background: var(--primary);
+  top: -150px;
+  left: -150px;
+}
+
+.lang-orb-2 {
+  width: 400px;
+  height: 400px;
+  background: var(--accent-saffron);
+  bottom: -100px;
+  right: -100px;
+}
+
+.lang-splash-card {
+  width: 100%;
+  max-width: 900px;
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 56px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0,0,0,0.02);
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== BRANDING ===== */
+.lang-logo-center {
+  margin-bottom: 32px;
+}
+
+.lang-logo-img {
+  height: 80px; /* Large, clear icon on splash screen */
+  width: auto;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.1));
+}
+
+/* ===== HEADER ===== */
+.lang-splash-header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.lang-splash-card h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+  color: #111827;
+}
+
+.lang-splash-card h2 {
+  font-size: 1.4rem;
+  margin-bottom: 16px;
+  color: #4B5563;
+  font-weight: 500;
+}
+
+.lang-splash-card p {
+  font-size: 0.95rem;
+  color: #9CA3AF;
+  line-height: 1.6;
+}
+
+/* ===== LANGUAGE GRID ===== */
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  width: 100%;
+  margin-bottom: 48px;
+}
+
+.lang-card {
+  padding: 24px 16px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  position: relative;
+  min-height: 110px;
+}
+
+.lang-card:hover {
+  border-color: #CBD5E1;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+}
+
+.lang-card.selected {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(26, 86, 219, 0.15);
+  border: none;
+}
+
+.lang-content-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.lang-native {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #1F2937;
+  line-height: 1.2;
+}
+
+.lang-english {
+  font-size: 0.75rem;
+  color: #6B7280;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-weight: 600;
+}
+
+.lang-check {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 0.75rem;
+  color: white;
+  font-weight: 800;
+  background: rgba(255,255,255,0.3);
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+/* ===== FOOTER ACTION ===== */
+.lang-footer-action {
+  width: 100%;
+  text-align: center;
+}
+
+.lang-continue {
+  min-width: 320px;
+  font-size: 1.05rem;
+  padding: 16px 40px;
+  border-radius: 50px;
+  box-shadow: 0 8px 20px rgba(26, 86, 219, 0.25);
+  transition: all 0.3s ease;
+}
+
+.lang-continue:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(26, 86, 219, 0.3);
+}
+
+.lang-continue:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1024px) {
+  .lang-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .lang-splash-card {
+    padding: 40px 32px;
+  }
+  .lang-splash-card h1 { font-size: 2rem; }
+  .lang-splash-card h2 { font-size: 1.25rem; }
+  .lang-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  .lang-card { min-height: 100px; padding: 20px 12px; }
+  .lang-native { font-size: 1.15rem; }
+  .lang-continue { width: 100%; min-width: unset; }
+}
+
+@media (max-width: 480px) {
+  .lang-splash-card {
+    padding: 32px 20px 24px;
+    border-radius: 20px;
+  }
+  .lang-splash-card h1 { font-size: 1.6rem; margin-bottom: 8px; }
+  .lang-splash-card p { font-size: 0.85rem; }
+  .lang-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 32px; }
+  .lang-card { min-height: 90px; }
+  .lang-logo-center .logo-text { font-size: 1.4rem; }
+}
