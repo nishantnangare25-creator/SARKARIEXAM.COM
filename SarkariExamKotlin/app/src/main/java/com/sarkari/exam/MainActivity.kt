@@ -3,11 +3,11 @@ package com.sarkari.exam
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.google.firebase.FirebaseApp
-import com.google.firebase.FirebaseOptions
-import com.sarkari.exam.data.AppConstants
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import com.sarkari.exam.ui.BananiAppMain
-import com.sarkari.exam.ui.theme.SarkariExamTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         }
 
         setContent {
-            SarkariExamTheme {
+            Surface(modifier = Modifier.fillMaxSize()) {
                 BananiAppMain()
             }
         }

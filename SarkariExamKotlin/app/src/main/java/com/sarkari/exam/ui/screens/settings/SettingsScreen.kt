@@ -1,7 +1,9 @@
 package com.sarkari.exam.ui.screens.settings
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -11,175 +13,201 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sarkari.exam.ui.theme.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sarkari.exam.ui.theme.AccentOrange
+import com.sarkari.exam.ui.theme.PrimaryBlue
+import com.sarkari.exam.ui.theme.TextDark
+import com.sarkari.exam.ui.theme.TextMuted
+import com.sarkari.exam.ui.viewmodels.SettingsViewModel
+import com.sarkari.exam.ui.viewmodels.UserSettingsProfile
+
+val BackgroundLight = Color.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    onBack: () -> Unit = {},
-    onLogout: () -> Unit = {}
+    onNavigateBack: () -> Unit,
+    viewModel: SettingsViewModel = viewModel()
 ) {
-    var pushNotifications by remember { mutableStateOf(true) }
-    var examAlerts by remember { mutableStateOf(true) }
-    var darkMode by remember { mutableStateOf(false) }
+    val userProfile by viewModel.userProfile.collectAsState()
+    val pushNotifications by viewModel.pushNotificationsEnabled.collectAsState()
+    val examAlerts by viewModel.examAlertsEnabled.collectAsState()
+    val darkMode by viewModel.darkModeEnabled.collectAsState()
+    val language by viewModel.selectedLanguage.collectAsState()
 
     Scaffold(
+        containerColor = BackgroundLight,
         topBar = {
             TopAppBar(
-                title = { 
-                    Text(
-                        "Settings", 
-                        fontWeight = FontWeight.ExtraBold,
-                        color = TextPrimary
-                    ) 
-                },
+                title = { Text("Settings ⚙️", fontWeight = FontWeight.ExtraBold, fontSize = 20.sp, color = TextDark) },
                 navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = null, tint = TextPrimary)
+                    IconButton(onClick = onNavigateBack) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = TextDark)
                     }
                 },
                 actions = {
-                    IconButton(onClick = { }) { Icon(Icons.Default.Search, contentDescription = null, tint = TextPrimary) }
+                    IconButton(onClick = { /* Search */ }) {
+                        Icon(Icons.Outlined.Search, contentDescription = "Search", tint = PrimaryBlue)
+                    }
                 },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundWhite)
+                colors = TopAppBarDefaults.topAppBarColors(containerColor = BackgroundLight)
             )
         }
-    ) { padding ->
-        Column(
+    ) { paddingValues ->
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
-                .background(SurfaceGray)
-                .verticalScroll(rememberScrollState())
-                .padding(20.dp)
+                .padding(paddingValues),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // User Profile Card
-            Surface(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(28.dp),
-                color = BackgroundWhite,
-                border = BorderStroke(1.dp, BorderColor.copy(alpha = 0.5f))
-            ) {
-                Row(
-                    modifier = Modifier.padding(20.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .background(SurfaceGray),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(Icons.Default.Person, contentDescription = null, tint = TextMuted, modifier = Modifier.size(32.dp))
-                    }
-                    Spacer(modifier = Modifier.width(16.dp))
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = "Aarav Sharma", fontWeight = FontWeight.ExtraBold, fontSize = 18.sp, color = TextPrimary)
-                        Spacer(modifier = Modifier.height(4.dp))
-                        Surface(
-                            color = AccentOrange.copy(alpha = 0.1f),
-                            shape = RoundedCornerShape(8.dp)
-                        ) {
-                            Row(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Star, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(14.dp))
-                                Spacer(modifier = Modifier.width(6.dp))
-                                Text(text = "PREMIUM PLAN", color = AccentOrange, fontWeight = FontWeight.Black, fontSize = 11.sp)
-                            }
-                        }
-                    }
-                    IconButton(
-                        onClick = { },
-                        modifier = Modifier.size(40.dp).background(SurfaceGray, CircleShape)
-                    ) {
-                        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = TextMuted)
-                    }
+            
+            // User Card
+            item {
+                UserProfileCard(userProfile)
+            }
+
+            // Account Section
+            item {
+                SettingsSection(title = "Account") {
+                    SettingsItem(icon = Icons.Outlined.Person, title = "Edit Profile", subtitle = "Update your personal details")
+                    SettingsItem(icon = Icons.Outlined.Lock, title = "Change Password", subtitle = "Secure your account")
+                    SettingsItem(icon = Icons.Outlined.StarBorder, title = "Manage Subscription", subtitle = "Premium plan details")
                 }
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
-
-            // Settings Sections
-            SettingsGroup(title = "ACCOUNT") {
-                SettingsItem("Edit Profile", Icons.Outlined.Person)
-                SettingsItem("Change Password", Icons.Outlined.Lock)
-                SettingsItem("Manage Subscription", Icons.Outlined.CreditCard, rightText = "Active")
+            // Notifications Section
+            item {
+                SettingsSection(title = "Notifications") {
+                    SettingsToggleItem(
+                        icon = Icons.Outlined.NotificationsActive, 
+                        title = "Push Notifications", 
+                        subtitle = "Receive daily updates", 
+                        isChecked = pushNotifications,
+                        onToggle = { viewModel.togglePushNotifications() }
+                    )
+                    SettingsToggleItem(
+                        icon = Icons.Outlined.Campaign, 
+                        title = "Exam Alerts", 
+                        subtitle = "Get notified about exam dates", 
+                        isChecked = examAlerts,
+                        onToggle = { viewModel.toggleExamAlerts() }
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SettingsGroup(title = "NOTIFICATIONS") {
-                SettingsToggle("Push Notifications", Icons.Outlined.Notifications, pushNotifications) { pushNotifications = it }
-                SettingsToggle("Exam Alerts", Icons.Outlined.WarningAmber, examAlerts) { examAlerts = it }
+            // Preferences Section
+            item {
+                SettingsSection(title = "Preferences") {
+                    SettingsToggleItem(
+                        icon = Icons.Outlined.DarkMode, 
+                        title = "Dark Mode", 
+                        subtitle = "Switch to dark theme", 
+                        isChecked = darkMode,
+                        onToggle = { viewModel.toggleDarkMode() }
+                    )
+                    SettingsItem(
+                        icon = Icons.Outlined.Language, 
+                        title = "Language", 
+                        subtitle = language,
+                        onClick = { viewModel.setLanguage(if (language == "English") "Hindi" else "English") }
+                    )
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SettingsGroup(title = "PREFERENCES") {
-                SettingsToggle("Dark Mode", Icons.Outlined.DarkMode, darkMode) { darkMode = it }
-                SettingsItem("Language", Icons.Outlined.Language, rightText = "English")
+            // Privacy Section
+            item {
+                SettingsSection(title = "Privacy") {
+                    SettingsItem(icon = Icons.Outlined.PrivacyTip, title = "Privacy Policy", subtitle = "Read our policies")
+                    SettingsItem(icon = Icons.Outlined.Gavel, title = "Terms & Conditions", subtitle = "App usage terms")
+                }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            SettingsGroup(title = "SUPPORT & LEGAL") {
-                SettingsItem("Help Center", Icons.Outlined.HelpOutline)
-                SettingsItem("Contact Us", Icons.Outlined.Email)
-                SettingsItem("Privacy Policy", Icons.Outlined.Shield)
-                SettingsItem("Terms & Conditions", Icons.Outlined.Gavel)
+            // Support Section
+            item {
+                SettingsSection(title = "Support") {
+                    SettingsItem(icon = Icons.Outlined.HelpOutline, title = "Help Center", subtitle = "FAQs and guides")
+                    SettingsItem(icon = Icons.Outlined.SupportAgent, title = "Contact Us", subtitle = "Reach out for support")
+                }
             }
-
-            Spacer(modifier = Modifier.height(32.dp))
 
             // Logout Button
-            OutlinedButton(
-                onClick = onLogout,
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                shape = RoundedCornerShape(16.dp),
-                border = BorderStroke(1.dp, ErrorRed.copy(alpha = 0.3f))
-            ) {
-                Icon(Icons.Default.Logout, contentDescription = null, tint = ErrorRed, modifier = Modifier.size(20.dp))
-                Spacer(modifier = Modifier.width(12.dp))
-                Text("Logout Session", color = ErrorRed, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp)
+            item {
+                Button(
+                    onClick = { /* Logout Action */ },
+                    modifier = Modifier.fillMaxWidth().height(56.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFFFF0F0)) // Light Red
+                ) {
+                    Icon(Icons.Outlined.Logout, contentDescription = null, tint = Color(0xFFD32F2F))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Logout", color = Color(0xFFD32F2F), fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                }
             }
-            
-            Spacer(modifier = Modifier.height(24.dp))
-            
-            Text(
-                text = "SarkariExamAI v1.0.4 (Build 42)",
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-                fontSize = 11.sp,
-                color = Color.LightGray
-            )
-            
-            Spacer(modifier = Modifier.height(40.dp))
+
+            item { Spacer(modifier = Modifier.height(32.dp)) }
         }
     }
 }
 
 @Composable
-fun SettingsGroup(title: String, content: @Composable ColumnScope.() -> Unit) {
+fun UserProfileCard(profile: UserSettingsProfile) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = Color.White,
+        shadowElevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier.size(64.dp).background(AccentOrange, CircleShape),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(profile.initials, color = Color.White, fontWeight = FontWeight.ExtraBold, fontSize = 24.sp)
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Column(modifier = Modifier.weight(1f)) {
+                Text(profile.name, fontWeight = FontWeight.Black, fontSize = 18.sp, color = TextDark)
+                Spacer(modifier = Modifier.height(2.dp))
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = PrimaryBlue.copy(alpha = 0.1f)
+                ) {
+                    Text(
+                        text = profile.subtitle, 
+                        color = PrimaryBlue, 
+                        fontSize = 12.sp, 
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+            IconButton(onClick = { /* Edit Profile */ }, modifier = Modifier.background(BackgroundLight, CircleShape)) {
+                Icon(Icons.Outlined.Edit, contentDescription = "Edit", tint = PrimaryBlue, modifier = Modifier.size(20.dp))
+            }
+        }
+    }
+}
+
+@Composable
+fun SettingsSection(title: String, content: @Composable ColumnScope.() -> Unit) {
     Column {
-        Text(
-            text = title,
-            modifier = Modifier.padding(start = 12.dp, bottom = 12.dp),
-            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Black),
-            color = TextMuted
-        )
+        Text(title, fontWeight = FontWeight.ExtraBold, fontSize = 16.sp, color = TextDark, modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp))
         Surface(
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(28.dp),
-            color = BackgroundWhite,
-            border = BorderStroke(1.dp, BorderColor.copy(alpha = 0.5f))
+            shape = RoundedCornerShape(20.dp),
+            color = Color.White,
+            shadowElevation = 1.dp
         ) {
-            Column {
+            Column(modifier = Modifier.padding(vertical = 8.dp)) {
                 content()
             }
         }
@@ -187,54 +215,64 @@ fun SettingsGroup(title: String, content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-fun SettingsItem(title: String, icon: ImageVector, rightText: String? = null) {
+fun SettingsItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit = {}
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { }
-            .padding(20.dp),
+            .clickable { onClick() }
+            .padding(horizontal = 20.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier.size(40.dp).background(PrimaryBlue.copy(alpha = 0.08f), CircleShape),
+            modifier = Modifier.size(40.dp).background(PrimaryBlue.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(icon, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(20.dp))
         }
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = title, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 15.sp, color = TextPrimary)
-        if (rightText != null) {
-            Text(text = rightText, color = TextMuted, fontSize = 13.sp, modifier = Modifier.padding(end = 8.dp), fontWeight = FontWeight.Medium)
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = TextDark)
+            Text(subtitle, color = TextMuted, fontSize = 12.sp)
         }
-        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = BorderColor, modifier = Modifier.size(22.dp))
+        Icon(Icons.Default.ChevronRight, contentDescription = null, tint = TextMuted)
     }
 }
 
 @Composable
-fun SettingsToggle(title: String, icon: ImageVector, isChecked: Boolean, onCheckedChange: (Boolean) -> Unit) {
+fun SettingsToggleItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    isChecked: Boolean,
+    onToggle: () -> Unit
+) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp),
+            .clickable { onToggle() }
+            .padding(horizontal = 20.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier.size(40.dp).background(PrimaryBlue.copy(alpha = 0.08f), CircleShape),
+            modifier = Modifier.size(40.dp).background(PrimaryBlue.copy(alpha = 0.1f), RoundedCornerShape(10.dp)),
             contentAlignment = Alignment.Center
         ) {
             Icon(icon, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(20.dp))
         }
         Spacer(modifier = Modifier.width(16.dp))
-        Text(text = title, modifier = Modifier.weight(1f), fontWeight = FontWeight.Bold, fontSize = 15.sp, color = TextPrimary)
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, fontWeight = FontWeight.Bold, fontSize = 15.sp, color = TextDark)
+            Text(subtitle, color = TextMuted, fontSize = 12.sp)
+        }
         Switch(
             checked = isChecked,
-            onCheckedChange = onCheckedChange,
-            colors = SwitchDefaults.colors(
-                checkedThumbColor = BackgroundWhite, 
-                checkedTrackColor = SuccessGreen,
-                uncheckedThumbColor = BackgroundWhite,
-                uncheckedTrackColor = BorderColor
-            )
+            onCheckedChange = { onToggle() },
+            colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = PrimaryBlue)
         )
     }
 }

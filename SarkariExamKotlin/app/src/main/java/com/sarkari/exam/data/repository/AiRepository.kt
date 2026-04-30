@@ -1,122 +1,116 @@
 package com.sarkari.exam.data.repository
 
-import com.google.gson.Gson
-import com.sarkari.exam.data.api.*
-import com.sarkari.exam.data.models.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import com.sarkari.exam.data.local.Language
-import com.sarkari.exam.data.local.IndianState
+import com.sarkari.exam.data.AppConstants
+import com.sarkari.exam.data.network.GroqChatRequest
+import com.sarkari.exam.data.network.GroqMessage
+import com.sarkari.exam.data.network.RetrofitClient
 
 class AiRepository {
-    
-    private val groqRetrofit = Retrofit.Builder()
-        .baseUrl("https://api.groq.com/openai/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(AiApiService::class.java)
+    private val groqApi = RetrofitClient.groqApiService
+    private val authHeader = "Bearer ${AppConstants.GROQ_API_KEY}"
 
-    private val geminiRetrofit = Retrofit.Builder()
-        .baseUrl("https://generativelanguage.googleapis.com/")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-        .create(GeminiApiService::class.java)
+    suspend fun sendChatMessage(
+        conversationHistory: List<GroqMessage>,
+        userMessage: String,
+        examContext: String = "SSC CGL",
+        subjectContext: String = "General"
+    ): Result<String> {
+        return try {
+            val systemPrompt = GroqMessage(
+                role = "system",
+                content = "You are Riya, a friendly and expert AI study assistant for Indian government exam aspirants. " +
+                        "The user is preparing for $examContext, focusing on $subjectContext. " +
+                        "Always give concise, clear, helpful answers. Use simple Hindi-English (Hinglish) if the user prefers. " +
+                        "For questions, provide step-by-step explanations. Keep responses focused and to the point."
+            )
 
-    private val gson = Gson()
-    
-    // Fallback logic implemented natively with Language Support
-    suspend fun getAiResponse(
-        messages: List<ChatMessage>, 
-        apiKey: String, 
-        languageCode: String = "en",
-        stateCode: String = "DL",
-        provider: String = "groq"
-    ): String? = withContext(Dispatchers.IO) {
-        try {
-            val language = Language.values().find { it.code == languageCode } ?: Language.ENGLISH
-            val stateName = IndianState.values().find { it.code == stateCode }?.displayName ?: "Delhi"
-            val contextMessage = ChatMessage("system", "You are a helpful education assistant for government exams in India. The user is located in $stateName. ${language.aiInstruction}")
-            val fullMessages = listOf(contextMessage) + messages
+            val messages = mutableListOf(systemPrompt)
+            messages.addAll(conversationHistory.takeLast(8)) // Keep last 8 messages for context
+            messages.add(GroqMessage(role = "user", content = userMessage))
 
-            if (provider == "groq") {
-                val response = groqRetrofit.getGroqCompletion("Bearer $apiKey", AiRequest("llama-3.3-70b-versatile", fullMessages))
-                if (response.isSuccessful) {
-                    return@withContext response.body()?.choices?.firstOrNull()?.message?.content
-                }
-            } else {
-                val geminiMsg = fullMessages.map { GeminiContent(listOf(GeminiPart(it.content))) }
-                val response = geminiRetrofit.getGeminiCompletion(apiKey, GeminiRequest(geminiMsg))
-                if (response.isSuccessful) {
-                    return@withContext response.body()?.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text
-                }
-            }
+            val request = GroqChatRequest(
+                model = "llama3-8b-8192",
+                messages = messages
+            )
+
+            val response = groqApi.createChatCompletion(authHeader, request)
+            val reply = response.choices.firstOrNull()?.message?.content
+                ?: "Sorry, I could not generate a response."
+            Result.success(reply)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Result.failure(e)
         }
-        return@withContext null
     }
 
-    // Logic to parse AI text into Question objects (Native version of parseTextToQuestions)
-    fun parseQuestions(text: String): List<Question> {
-        val questions = mutableListOf<Question>()
-        try {
-            val blocks = text.split(Regex("(?:^|\\n)\\s*(?:Q|Question)\\s*\\d*[:.]?\\s*", RegexOption.IGNORE_CASE))
-                .filter { it.isNotBlank() }
-            
-            blocks.forEachIndexed { index, block ->
-                val lines = block.lines().filter { it.isNotBlank() }
-                if (lines.size < 3) return@forEachIndexed
-
-                var questionStr = ""
-                val options = mutableListOf<String>()
-                var correctAnswer = ""
-                var explanation = ""
-                var mode = "Q"
-
-                lines.forEach { line ->
-                    val trimmed = line.trim()
-                    val optionMatch = Regex("""^[(]?([A-E])[).:]\s*(.+)""").find(trimmed)
-                    
-                    if (optionMatch != null) {
-                        mode = "O"
-                        options.add(optionMatch.groupValues[2].trim())
-                    } else if (trimmed.startsWith("Answer:", ignoreCase = true)) {
-                        mode = "A"
-                        val ansStr = trimmed.removePrefix("Answer:").trim()
-                        val letterMatch = Regex("([A-E])").find(ansStr)
-                        if (letterMatch != null && options.isNotEmpty()) {
-                            val letterIndex = letterMatch.groupValues[1].uppercase()[0] - 'A'
-                            if (letterIndex in options.indices) {
-                                correctAnswer = options[letterIndex]
-                            } else {
-                                correctAnswer = ansStr
-                            }
-                        } else {
-                            correctAnswer = ansStr
-                        }
-                    } else if (trimmed.startsWith("Explanation:", ignoreCase = true) || mode == "E") {
-                        if (mode != "E") {
-                            mode = "E"
-                            explanation = trimmed.removePrefix("Explanation:").trim()
-                        } else {
-                            explanation += "\n$trimmed"
-                        }
-                    } else {
-                        if (mode == "Q") questionStr += (if (questionStr.isEmpty()) "" else "\n") + trimmed
-                        else if (mode == "E") explanation += "\n$trimmed"
-                    }
-                }
-
-                if (questionStr.isNotBlank() && options.size >= 2 && correctAnswer.isNotBlank()) {
-                    questions.add(Question(index + 1, questionStr, options, correctAnswer, explanation))
-                }
+    suspend fun generateNotes(
+        topic: String,
+        examContext: String = "SSC CGL",
+        subjectContext: String = "General",
+        includeFlashcards: Boolean = false,
+        includePyqLink: Boolean = false
+    ): Result<String> {
+        return try {
+            val prompt = buildString {
+                append("Generate comprehensive, well-structured study notes for the following topic:\n\n")
+                append("Topic: $topic\n")
+                append("Exam: $examContext | Subject: $subjectContext\n\n")
+                append("Format the notes as:\n")
+                append("📌 Key Concepts (bullet points)\n")
+                append("📖 Detailed Explanation\n")
+                append("🔢 Important Facts & Figures\n")
+                if (includeFlashcards) append("🗂️ Flashcard Q&A pairs at the end\n")
+                if (includePyqLink) append("📝 Typical PYQ-style questions related to this topic\n")
+                append("\nMake it easy to memorize and exam-focused.")
             }
+
+            val messages = listOf(
+                GroqMessage(role = "system", content = "You are an expert teacher creating high-quality study material for Indian competitive exams."),
+                GroqMessage(role = "user", content = prompt)
+            )
+
+            val request = GroqChatRequest(model = "llama3-8b-8192", messages = messages)
+            val response = groqApi.createChatCompletion(authHeader, request)
+            val notes = response.choices.firstOrNull()?.message?.content
+                ?: "Could not generate notes. Please try again."
+            Result.success(notes)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Result.failure(e)
         }
-        return questions
+    }
+
+    suspend fun analyzePaper(
+        questions: String,
+        examContext: String = "SSC CGL",
+        subjectContext: String = "General"
+    ): Result<String> {
+        return try {
+            val prompt = """
+                Analyze the following exam questions from $examContext ($subjectContext) paper:
+                
+                $questions
+                
+                Please provide:
+                1. 📊 Topic-wise analysis (which topics appear most)
+                2. 🎯 Difficulty breakdown (Easy/Medium/Hard percentages)
+                3. 💡 Key patterns noticed
+                4. 📈 Recommended focus areas for preparation
+                5. 🤖 AI Insight for the aspirant
+                
+                Be concise and actionable.
+            """.trimIndent()
+
+            val messages = listOf(
+                GroqMessage(role = "system", content = "You are an expert exam analyst for Indian competitive exams."),
+                GroqMessage(role = "user", content = prompt)
+            )
+
+            val request = GroqChatRequest(model = "llama3-8b-8192", messages = messages)
+            val response = groqApi.createChatCompletion(authHeader, request)
+            val analysis = response.choices.firstOrNull()?.message?.content
+                ?: "Could not analyze. Please try again."
+            Result.success(analysis)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
-

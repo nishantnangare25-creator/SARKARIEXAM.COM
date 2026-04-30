@@ -26,7 +26,7 @@ import com.sarkari.exam.ui.theme.*
 fun AnalyticsDashboard(
     onBack: () -> Unit = {}
 ) {
-    val backgroundColor = Color(0xFFF5F6FA)
+    val backgroundColor = Color.White
 
     Scaffold(
         topBar = {

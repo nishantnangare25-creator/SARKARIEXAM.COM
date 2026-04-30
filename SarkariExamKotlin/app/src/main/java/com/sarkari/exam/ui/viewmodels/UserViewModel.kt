@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import com.sarkari.exam.data.local.AppPreferences
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import com.sarkari.exam.data.repository.UserRepository
+import com.google.firebase.auth.FirebaseAuth
 
 data class UserProfile(
     val exam: String = "",
@@ -19,6 +21,8 @@ data class UserProfile(
 
 class UserViewModel(application: Application) : AndroidViewModel(application) {
     private val appPreferences = AppPreferences(application)
+    private val userRepository = UserRepository()
+    private val firebaseAuth = FirebaseAuth.getInstance()
     
     private val _userProfile = MutableStateFlow(UserProfile())
     val userProfile: StateFlow<UserProfile> = _userProfile.asStateFlow()
@@ -32,6 +36,19 @@ class UserViewModel(application: Application) : AndroidViewModel(application) {
         viewModelScope.launch {
             appPreferences.examCode.collectLatest { exam ->
                 _userProfile.value = _userProfile.value.copy(exam = exam)
+            }
+        }
+        
+        // Fetch from Firestore if logged in
+        firebaseAuth.currentUser?.uid?.let { uid ->
+            viewModelScope.launch {
+                userRepository.getUserProfile(uid).onSuccess { profile ->
+                    if (profile != null) {
+                        // Assuming you want to sync some fields from profile
+                        // e.g. displayName, but the current UI uses default local mock.
+                        // You can expand UserProfile to hold the displayName later.
+                    }
+                }
             }
         }
     }

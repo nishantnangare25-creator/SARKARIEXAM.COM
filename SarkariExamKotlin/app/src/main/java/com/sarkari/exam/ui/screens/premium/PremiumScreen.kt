@@ -2,9 +2,9 @@ package com.sarkari.exam.ui.screens.premium
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -14,99 +14,299 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.sarkari.exam.ui.viewmodels.SubscriptionState
+import com.sarkari.exam.ui.viewmodels.SubscriptionViewModel
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.sarkari.exam.ui.theme.*
+import kotlinx.coroutines.delay
+
+val PrimaryBlue = Color(0xFF2F5BB7)
+val AccentOrange = Color(0xFFFF6A00)
+val BackgroundWhite = Color(0xFFFFFFFF)
+val TextDark = Color(0xFF111827)
+val TextMuted = Color(0xFF6B7280)
+val BorderColor = Color(0xFFE5E7EB)
+val CardBackground = Color(0xFFF9FAFB)
+val GreenAccent = Color(0xFF00B859)
+val GreenBg = Color(0xFFE6F8ED)
+val RedAccent = Color(0xFFD32F2F)
+val RedBg = Color(0xFFFFEAEB)
+val LightBlueBg = Color(0xFFF0F4FF)
 
 @Composable
 fun PremiumScreen(
-    onClose: () -> Unit = {},
-    onStartTrial: () -> Unit = {}
+    onBackClick: () -> Unit,
+    onSubscriptionSuccess: () -> Unit = {},
+    viewModel: SubscriptionViewModel = viewModel()
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White)
-            .verticalScroll(rememberScrollState())
-            .padding(20.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        // Top Header
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            IconButton(
-                onClick = onClose,
-                modifier = Modifier
-                    .size(40.dp)
-                    .background(Color(0xFFF1F5F9), CircleShape)
+    var isVisible by remember { mutableStateOf(false) }
+    
+    val subState by viewModel.subState.collectAsState()
+    val isLoading = subState is SubscriptionState.Loading
+    val errorMessage = (subState as? SubscriptionState.Error)?.message
+    val isActive = subState is SubscriptionState.Active
+
+    LaunchedEffect(subState) {
+        if (subState is SubscriptionState.Success) {
+            onSubscriptionSuccess()
+            viewModel.resetState()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        isVisible = true
+    }
+
+    Scaffold(
+        containerColor = BackgroundWhite,
+        bottomBar = {
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = slideInVertically(initialOffsetY = { it }, animationSpec = tween(800, delayMillis = 400)) + fadeIn()
             ) {
-                Icon(Icons.Default.Close, contentDescription = "Close", tint = Color.Gray)
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(BackgroundWhite)
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    if (errorMessage != null) {
+                        Text(
+                            text = errorMessage,
+                            color = RedAccent,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(bottom = 8.dp)
+                        )
+                    }
+
+                    if (isActive) {
+                        Surface(
+                            color = GreenBg,
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Text(
+                                text = "You are already a Premium Member! 🎉",
+                                color = GreenAccent,
+                                modifier = Modifier.padding(16.dp),
+                                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold)
+                            )
+                        }
+                    } else {
+                        PremiumCTAButton(
+                            text = "Start 7-Day Free Trial",
+                            isLoading = isLoading,
+                            onClick = { viewModel.startFreeTrial() }
+                        )
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Icon(
+                            imageVector = Icons.Default.Lock,
+                            contentDescription = "Secure",
+                            tint = TextMuted,
+                            modifier = Modifier.size(16.dp)
+                        )
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(
+                            text = "Secure Payment • Cancel Anytime",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TextMuted
+                        )
+                    }
+                }
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Top Bar
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(CardBackground)
+                        .clickable { onBackClick() },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Back", tint = TextDark)
+                }
+
+                OfferTimer()
             }
 
-            TimerBadge(time = "02:15:30")
+            Spacer(modifier = Modifier.height(32.dp))
+
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = slideInVertically(initialOffsetY = { -50 }, animationSpec = tween(600)) + fadeIn()
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "Upgrade to Premium",
+                        style = MaterialTheme.typography.headlineLarge.copy(
+                            fontWeight = FontWeight.ExtraBold,
+                            color = PrimaryBlue,
+                            letterSpacing = (-0.5).sp
+                        ),
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "Unlock all AI-powered features",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = TextMuted,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
+
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = fadeIn(animationSpec = tween(800, delayMillis = 200)) + scaleIn(initialScale = 0.9f)
+            ) {
+                MainOfferCard()
+            }
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = fadeIn(animationSpec = tween(800, delayMillis = 300)) + slideInVertically(initialOffsetY = { 50 })
+            ) {
+                FreeTrialCard()
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            AnimatedVisibility(
+                visible = isVisible,
+                enter = fadeIn(animationSpec = tween(800, delayMillis = 400))
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    FeatureItem(text = "Unlimited Mock Tests")
+                    FeatureItem(text = "AI Notes Generator")
+                    FeatureItem(text = "PYQ Analysis")
+                    FeatureItem(text = "No Ads")
+                }
+            }
+
+            Spacer(modifier = Modifier.height(40.dp))
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(32.dp))
+@Composable
+fun OfferTimer() {
+    var timeLeft by remember { mutableStateOf(8130) } // 02:15:30 in seconds
 
-        // Title Section
-        Text(
-            text = "Upgrade to Premium",
-            style = MaterialTheme.typography.displaySmall.copy(
-                fontWeight = FontWeight.ExtraBold,
-                color = TextPrimary
-            ),
-            textAlign = TextAlign.Center
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        Text(
-            text = "Unlock all AI-powered features",
-            style = MaterialTheme.typography.titleMedium,
-            color = TextMuted,
-            textAlign = TextAlign.Center
-        )
+    LaunchedEffect(Unit) {
+        while (timeLeft > 0) {
+            delay(1000)
+            timeLeft--
+        }
+    }
 
-        Spacer(modifier = Modifier.height(40.dp))
+    val hours = timeLeft / 3600
+    val minutes = (timeLeft % 3600) / 60
+    val seconds = timeLeft % 60
+    val timeString = String.format("%02d:%02d:%02d", hours, minutes, seconds)
 
-        // Main Offer Card
-        Box(contentAlignment = Alignment.TopCenter) {
+    // Pulse animation for critical time
+    val infiniteTransition = rememberInfiniteTransition()
+    val pulse by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = if (timeLeft < 3600) 1.05f else 1f,
+        animationSpec = infiniteRepeatable(animation = tween(1000), repeatMode = RepeatMode.Reverse)
+    )
+
+    Surface(
+        color = RedBg,
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.scale(pulse)
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = Icons.Default.Schedule,
+                contentDescription = "Timer",
+                tint = RedAccent,
+                modifier = Modifier.size(16.dp)
+            )
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = "Offer ends in $timeString",
+                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                color = RedAccent
+            )
+        }
+    }
+}
+
+@Composable
+fun MainOfferCard() {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        // Card Body
+        Surface(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 14.dp),
+            shape = RoundedCornerShape(24.dp),
+            color = BackgroundWhite,
+            border = BorderStroke(1.dp, Color(0xFFE0E7FF)),
+            shadowElevation = 8.dp
+        ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 18.dp)
-                    .shadow(12.dp, RoundedCornerShape(32.dp), ambientColor = PrimaryBlue.copy(alpha = 0.2f))
-                    .clip(RoundedCornerShape(32.dp))
-                    .background(
-                        Brush.verticalGradient(
-                            listOf(SurfaceGray, BackgroundWhite)
-                        )
-                    )
-                    .padding(28.dp),
+                    .padding(horizontal = 24.dp, vertical = 32.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Spacer(modifier = Modifier.height(18.dp))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Default.LocalFireDepartment, contentDescription = null, tint = AccentOrange, modifier = Modifier.size(20.dp))
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "SPECIAL OFFER",
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.ExtraBold),
-                        color = AccentOrange
-                    )
-                }
+                Text(
+                    text = "SPECIAL OFFER",
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        fontWeight = FontWeight.ExtraBold,
+                        letterSpacing = 1.sp
+                    ),
+                    color = AccentOrange
+                )
 
                 Spacer(modifier = Modifier.height(16.dp))
 
@@ -115,193 +315,174 @@ fun PremiumScreen(
                         text = "₹99",
                         style = MaterialTheme.typography.displayLarge.copy(
                             fontWeight = FontWeight.Black,
-                            color = TextPrimary,
-                            fontSize = 64.sp
-                        )
+                            letterSpacing = (-1).sp
+                        ),
+                        color = PrimaryBlue
                     )
                     Text(
-                        text = " /month",
-                        style = MaterialTheme.typography.titleLarge,
+                        text = "/month",
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Medium),
                         color = TextMuted,
-                        modifier = Modifier.padding(bottom = 14.dp)
+                        modifier = Modifier.padding(bottom = 8.dp, start = 4.dp)
                     )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
 
                 Surface(
-                    shape = RoundedCornerShape(16.dp),
-                    color = SuccessGreen.copy(alpha = 0.08f),
-                    border = BorderStroke(1.dp, SuccessGreen.copy(alpha = 0.2f))
+                    color = GreenBg,
+                    shape = RoundedCornerShape(12.dp),
+                    border = BorderStroke(1.dp, GreenAccent.copy(alpha = 0.3f))
                 ) {
+                    val strikeText = buildAnnotatedString {
+                        append("50% OFF (was ")
+                        withStyle(style = SpanStyle(textDecoration = TextDecoration.LineThrough)) {
+                            append("₹199")
+                        }
+                        append(")")
+                    }
                     Text(
-                        text = "50% OFF (was ₹199)",
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.ExtraBold),
-                        color = SuccessGreen
+                        text = strikeText,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                        style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                        color = GreenAccent
                     )
                 }
             }
-
-            // Most Popular Badge
-            Surface(
-                shape = RoundedCornerShape(14.dp),
-                color = Color(0xFF1E3A8A),
-                border = BorderStroke(1.5.dp, BackgroundWhite.copy(alpha = 0.4f)),
-                modifier = Modifier.offset(y = 0.dp)
-            ) {
-                Text(
-                    text = "MOST POPULAR",
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
-                    style = MaterialTheme.typography.labelLarge.copy(
-                        fontWeight = FontWeight.ExtraBold,
-                        color = BackgroundWhite
-                    )
-                )
-            }
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
-
-        // Free Trial Row
+        // Floating Pill
         Surface(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(24.dp),
-            border = BorderStroke(1.dp, BorderColor.copy(alpha = 0.6f)),
-            color = BackgroundWhite
+            color = PrimaryBlue,
+            shape = RoundedCornerShape(50),
+            shadowElevation = 4.dp
         ) {
-            Row(
-                modifier = Modifier.padding(20.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "7 Days Free Trial 🎁",
-                        style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.ExtraBold),
-                        color = TextPrimary
-                    )
-                    Text(
-                        text = "Then ₹99/month. Cancel Anytime.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = TextMuted
-                    )
-                }
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .background(SecondaryBlue, CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(Icons.Default.LockOpen, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(24.dp))
-                }
-            }
+            Text(
+                text = "MOST POPULAR",
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
+                style = MaterialTheme.typography.labelSmall.copy(
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 1.sp
+                ),
+                color = BackgroundWhite
+            )
         }
+    }
+}
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Features List
-        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            FeatureItem(text = "Unlimited Mock Tests")
-            FeatureItem(text = "AI Notes Generator")
-            FeatureItem(text = "PYQ Analysis")
-            FeatureItem(text = "No Ads")
-        }
-
-        Spacer(modifier = Modifier.height(48.dp))
-
-        // CTA Section
-        Button(
-            onClick = onStartTrial,
+@Composable
+fun FreeTrialCard() {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(20.dp),
+        color = BackgroundWhite,
+        border = BorderStroke(1.dp, BorderColor),
+        shadowElevation = 2.dp
+    ) {
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(60.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = PrimaryBlue),
-            elevation = ButtonDefaults.buttonElevation(defaultElevation = 4.dp)
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Start 7-Day Free Trial",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.ExtraBold),
-                    color = BackgroundWhite
+                    text = "7 Days Free Trial 🎁",
+                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    color = PrimaryBlue
                 )
-                Spacer(modifier = Modifier.width(10.dp))
-                Icon(Icons.Default.ArrowForward, contentDescription = null, tint = BackgroundWhite)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Payment Info
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.alpha(0.8f)
-            ) {
-                Icon(Icons.Default.VerifiedUser, contentDescription = null, tint = SuccessGreen, modifier = Modifier.size(16.dp))
-                Spacer(modifier = Modifier.width(6.dp))
+                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = "SECURE PAYMENT 🔒",
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.ExtraBold),
-                    color = SuccessGreen
+                    text = "Then ₹99/month. Cancel Anytime.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TextMuted
                 )
             }
             
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(20.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.alpha(0.6f)
+            Box(
+                modifier = Modifier
+                    .size(48.dp)
+                    .clip(CircleShape)
+                    .background(LightBlueBg),
+                contentAlignment = Alignment.Center
             ) {
-                Icon(Icons.Default.Payment, contentDescription = null, modifier = Modifier.size(24.dp), tint = TextMuted)
-                Text("UPI", fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, color = TextMuted)
-                Text("CARDS", fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, color = TextMuted)
-                Text("WALLET", fontWeight = FontWeight.ExtraBold, fontSize = 13.sp, color = TextMuted)
+                Icon(
+                    imageVector = Icons.Default.LockOpen,
+                    contentDescription = "Unlock",
+                    tint = PrimaryBlue,
+                    modifier = Modifier.size(24.dp)
+                )
             }
         }
-
-        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
 @Composable
 fun FeatureItem(text: String) {
-    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 8.dp)) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Box(
             modifier = Modifier
                 .size(28.dp)
-                .background(SecondaryBlue, CircleShape),
+                .clip(CircleShape)
+                .background(LightBlueBg),
             contentAlignment = Alignment.Center
         ) {
-            Icon(Icons.Default.Check, contentDescription = null, tint = PrimaryBlue, modifier = Modifier.size(18.dp))
+            Icon(
+                imageVector = Icons.Default.Check,
+                contentDescription = null,
+                tint = PrimaryBlue,
+                modifier = Modifier.size(16.dp)
+            )
         }
         Spacer(modifier = Modifier.width(16.dp))
         Text(
-            text = text, 
-            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold), 
-            color = TextPrimary
+            text = text,
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+            color = PrimaryBlue
         )
     }
 }
 
 @Composable
-fun TimerBadge(time: String) {
-    Surface(
-        shape = RoundedCornerShape(12.dp),
-        color = Color(0xFFFEF2F2),
-        border = BorderStroke(1.dp, Color(0xFFEF4444).copy(alpha = 0.2f))
+fun PremiumCTAButton(
+    text: String,
+    isLoading: Boolean = false,
+    onClick: () -> Unit
+) {
+    var isPressed by remember { mutableStateOf(false) }
+    val scale by animateFloatAsState(targetValue = if (isPressed) 0.95f else 1f, label = "button_scale")
+
+    Button(
+        onClick = onClick,
+        enabled = !isLoading,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .scale(scale)
+            .clip(RoundedCornerShape(20.dp))
+            .background(
+                brush = Brush.horizontalGradient(
+                    colors = listOf(PrimaryBlue, Color(0xFF4371D7))
+                )
+            ),
+        colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, disabledContainerColor = Color.Transparent),
+        shape = RoundedCornerShape(20.dp),
+        contentPadding = PaddingValues()
     ) {
-        Row(
-            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Icon(Icons.Default.Timer, contentDescription = null, tint = Color(0xFFEF4444), modifier = Modifier.size(16.dp))
-            Spacer(modifier = Modifier.width(6.dp))
+        if (isLoading) {
+            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp), strokeWidth = 2.dp)
+        } else {
             Text(
-                text = "Offer ends in $time",
-                style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                color = Color(0xFFEF4444)
+                text = text,
+                style = MaterialTheme.typography.titleMedium.copy(
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color.White,
+                    letterSpacing = 0.5.sp
+                )
             )
         }
     }

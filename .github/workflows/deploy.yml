@@ -1,0 +1,58 @@
+name: Deploy to MilesWeb
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  web-deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    
+    defaults:
+      run:
+        working-directory: ./AIGovPrep
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+        cache-dependency-path: './AIGovPrep/package-lock.json'
+
+    - name: Install Dependencies
+      run: npm install
+
+    - name: Build Project
+      run: npm run build
+      env:
+        VITE_GEMINI_API_KEY_1: ${{ secrets.VITE_GEMINI_API_KEY_1 }}
+        VITE_GEMINI_API_KEY_2: ${{ secrets.VITE_GEMINI_API_KEY_2 }}
+        VITE_GEMINI_API_KEY_3: ${{ secrets.VITE_GEMINI_API_KEY_3 }}
+        VITE_GEMINI_API_KEY_4: ${{ secrets.VITE_GEMINI_API_KEY_4 }}
+        VITE_GEMINI_API_KEY_5: ${{ secrets.VITE_GEMINI_API_KEY_5 }}
+        VITE_GEMINI_API_KEY_6: ${{ secrets.VITE_GEMINI_API_KEY_6 }}
+        VITE_GROQ_API_KEY_1: ${{ secrets.GROQ_API_KEY_1 }}
+        VITE_GROQ_API_KEY_2: ${{ secrets.GROQ_API_KEY_2 }}
+        VITE_GROQ_API_KEY_3: ${{ secrets.GROQ_API_KEY_3 }}
+        VITE_GROQ_API_KEY_4: ${{ secrets.GROQ_API_KEY_4 }}
+        VITE_GROQ_API_KEY_5: ${{ secrets.GROQ_API_KEY_5 }}
+        VITE_GROQ_API_KEY_6: ${{ secrets.GROQ_API_KEY_6 }}
+        VITE_OPENROUTER_API_KEY_1: ${{ secrets.OPENROUTER_API_KEY_1 }}
+        VITE_OPENROUTER_API_KEY_2: ${{ secrets.OPENROUTER_API_KEY_2 }}
+        VITE_OPENROUTER_API_KEY_3: ${{ secrets.OPENROUTER_API_KEY_3 }}
+        VITE_FIREBASE_API_KEY: ${{ secrets.VITE_FIREBASE_API_KEY }}
+        VITE_WORKER_URL: ${{ secrets.VITE_WORKER_URL }}
+
+    - name: Deploy to MilesWeb via Custom Script
+      run: node deploy-to-milesweb.js
+      env:
+        FTP_SERVER: ${{ secrets.FTP_SERVER }}
+        FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+        FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
