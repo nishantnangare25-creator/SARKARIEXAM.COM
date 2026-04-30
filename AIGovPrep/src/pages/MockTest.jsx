@@ -83,22 +83,26 @@ export default function MockTest() {
   };
 
   const handleSubmit = async () => {
-    clearInterval(intervalRef.current);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    
+    // Set states immediately for better UI response
+    setStarted(false);
+    setShowResult(true);
+
     try {
       if (user) {
-        await saveTestResult(user.uid, {
+        // Save in background, don't await to block the UI
+        saveTestResult(user.uid, {
           exam,
           subject,
           score: getScore(),
           total: questions.length,
           timestamp: new Date().toISOString()
-        });
+        }).catch(err => console.error("Background save failed:", err));
       }
     } catch (err) {
-      console.error("Error saving test result:", err);
+      console.error("Error in handleSubmit:", err);
     }
-    setStarted(false);
-    setShowResult(true);
   };
 
   const getScore = () => {
@@ -208,6 +212,7 @@ export default function MockTest() {
           <header className="animate-fadeInUp" style={{ textAlign: 'center', marginBottom: 40 }}>
             <p className="badge badge-primary">Test Completed</p>
             <h1 style={{ marginTop: 12 }}>{t('mockTest.result')}</h1>
+            {profile?.name && <p style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>Great job, {profile.name}!</p>}
           </header>
 
           <div className="content-area">
