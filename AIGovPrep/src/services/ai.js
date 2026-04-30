@@ -521,7 +521,7 @@ export const generateMockQuestions = async ({ exam, subject, difficulty, count, 
       role: 'system',
       content: `You are an expert Indian competitive exam creator. Generate exactly ${count || 5} MCQ questions. Respond in ${lang}.
 CRITICAL RULES:
-1. DO NOT USE JSON. DO NOT USE CODE BLOCKS (```).
+1. DO NOT USE JSON. DO NOT USE CODE BLOCKS (\`\`\`).
 2. Respond STRICTLY in plain text format.
 3. Use this EXACT format for EVERY question:
 Q: [Question text]
@@ -580,7 +580,7 @@ export const generatePYQSMockQuestions = async ({ topic, year, count, language }
       role: 'system',
       content: `You are an expert Indian competitive exam creator. Generate exactly ${count || 5} Past Year Questions (PYQs). Respond in ${lang}.
 CRITICAL RULES:
-1. DO NOT USE JSON. DO NOT USE CODE BLOCKS (```).
+1. DO NOT USE JSON. DO NOT USE CODE BLOCKS (\`\`\`).
 2. Respond STRICTLY in plain text format.
 3. Use this EXACT format for EVERY question:
 Q: [Question text]
