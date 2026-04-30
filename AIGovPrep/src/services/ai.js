@@ -1,6 +1,6 @@
 // Groq AI API Service
 // API key is stored in environment variables (VITE_GROQ_API_KEY)
-export const BUILD_ID = "v2.1." + Date.now();
+export const BUILD_ID = "v2.1." + 1714470123456; // Updated for fresh trigger
 
 import i18n, { languages } from '../i18n';
 import { db } from './firebase';
